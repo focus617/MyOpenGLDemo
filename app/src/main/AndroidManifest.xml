@@ -18,4 +18,9 @@
         </activity>
     </application>
 
+    <!-- For OpenGL ES 2.0   -->
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <!-- 如果应用程序使用纹理压缩，则还必须声明应用程序支持哪种压缩格式 -->
+    <supports-gl-texture android:name="GL_OES_compressed_ETC1_RGB8_texture" />
+    <supports-gl-texture android:name="GL_OES_compressed_paletted_texture" />
 </manifest>
