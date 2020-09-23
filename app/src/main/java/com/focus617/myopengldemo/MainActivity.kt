@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onPause() {
-        super.onResume()
+        super.onPause()
         mGLSurfaceView.onPause()
     }
 }
