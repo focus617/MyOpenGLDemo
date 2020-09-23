@@ -33,6 +33,8 @@ dependencies {
     // Support libraries
     implementation Dependencies.androidx_appcompat
     implementation Dependencies.androidx_constraintlayout
+    // Logger
+    implementation Dependencies.timber
 
     // 2. Unit/Integration tests dependencies
     testImplementation Dependencies.junit
