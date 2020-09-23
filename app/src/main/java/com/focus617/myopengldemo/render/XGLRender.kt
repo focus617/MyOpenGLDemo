@@ -23,22 +23,22 @@ class XGLRender : GLSurfaceView.Renderer {
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
-        // 设置渲染的位置和大小
+        // 设置渲染的OpenGL场景（视口）的位置和大小
         Timber.d("width = $width, height = $height")
         GLES31.glViewport(0, 0, width, height);
 
-        // 此投影矩阵应用于onDrawFrame（）方法中的对象坐标
+        // 计算透视投影矩阵 (Project Matrix)，而后将应用于onDrawFrame（）方法中的对象坐标
         val aspect: Float = width.toFloat() / height.toFloat()
-        Matrix.frustumM(mProjectionMatrix, 0, -aspect, aspect, -1F, 1F, 3F, 7F);
+        Matrix.frustumM(mProjectionMatrix, 0, -aspect, aspect, -1f, 1f, 3f, 7f);
 
     }
 
     override fun onDrawFrame(unused: GL10) {
-        // 重绘背景颜色
+        // 首先清理屏幕，重绘背景颜色
         GLES31.glClear(GLES31.GL_COLOR_BUFFER_BIT);
         
-        // 设置相机的位置 (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, 0F, 0F, -3F, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
+        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
         // 计算投影和视图转换
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);

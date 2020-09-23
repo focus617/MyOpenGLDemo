@@ -4,6 +4,7 @@ import android.opengl.GLES31
 import timber.log.Timber
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
+import kotlin.math.sin
 
 
 class Triangle {
@@ -26,9 +27,10 @@ class Triangle {
                     "#endif\n" +
 
                     "out vec4 FragColor; " +
+                    "uniform vec4 outColor; " +
 
                     "void main() {" +
-                    "  FragColor = vec4(1.0f,0.5f,0.2f,1.0f);" +
+                    "  FragColor = outColor;" +
                     "}")
 
 
@@ -51,7 +53,7 @@ class Triangle {
             vertexShader = 0
         }
 
-        // 片段着色器
+        // 片元着色器
         var fragmentShader = XGLRender.loadShader(GLES31.GL_FRAGMENT_SHADER, fragmentShaderCode)
         GLES31.glGetShaderiv(fragmentShader, GLES31.GL_COMPILE_STATUS, success)
         if (success.get(0) == 0) {
@@ -91,8 +93,13 @@ class Triangle {
     }
 
     fun draw(mvpMatrix: FloatArray) {
-        // 开放使能顶点数组
+        // 使用sin函数让颜色在0.0到1.0之间改变
+        val timeValue = System.currentTimeMillis()
+        val greenValue = sin((timeValue / 300 % 50).toDouble()) / 2 + 0.5
+
+        // 启用顶点数组
         GLES31.glEnableVertexAttribArray(aPosLocation);
+
         // 将程序添加到OpenGL ES环境
         GLES31.glUseProgram(mProgram)
 
@@ -101,8 +108,13 @@ class Triangle {
         // 将模型视图投影矩阵传递给着色器
         GLES31.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
 
+        // 查询 uniform ourColor的位置值
+        val vertexColorLocation = GLES31.glGetUniformLocation(mProgram, "outColor")
+        GLES31.glUniform4f(vertexColorLocation, greenValue.toFloat(), 0f, 0f, 0f)
+
         // 绘制三角形
         GLES31.glDrawArrays(GLES31.GL_TRIANGLES, 0, vertexCount)
+
         // 禁用顶点数组
         GLES31.glDisableVertexAttribArray(aPosLocation)
     }
@@ -118,7 +130,7 @@ class Triangle {
         // aPos的位置偏移
         internal const val aPosLocation = 0
 
-        // 三角形的顶点输入
+        // 一个等边三角形的顶点输入
         internal var triangleCoords = floatArrayOf(  // 按逆时针顺序
             0.0f, 0.622008459f, 0.0f,   // 上
             -0.5f, -0.311004243f, 0.0f, // 左下
