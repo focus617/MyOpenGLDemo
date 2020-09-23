@@ -1,6 +1,6 @@
 package com.focus617.myopengldemo.render
 
-import android.opengl.GLES30
+import android.opengl.GLES31
 import timber.log.Timber
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
@@ -8,14 +8,17 @@ import java.nio.IntBuffer
 
 class Triangle {
 
+    // 定义顶点着色器
+    // [mMVPMatrix] 模型视图投影矩阵
     private val vertexShaderCode =
-        // 定义顶点着色器
         "#version 300 es \n" +
                 "layout (location = 0) in vec3 aPos;" +
+                "uniform mat4 uMVPMatrix;" +
                 "void main() {" +
-                "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);" +
+                "   gl_Position = uMVPMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);" +
                 "}"
 
+    // 定义片段着色器
     private val fragmentShaderCode = (
             "#version 300 es \n " +
                     "#ifdef GL_ES\n" +
@@ -29,73 +32,79 @@ class Triangle {
                     "}")
 
 
-    private val mProgram: Int          // 着色器程序对象
+    private val mProgram: Int         // 着色器程序对象
     private val mVBOIds: IntBuffer    // 顶点缓存对象
 
     init {
         // 创建缓存，并绑定缓存类型
         mVBOIds = IntBuffer.allocate(1)
-        GLES30.glGenBuffers(1, mVBOIds)
-        Timber.i("VBO ID:"+ mVBOIds.get(0))
+        GLES31.glGenBuffers(1, mVBOIds)
+        Timber.d("VBO ID: ${mVBOIds.get(0)}")
 
         // 顶点着色器
-        var vertexShader = XGLRender.loadShader(GLES30.GL_VERTEX_SHADER, vertexShaderCode)
+        var vertexShader = XGLRender.loadShader(GLES31.GL_VERTEX_SHADER, vertexShaderCode)
         var success: IntBuffer = IntBuffer.allocate(1)
-        GLES30.glGetShaderiv(vertexShader, GLES30.GL_COMPILE_STATUS, success)
+        GLES31.glGetShaderiv(vertexShader, GLES31.GL_COMPILE_STATUS, success)
         if (success.get(0) == 0) {
-            Timber.e(GLES30.glGetShaderInfoLog(vertexShader));
-            GLES30.glDeleteShader(vertexShader);
+            Timber.e(GLES31.glGetShaderInfoLog(vertexShader));
+            GLES31.glDeleteShader(vertexShader);
             vertexShader = 0
         }
 
         // 片段着色器
-        var fragmentShader = XGLRender.loadShader(GLES30.GL_FRAGMENT_SHADER, fragmentShaderCode)
-        GLES30.glGetShaderiv(fragmentShader, GLES30.GL_COMPILE_STATUS, success)
+        var fragmentShader = XGLRender.loadShader(GLES31.GL_FRAGMENT_SHADER, fragmentShaderCode)
+        GLES31.glGetShaderiv(fragmentShader, GLES31.GL_COMPILE_STATUS, success)
         if (success.get(0) == 0) {
-            Timber.e(GLES30.glGetShaderInfoLog(fragmentShader))
-            GLES30.glDeleteShader(fragmentShader)
+            Timber.e(GLES31.glGetShaderInfoLog(fragmentShader))
+            GLES31.glDeleteShader(fragmentShader)
             fragmentShader = 0
         }
 
         // 把着色器链接为一个着色器程序对象
-        mProgram = GLES30.glCreateProgram()
-        GLES30.glAttachShader(mProgram, vertexShader)
-        GLES30.glAttachShader(mProgram, fragmentShader)
-        GLES30.glLinkProgram(mProgram)
+        mProgram = GLES31.glCreateProgram()
+        GLES31.glAttachShader(mProgram, vertexShader)
+        GLES31.glAttachShader(mProgram, fragmentShader)
+        GLES31.glLinkProgram(mProgram)
 
-        GLES30.glGetProgramiv(mProgram, GLES30.GL_COMPILE_STATUS, success)
+        GLES31.glGetProgramiv(mProgram, GLES31.GL_COMPILE_STATUS, success)
         if (success.get(0) == 0) {
-            Timber.e(GLES30.glGetProgramInfoLog(mProgram))
-            GLES30.glDeleteProgram(mProgram)
+            Timber.e(GLES31.glGetProgramInfoLog(mProgram))
+            GLES31.glDeleteProgram(mProgram)
         }
 
         // 销毁不再需要的着色器对象
-        GLES30.glDeleteShader(vertexShader);
-        GLES30.glDeleteShader(fragmentShader);
+        GLES31.glDeleteShader(vertexShader);
+        GLES31.glDeleteShader(fragmentShader);
 
-        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mVBOIds.get(0))
+        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mVBOIds.get(0))
         // 把定义的顶点数据复制到缓存中
-        GLES30.glBufferData(
-            GLES30.GL_ARRAY_BUFFER,
+        GLES31.glBufferData(
+            GLES31.GL_ARRAY_BUFFER,
             triangleCoords.size * 4,
             FloatBuffer.wrap(triangleCoords),
-            GLES30.GL_STATIC_DRAW
+            GLES31.GL_STATIC_DRAW
         )
 
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
-        GLES30.glVertexAttribPointer(aPosLocation, 3, GLES30.GL_FLOAT, false, vertexStride, 0)
+        GLES31.glVertexAttribPointer(aPosLocation, 3, GLES31.GL_FLOAT, false, vertexStride, 0)
 
     }
 
-    fun draw() {
+    fun draw(mvpMatrix: FloatArray) {
         // 开放使能顶点数组
-        GLES30.glEnableVertexAttribArray(aPosLocation);
+        GLES31.glEnableVertexAttribArray(aPosLocation);
         // 将程序添加到OpenGL ES环境
-        GLES30.glUseProgram(mProgram)
+        GLES31.glUseProgram(mProgram)
+
+        // 获取模型视图投影矩阵的句柄
+        val mMVPMatrixHandle = GLES31.glGetUniformLocation(mProgram, "uMVPMatrix")
+        // 将模型视图投影矩阵传递给着色器
+        GLES31.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
+
         // 绘制三角形
-        GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, vertexCount)
+        GLES31.glDrawArrays(GLES31.GL_TRIANGLES, 0, vertexCount)
         // 禁用顶点数组
-        GLES30.glDisableVertexAttribArray(aPosLocation)
+        GLES31.glDisableVertexAttribArray(aPosLocation)
     }
 
     // 顶点数据集，及其属性
