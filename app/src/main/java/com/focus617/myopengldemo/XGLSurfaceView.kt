@@ -3,6 +3,7 @@ package com.focus617.myopengldemo
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
+import android.view.MotionEvent
 import com.focus617.myopengldemo.render.XGLRender
 
 /**
@@ -23,7 +24,49 @@ class XGLSurfaceView @JvmOverloads constructor(context: Context?, attrs: Attribu
 
         // 仅在绘图数据发生更改时才渲染视图
         // 在该模式下当渲染内容变化时不会主动刷新效果，需要手动调用requestRender() 才行
-//        renderMode = RENDERMODE_WHEN_DIRTY
+        renderMode = RENDERMODE_WHEN_DIRTY
     }
+
+    /*
+    * 通过触摸事件获取要求视图矩阵旋转的角度
+    */
+    private val TOUCH_SCALE_FACTOR = 180.0f / 720
+
+    // 记录上个事件时的坐标
+    private var mPreviousX = 0f
+    private var mPreviousY = 0f
+
+    override fun onTouchEvent(e: MotionEvent): Boolean {
+
+        // MotionEvent报告触摸屏和其他输入控件的输入详细信息。
+        // 在这种情况下，这里只对触摸位置发生变化的事件感兴趣。
+        val x = e.x
+        val y = e.y
+        when (e.action) {
+            MotionEvent.ACTION_MOVE -> {
+                var dx = x - mPreviousX
+                var dy = y - mPreviousY
+
+                // reverse direction of rotation above the mid-line
+                if (y > height / 2) {
+                    dx *= -1
+                }
+
+                // reverse direction of rotation to left of the mid-line
+                if (x < width / 2) {
+                    dy *= -1
+                }
+                mRender.setAngle(
+                    mRender.getAngle() +
+                            (dx + dy) * TOUCH_SCALE_FACTOR
+                )
+                requestRender()
+            }
+        }
+        mPreviousX = x
+        mPreviousY = y
+        return true
+    }
+
 
 }

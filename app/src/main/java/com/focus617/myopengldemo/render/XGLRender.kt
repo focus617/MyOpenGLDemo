@@ -3,7 +3,6 @@ package com.focus617.myopengldemo.render
 import android.opengl.GLES31
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
-import android.os.SystemClock
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -21,13 +20,15 @@ class XGLRender : GLSurfaceView.Renderer {
 
     private val mRotationMatrix = FloatArray(16)
 
-    // 创建旋转矩阵
-    private fun setupRotationMatrix() {
-        val time = SystemClock.uptimeMillis() % 4000L
-        val angle = 0.090f * time.toInt()
-        Matrix.setRotateM(mRotationMatrix, 0, angle, 0f, 0f, -1.0f)
-    }
+    // 处理旋转
+    private fun setupRotation() {
+//        val time = SystemClock.uptimeMillis() % 4000L
+//        val angle = 0.090f * time.toInt()
 
+        // 创建旋转矩阵
+        Matrix.setRotateM(mRotationMatrix, 0, getAngle(), 0f, 0f, -1.0f)
+        Matrix.multiplyMM(mViewMatrix, 0, mRotationMatrix, 0, mViewMatrix, 0);
+    }
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         // 设置重绘背景框架颜色
@@ -52,22 +53,34 @@ class XGLRender : GLSurfaceView.Renderer {
         // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
         Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
-        // 计算投影和视图转换
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
+        // 处理旋转
+        setupRotation()
 
-        // 创建旋转矩阵
-        //setupRotationMatrix()
-        //val mTempMatrix = FloatArray(16)
-        //Matrix.multiplyMM(mTempMatrix, 0, mRotationMatrix, 0, mViewMatrix, 0);
-        //Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mTempMatrix, 0);
+        // 视图转换：计算投影矩阵
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
         // 绘制三角形
         mTriangle = Triangle()
         mTriangle.draw(mMVPMatrix)
     }
 
+/**
+ * 在 SurfaceView中通过触摸事件获取到要视图矩阵旋转的角度
+ * 由于渲染器代码在与应用程序的主用户界面线程在不同的线程上运行，因此必须将此公共变量声明为volatile。
+ */
+    @Volatile
+    var mAngle = 0f
+
+    fun getAngle(): Float {
+        return mAngle
+    }
+
+    fun setAngle(angle: Float) {
+        mAngle = angle
+    }
+
     /**
-     * 创建顶点着色器
+     * 创建着色器
      * @Parameter [type]顶点着色器类型（GLES31.GL_VERTEX_SHADER）或片段着色器类型（GLES31.GL_FRAGMENT_SHADER）
      */
     companion object {
