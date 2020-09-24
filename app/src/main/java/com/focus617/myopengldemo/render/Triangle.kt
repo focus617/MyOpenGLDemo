@@ -93,9 +93,6 @@ class Triangle {
     }
 
     fun draw(mvpMatrix: FloatArray) {
-        // 使用sin函数让颜色在0.0到1.0之间改变
-        val timeValue = System.currentTimeMillis()
-        val greenValue = sin((timeValue / 300 % 50).toDouble()) / 2 + 0.5
 
         // 启用顶点数组
         GLES31.glEnableVertexAttribArray(aPosLocation);
@@ -103,14 +100,14 @@ class Triangle {
         // 将程序添加到OpenGL ES环境
         GLES31.glUseProgram(mProgram)
 
+        // 设置片元着色器使用的颜色
+        setupBlinkColor()
+        //setupSolidColor()
+
         // 获取模型视图投影矩阵的句柄
         val mMVPMatrixHandle = GLES31.glGetUniformLocation(mProgram, "uMVPMatrix")
         // 将模型视图投影矩阵传递给着色器
         GLES31.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
-
-        // 查询 uniform ourColor的位置值
-        val vertexColorLocation = GLES31.glGetUniformLocation(mProgram, "outColor")
-        GLES31.glUniform4f(vertexColorLocation, greenValue.toFloat(), 0f, 0f, 0f)
 
         // 绘制三角形
         GLES31.glDrawArrays(GLES31.GL_TRIANGLES, 0, vertexCount)
@@ -118,6 +115,25 @@ class Triangle {
         // 禁用顶点数组
         GLES31.glDisableVertexAttribArray(aPosLocation)
     }
+
+    private fun setupBlinkColor() {
+        // 使用sin函数让颜色在0.0到1.0之间改变
+        val timeValue = System.currentTimeMillis()
+        val greenValue = sin((timeValue / 300 % 50).toDouble()) / 2 + 0.5
+
+        // 查询 uniform ourColor的位置值
+        val vertexColorLocation = GLES31.glGetUniformLocation(mProgram, "outColor")
+        GLES31.glUniform4f(vertexColorLocation, greenValue.toFloat(), 0.5f, 0.2f, 1.0f)
+    }
+
+    private fun setupSolidColor() {
+
+        // 查询 uniform ourColor的位置值
+        val vertexColorLocation = GLES31.glGetUniformLocation(mProgram, "outColor")
+        GLES31.glUniform4f(vertexColorLocation, 1.0f, 0.5f, 0.2f, 1.0f)
+    }
+
+
 
     // 顶点数据集，及其属性
     companion object {

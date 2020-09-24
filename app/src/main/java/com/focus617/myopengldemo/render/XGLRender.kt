@@ -3,9 +3,11 @@ package com.focus617.myopengldemo.render
 import android.opengl.GLES31
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import android.os.SystemClock
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
+
 
 class XGLRender : GLSurfaceView.Renderer {
 
@@ -16,6 +18,16 @@ class XGLRender : GLSurfaceView.Renderer {
     private val mProjectionMatrix = FloatArray(16)
 
     private val mViewMatrix = FloatArray(16)
+
+    private val mRotationMatrix = FloatArray(16)
+
+    // 创建旋转矩阵
+    private fun setupRotationMatrix() {
+        val time = SystemClock.uptimeMillis() % 4000L
+        val angle = 0.090f * time.toInt()
+        Matrix.setRotateM(mRotationMatrix, 0, angle, 0f, 0f, -1.0f)
+    }
+
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         // 设置重绘背景框架颜色
@@ -42,6 +54,12 @@ class XGLRender : GLSurfaceView.Renderer {
 
         // 计算投影和视图转换
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
+
+        // 创建旋转矩阵
+        //setupRotationMatrix()
+        //val mTempMatrix = FloatArray(16)
+        //Matrix.multiplyMM(mTempMatrix, 0, mRotationMatrix, 0, mViewMatrix, 0);
+        //Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mTempMatrix, 0);
 
         // 绘制三角形
         mTriangle = Triangle()
