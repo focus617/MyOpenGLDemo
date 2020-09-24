@@ -18,16 +18,14 @@ class XGLRender : GLSurfaceView.Renderer {
 
     private val mViewMatrix = FloatArray(16)
 
-    private val mRotationMatrix = FloatArray(16)
 
     // 处理旋转
     private fun setupRotation() {
 //        val time = SystemClock.uptimeMillis() % 4000L
 //        val angle = 0.090f * time.toInt()
 
-        // 创建旋转矩阵
-        Matrix.setRotateM(mRotationMatrix, 0, getAngle(), 0f, 0f, -1.0f)
-        Matrix.multiplyMM(mViewMatrix, 0, mRotationMatrix, 0, mViewMatrix, 0);
+        // 进行旋转变换
+        Matrix.rotateM(mViewMatrix, 0, getAngle(),0f, 0f, 1.0f)
     }
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {

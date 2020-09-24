@@ -106,7 +106,7 @@ class Triangle {
 
         // 获取模型视图投影矩阵的句柄
         val mMVPMatrixHandle = GLES31.glGetUniformLocation(mProgram, "uMVPMatrix")
-        // 将模型视图投影矩阵传递给着色器
+        // 将模型视图投影矩阵传递给顶点着色器
         GLES31.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
 
         // 绘制三角形
@@ -117,7 +117,7 @@ class Triangle {
     }
 
     private fun setupBlinkColor() {
-        // 使用sin函数让颜色在0.0到1.0之间改变
+        // 使用sin函数让颜色随时间在0.0到1.0之间改变
         val timeValue = System.currentTimeMillis()
         val greenValue = sin((timeValue / 300 % 50).toDouble()) / 2 + 0.5
 
@@ -137,7 +137,7 @@ class Triangle {
 
     // 顶点数据集，及其属性
     companion object {
-        // 顶点坐标维度
+        // 顶点坐标的属性个数（除了3维坐标外，也可能有其它属性）
         internal const val COORDS_PER_VERTEX = 3
 
         // 连续的顶点属性组之间的间隔
