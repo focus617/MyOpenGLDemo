@@ -21,20 +21,20 @@ class Triangle {
 
     // 定义片段着色器
     private val fragmentShaderCode = (
-            "#version 300 es \n " +
-                    "#ifdef GL_ES\n" +
-                    "precision highp float;\n" +
-                    "#endif\n" +
+        "#version 300 es \n " +
+                "#ifdef GL_ES\n" +
+                "precision highp float;\n" +
+                "#endif\n" +
 
-                    "out vec4 FragColor; " +
-                    "uniform vec4 outColor; " +
+                "out vec4 FragColor; " +
+                "uniform vec4 outColor; " +
 
-                    "void main() {" +
-                    "  FragColor = outColor;" +
-                    "}")
+                "void main() {" +
+                "  FragColor = outColor;" +
+                "}")
 
 
-    private val mProgram: Int         // 着色器程序对象
+    private val mProgramObject: Int         // 着色器程序对象
     private val mVBOIds: IntBuffer    // 顶点缓存对象
 
     init {
@@ -43,35 +43,25 @@ class Triangle {
         GLES31.glGenBuffers(1, mVBOIds)
         Timber.d("VBO ID: ${mVBOIds.get(0)}")
 
+        var success: IntBuffer = IntBuffer.allocate(1)
+
         // 顶点着色器
         var vertexShader = XGLRender.loadShader(GLES31.GL_VERTEX_SHADER, vertexShaderCode)
-        var success: IntBuffer = IntBuffer.allocate(1)
-        GLES31.glGetShaderiv(vertexShader, GLES31.GL_COMPILE_STATUS, success)
-        if (success.get(0) == 0) {
-            Timber.e(GLES31.glGetShaderInfoLog(vertexShader));
-            GLES31.glDeleteShader(vertexShader);
-            vertexShader = 0
-        }
 
         // 片元着色器
         var fragmentShader = XGLRender.loadShader(GLES31.GL_FRAGMENT_SHADER, fragmentShaderCode)
         GLES31.glGetShaderiv(fragmentShader, GLES31.GL_COMPILE_STATUS, success)
-        if (success.get(0) == 0) {
-            Timber.e(GLES31.glGetShaderInfoLog(fragmentShader))
-            GLES31.glDeleteShader(fragmentShader)
-            fragmentShader = 0
-        }
 
         // 把着色器链接为一个着色器程序对象
-        mProgram = GLES31.glCreateProgram()
-        GLES31.glAttachShader(mProgram, vertexShader)
-        GLES31.glAttachShader(mProgram, fragmentShader)
-        GLES31.glLinkProgram(mProgram)
+        mProgramObject = GLES31.glCreateProgram()
+        GLES31.glAttachShader(mProgramObject, vertexShader)
+        GLES31.glAttachShader(mProgramObject, fragmentShader)
+        GLES31.glLinkProgram(mProgramObject)
 
-        GLES31.glGetProgramiv(mProgram, GLES31.GL_COMPILE_STATUS, success)
+        GLES31.glGetProgramiv(mProgramObject, GLES31.GL_COMPILE_STATUS, success)
         if (success.get(0) == 0) {
-            Timber.e(GLES31.glGetProgramInfoLog(mProgram))
-            GLES31.glDeleteProgram(mProgram)
+            Timber.e(GLES31.glGetProgramInfoLog(mProgramObject))
+            GLES31.glDeleteProgram(mProgramObject)
         }
 
         // 销毁不再需要的着色器对象
@@ -94,22 +84,23 @@ class Triangle {
 
     fun draw(mvpMatrix: FloatArray) {
 
-        // 启用顶点数组
-        GLES31.glEnableVertexAttribArray(aPosLocation);
-
         // 将程序添加到OpenGL ES环境
-        GLES31.glUseProgram(mProgram)
+        GLES31.glUseProgram(mProgramObject)
+
+        // 获取模型视图投影矩阵的句柄
+        val mMVPMatrixHandle = GLES31.glGetUniformLocation(mProgramObject, "uMVPMatrix")
+        // 将模型视图投影矩阵传递给顶点着色器
+        GLES31.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
 
         // 设置片元着色器使用的颜色
         setupBlinkColor()
         //setupSolidColor()
 
-        // 获取模型视图投影矩阵的句柄
-        val mMVPMatrixHandle = GLES31.glGetUniformLocation(mProgram, "uMVPMatrix")
-        // 将模型视图投影矩阵传递给顶点着色器
-        GLES31.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
 
-        // 绘制三角形
+        // 启用顶点数组
+        GLES31.glEnableVertexAttribArray(aPosLocation);
+
+        // 图元装配，绘制三角形
         GLES31.glDrawArrays(GLES31.GL_TRIANGLES, 0, vertexCount)
 
         // 禁用顶点数组
@@ -122,14 +113,14 @@ class Triangle {
         val greenValue = sin((timeValue / 300 % 50).toDouble()) / 2 + 0.5
 
         // 查询 uniform ourColor的位置值
-        val vertexColorLocation = GLES31.glGetUniformLocation(mProgram, "outColor")
+        val vertexColorLocation = GLES31.glGetUniformLocation(mProgramObject, "outColor")
         GLES31.glUniform4f(vertexColorLocation, greenValue.toFloat(), 0.5f, 0.2f, 1.0f)
     }
 
     private fun setupSolidColor() {
 
         // 查询 uniform ourColor的位置值
-        val vertexColorLocation = GLES31.glGetUniformLocation(mProgram, "outColor")
+        val vertexColorLocation = GLES31.glGetUniformLocation(mProgramObject, "outColor")
         GLES31.glUniform4f(vertexColorLocation, 1.0f, 0.5f, 0.2f, 1.0f)
     }
 
