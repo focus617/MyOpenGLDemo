@@ -45,6 +45,11 @@ class MainActivity : AppCompatActivity() {
                 mGLSurfaceView.setupShape(Shape.Triangle)
                 true
             }
+            R.id.action_square -> {
+                Toast.makeText(this, "Square", Toast.LENGTH_SHORT).show()
+                mGLSurfaceView.setupShape(Shape.Square)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

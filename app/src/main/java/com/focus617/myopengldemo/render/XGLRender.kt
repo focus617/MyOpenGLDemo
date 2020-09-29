@@ -20,6 +20,8 @@ class XGLRender : GLSurfaceView.Renderer {
 
     private val mViewMatrix = FloatArray(16)
 
+    private var drawingObject: DrawingObject? = null
+
 
     // 处理旋转
     private fun setupRotation() {
@@ -60,7 +62,16 @@ class XGLRender : GLSurfaceView.Renderer {
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
         when (shape) {
-            Shape.Triangle -> drawTriangle()
+            Shape.Triangle -> {
+                // 绘制三角形
+                drawingObject = Triangle()
+                (drawingObject as Triangle).draw(mMVPMatrix)
+            }
+            Shape.Square -> {
+                // 绘制正方形
+                drawingObject = Square()
+                (drawingObject as Square).draw(mMVPMatrix)
+            }
             Shape.Unknown -> return
         }
     }
@@ -68,12 +79,6 @@ class XGLRender : GLSurfaceView.Renderer {
     private var shape: Shape = Shape.Unknown
     fun setupShape(shape: Shape) {
         this.shape = shape
-    }
-
-    private fun drawTriangle() {
-        // 绘制三角形
-        mTriangle = Triangle()
-        mTriangle.draw(mMVPMatrix)
     }
 
 
@@ -99,7 +104,8 @@ class XGLRender : GLSurfaceView.Renderer {
     companion object {
         enum class Shape {
             Unknown,
-            Triangle
+            Triangle,
+            Square
         }
 
         fun loadShader(type: Int, shaderCode: String): Int {

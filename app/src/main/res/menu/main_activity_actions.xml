@@ -13,4 +13,9 @@
         android:id="@+id/action_triangle"
         android:title="@string/action_triangle"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_square"
+        android:title="@string/action_square"
+        app:showAsAction="never" />
 </menu>

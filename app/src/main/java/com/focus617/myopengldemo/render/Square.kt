@@ -4,11 +4,10 @@ import android.opengl.GLES31
 import timber.log.Timber
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
+import java.nio.ShortBuffer
 import kotlin.math.sin
 
-
-class Triangle : DrawingObject() {
-
+class Square : DrawingObject() {
     // 定义顶点着色器
     // [mMVPMatrix] 模型视图投影矩阵
     private val vertexShaderCode =
@@ -20,7 +19,7 @@ class Triangle : DrawingObject() {
                 "}"
 
     // 定义片段着色器
-    private val fragmentShaderCode = (
+    private val fragmentShaderCode =
             "#version 300 es \n " +
                     "#ifdef GL_ES\n" +
                     "precision highp float;\n" +
@@ -31,17 +30,18 @@ class Triangle : DrawingObject() {
 
                     "void main() {" +
                     "  FragColor = outColor;" +
-                    "}")
-
+                    "}"
 
     private val mProgramObject: Int     // 着色器程序对象
     private val mVBOIds: IntBuffer      // 顶点缓存对象
 
     init {
         // 创建缓存，并绑定缓存类型
-        mVBOIds = IntBuffer.allocate(1)
-        GLES31.glGenBuffers(1, mVBOIds)
-        Timber.d("VBO ID: ${mVBOIds.get(0)}")
+        mVBOIds = IntBuffer.allocate(2)
+        // mVBOIds[O] - used to store vertex attribute data
+        // mVBOIds[l] - used to store element indices
+        GLES31.glGenBuffers(2, mVBOIds)
+        Timber.d("VBO ID: $mVBOIds")
 
         var success: IntBuffer = IntBuffer.allocate(1)
 
@@ -50,8 +50,6 @@ class Triangle : DrawingObject() {
 
         // 片元着色器
         var fragmentShader = XGLRender.loadShader(GLES31.GL_FRAGMENT_SHADER, fragmentShaderCode)
-        // TODO: check why fragment Shader can't work without below
-        GLES31.glGetShaderiv(fragmentShader, GLES31.GL_COMPILE_STATUS, success)
 
         // 把着色器链接为一个着色器程序对象
         mProgramObject = GLES31.glCreateProgram()
@@ -73,14 +71,24 @@ class Triangle : DrawingObject() {
         // 释放着色器编译器使用的资源
         GLES31.glReleaseShaderCompiler()
 
+
         GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mVBOIds.get(0))
         // 把定义的顶点数据复制到缓存中
         GLES31.glBufferData(
             GLES31.GL_ARRAY_BUFFER,
-            triangleCoords.size * Float.SIZE_BYTES,
-            FloatBuffer.wrap(triangleCoords),
+            vertexCoords.size * Float.SIZE_BYTES,
+            FloatBuffer.wrap(vertexCoords),
             GLES31.GL_STATIC_DRAW
         )
+
+        // bind buffer object for element indices
+        GLES31.glBindBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(1))
+        GLES31.glBufferData(
+            GLES31.GL_ELEMENT_ARRAY_BUFFER,
+            indices.size * Short.SIZE_BYTES,
+            ShortBuffer.wrap(indices),
+            GLES31.GL_STATIC_DRAW)
+
     }
 
     fun draw(mvpMatrix: FloatArray) {
@@ -94,31 +102,35 @@ class Triangle : DrawingObject() {
         GLES31.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
 
         // 设置片元着色器使用的颜色
-        setupBlinkColor()
-        //setupSolidColor()
+        //setupBlinkColor()
+        setupSolidColor()
 
         GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mVBOIds.get(0))
+        GLES31.glBindBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(1))
 
         // 启用顶点数组
-        GLES31.glEnableVertexAttribArray(VERTEX_POS_INDEX);
+        GLES31.glEnableVertexAttribArray(Triangle.VERTEX_POS_INDEX);
 
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
         // 目前只有一个顶点位置属性
         GLES31.glVertexAttribPointer(
-            VERTEX_POS_INDEX,
-            VERTEX_POS_SIZE,
+            Triangle.VERTEX_POS_INDEX,
+            Triangle.VERTEX_POS_SIZE,
             GLES31.GL_FLOAT,
             false,
-            VERTEX_STRIDE,
-            VERTEX_POS_OFFSET
+            Triangle.VERTEX_STRIDE,
+            Triangle.VERTEX_POS_OFFSET
         )
 
         // 图元装配，绘制三角形
-        GLES31.glDrawArrays(GLES31.GL_TRIANGLES, 0, vertexCount)
+        GLES31.glDrawElements(GLES31.GL_TRIANGLES, indices.size,
+            GLES31.GL_UNSIGNED_SHORT, 0)
 
         // 禁用顶点数组
-        GLES31.glDisableVertexAttribArray(VERTEX_POS_INDEX)
+        GLES31.glDisableVertexAttribArray(Triangle.VERTEX_POS_INDEX)
+
         GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, 0)
+        GLES31.glBindBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
     private fun setupBlinkColor() {
@@ -137,6 +149,7 @@ class Triangle : DrawingObject() {
         val fragmentColorLocation = GLES31.glGetUniformLocation(mProgramObject, "outColor")
         GLES31.glUniform4f(fragmentColorLocation, 1.0f, 0.5f, 0.2f, 1.0f)
     }
+
 
 
     // 顶点数据集，及其属性
@@ -166,17 +179,23 @@ class Triangle : DrawingObject() {
         internal const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE
         // (VERTEX_POS_SIZE+ VERTEX_NORMAL_SIZE+ VERTEX_TEXCOORDO_SIZE+ VERTEX_TEXCOORD1_SIZE)
 
-        // 一个等边三角形的顶点输入
-        internal var triangleCoords = floatArrayOf(  // 按逆时针顺序
-            0.0f, 0.622008459f, 0.0f,   // 上
-            -0.5f, -0.311004243f, 0.0f, // 左下
-            0.5f, -0.311004243f, 0.0f   // 右下
+        // 正方形的顶点
+        internal var vertexCoords = floatArrayOf(  // 按逆时针顺序
+            -0.5f, 0.5f, 0.0f,   // top left
+            -0.5f, -0.5f, 0.0f,  // bottom left
+            0.5f, -0.5f, 0.0f,   // bottom right
+            0.5f, 0.5f, 0.0f     // top right
         )
-
         // 顶点的数量
-        internal val vertexCount = triangleCoords.size / VERTEX_ATTRIBUTE_SIZE
+        internal val vertexCount = vertexCoords.size / VERTEX_ATTRIBUTE_SIZE
 
         // 连续的顶点属性组之间的间隔
         internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
+
+
+        // 顶点索引
+        var indices = shortArrayOf(
+            0, 1, 2, 0, 2, 3
+        )
     }
 }
