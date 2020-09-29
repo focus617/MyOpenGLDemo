@@ -50,6 +50,7 @@ class Triangle {
 
         // 片元着色器
         var fragmentShader = XGLRender.loadShader(GLES31.GL_FRAGMENT_SHADER, fragmentShaderCode)
+        // TODO: check why fragment Shader can't work without below
         GLES31.glGetShaderiv(fragmentShader, GLES31.GL_COMPILE_STATUS, success)
 
         // 把着色器链接为一个着色器程序对象
@@ -58,15 +59,19 @@ class Triangle {
         GLES31.glAttachShader(mProgramObject, fragmentShader)
         GLES31.glLinkProgram(mProgramObject)
 
-        GLES31.glGetProgramiv(mProgramObject, GLES31.GL_COMPILE_STATUS, success)
+        GLES31.glGetProgramiv(mProgramObject, GLES31.GL_LINK_STATUS, success)
         if (success.get(0) == 0) {
             Timber.e(GLES31.glGetProgramInfoLog(mProgramObject))
             GLES31.glDeleteProgram(mProgramObject)
+        } else{
+            Timber.d("GLProgram $mProgramObject is ready.")
         }
 
         // 销毁不再需要的着色器对象
-        GLES31.glDeleteShader(vertexShader);
-        GLES31.glDeleteShader(fragmentShader);
+        GLES31.glDeleteShader(vertexShader)
+        GLES31.glDeleteShader(fragmentShader)
+        // 释放着色器编译器使用的资源
+        GLES31.glReleaseShaderCompiler()
 
         GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mVBOIds.get(0))
         // 把定义的顶点数据复制到缓存中
@@ -113,38 +118,61 @@ class Triangle {
         val greenValue = sin((timeValue / 300 % 50).toDouble()) / 2 + 0.5
 
         // 查询 uniform ourColor的位置值
-        val vertexColorLocation = GLES31.glGetUniformLocation(mProgramObject, "outColor")
-        GLES31.glUniform4f(vertexColorLocation, greenValue.toFloat(), 0.5f, 0.2f, 1.0f)
+        val fragmentColorLocation = GLES31.glGetUniformLocation(mProgramObject, "outColor")
+        GLES31.glUniform4f(fragmentColorLocation, greenValue.toFloat(), 0.5f, 0.2f, 1.0f)
     }
 
     private fun setupSolidColor() {
 
         // 查询 uniform ourColor的位置值
-        val vertexColorLocation = GLES31.glGetUniformLocation(mProgramObject, "outColor")
-        GLES31.glUniform4f(vertexColorLocation, 1.0f, 0.5f, 0.2f, 1.0f)
+        val fragmentColorLocation = GLES31.glGetUniformLocation(mProgramObject, "outColor")
+        GLES31.glUniform4f(fragmentColorLocation, 1.0f, 0.5f, 0.2f, 1.0f)
     }
 
 
 
     // 顶点数据集，及其属性
     companion object {
-        // 顶点坐标的属性个数（除了3维坐标外，也可能有其它属性）
-        internal const val COORDS_PER_VERTEX = 3
+        // 假定每个顶点有4个顶点属性一位置、法线和两个纹理坐标
 
-        // 连续的顶点属性组之间的间隔
-        internal const val vertexStride = COORDS_PER_VERTEX * 4
+        // 顶点坐标的每个属性的Size
+        internal const val  VERTEX_POS_SIZE         = 3     //x,y,and z
+        internal const val  VERTEX_NORMAL_SIZE      = 3     //x,y,and z
+        internal const val  VERTEX_TEXCOORDO_SIZE   = 2     //s and t
+        internal const val  VERTEX_TEXCOORD1_SIZE   = 2     //s and t
 
-        // aPos的位置偏移
-        internal const val aPosLocation = 0
+        // 顶点坐标的每个属性的Index
+        internal const val  VERTEX_POS_INDEX        = 0
+        internal const val  VERTEX_NORMAL_INDEX     = 1
+        internal const val  VERTEX_TEXCOORDO_INDEX  = 2
+        internal const val  VERTEX_TEXCOORD1_INDEX  = 3
 
-        // 一个等边三角形的顶点输入
+        // the following 4 defines are used to determine the locations
+        // of various attributes if vertex data are stored as an array
+        //of structures
+        internal const val  VERTEX_POS_OFFSET       = 0
+        internal const val  VERTEX_NORMAL_OFFSET    = 3
+        internal const val  VERTEX_TEX_COORDO_OFFSET = 6
+        internal const val  VERTEX_TEX_COORD1_OFFSET = 8
+        internal const val  VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE
+        // (VERTEX_POS_SIZE+ VERTEX_NORMAL_SIZE+ VERTEX_TEXCOORDO_SIZE+ VERTEX_TEXCOORD1_SIZE)
+
+       // 一个等边三角形的顶点输入
         internal var triangleCoords = floatArrayOf(  // 按逆时针顺序
             0.0f, 0.622008459f, 0.0f,   // 上
             -0.5f, -0.311004243f, 0.0f, // 左下
             0.5f, -0.311004243f, 0.0f   // 右下
         )
 
-        // 顶点的总数目
-        internal val vertexCount = triangleCoords.size / COORDS_PER_VERTEX
+        // 顶点的数量
+        internal val vertexCount = triangleCoords.size / VERTEX_ATTRIBUTE_SIZE
+
+        // 连续的顶点属性组之间的间隔
+        internal const val vertexStride = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
+
+        // aPos的位置偏移
+        internal const val aPosLocation = 0
+
+
     }
 }
