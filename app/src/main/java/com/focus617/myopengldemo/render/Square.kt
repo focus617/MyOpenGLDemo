@@ -20,29 +20,22 @@ class Square : DrawingObject() {
 
     // 定义片段着色器
     private val fragmentShaderCode =
-            "#version 300 es \n " +
-                    "#ifdef GL_ES\n" +
-                    "precision highp float;\n" +
-                    "#endif\n" +
+        "#version 300 es \n " +
+                "#ifdef GL_ES\n" +
+                "precision highp float;\n" +
+                "#endif\n" +
 
-                    "out vec4 FragColor; " +
-                    "uniform vec4 outColor; " +
+                "out vec4 FragColor; " +
+                "uniform vec4 outColor; " +
 
-                    "void main() {" +
-                    "  FragColor = outColor;" +
-                    "}"
+                "void main() {" +
+                "  FragColor = outColor;" +
+                "}"
 
-    private val mProgramObject: Int     // 着色器程序对象
-    private val mVBOIds: IntBuffer      // 顶点缓存对象
+    private var mProgramObject: Int = 0    // 着色器程序对象
+    private var mVBOIds: IntBuffer = IntBuffer.allocate(2)  // 顶点缓存对象
 
     init {
-        // 创建缓存，并绑定缓存类型
-        mVBOIds = IntBuffer.allocate(2)
-        // mVBOIds[O] - used to store vertex attribute data
-        // mVBOIds[l] - used to store element indices
-        GLES31.glGenBuffers(2, mVBOIds)
-        Timber.d("VBO ID: $mVBOIds")
-
         var success: IntBuffer = IntBuffer.allocate(1)
 
         // 顶点着色器
@@ -71,6 +64,11 @@ class Square : DrawingObject() {
         // 释放着色器编译器使用的资源
         GLES31.glReleaseShaderCompiler()
 
+        // mVBOIds[O] - used to store vertex attribute data
+        // mVBOIds[l] - used to store element indices
+        // allocate only on the first draw
+        GLES31.glGenBuffers(2, mVBOIds)
+        Timber.d("VBO ID: $mVBOIds")
 
         GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mVBOIds.get(0))
         // 把定义的顶点数据复制到缓存中
@@ -87,8 +85,8 @@ class Square : DrawingObject() {
             GLES31.GL_ELEMENT_ARRAY_BUFFER,
             indices.size * Short.SIZE_BYTES,
             ShortBuffer.wrap(indices),
-            GLES31.GL_STATIC_DRAW)
-
+            GLES31.GL_STATIC_DRAW
+        )
     }
 
     fun draw(mvpMatrix: FloatArray) {
@@ -102,8 +100,8 @@ class Square : DrawingObject() {
         GLES31.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
 
         // 设置片元着色器使用的颜色
-        //setupBlinkColor()
-        setupSolidColor()
+        setupBlinkColor()
+        //setupSolidColor()
 
         GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mVBOIds.get(0))
         GLES31.glBindBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(1))
@@ -123,8 +121,10 @@ class Square : DrawingObject() {
         )
 
         // 图元装配，绘制三角形
-        GLES31.glDrawElements(GLES31.GL_TRIANGLES, indices.size,
-            GLES31.GL_UNSIGNED_SHORT, 0)
+        GLES31.glDrawElements(
+            GLES31.GL_TRIANGLES, indices.size,
+            GLES31.GL_UNSIGNED_SHORT, 0
+        )
 
         // 禁用顶点数组
         GLES31.glDisableVertexAttribArray(Triangle.VERTEX_POS_INDEX)
@@ -149,7 +149,6 @@ class Square : DrawingObject() {
         val fragmentColorLocation = GLES31.glGetUniformLocation(mProgramObject, "outColor")
         GLES31.glUniform4f(fragmentColorLocation, 1.0f, 0.5f, 0.2f, 1.0f)
     }
-
 
 
     // 顶点数据集，及其属性
@@ -186,6 +185,7 @@ class Square : DrawingObject() {
             0.5f, -0.5f, 0.0f,   // bottom right
             0.5f, 0.5f, 0.0f     // top right
         )
+
         // 顶点的数量
         internal val vertexCount = vertexCoords.size / VERTEX_ATTRIBUTE_SIZE
 
