@@ -3,6 +3,7 @@ package com.focus617.myopengldemo.render
 import android.opengl.GLES31
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import android.widget.Toast
 import timber.log.Timber
 import java.nio.IntBuffer
 import javax.microedition.khronos.egl.EGLConfig
@@ -26,7 +27,7 @@ class XGLRender : GLSurfaceView.Renderer {
 //        val angle = 0.090f * time.toInt()
 
         // 进行旋转变换
-        Matrix.rotateM(mViewMatrix, 0, getAngle(),0f, 0f, 1.0f)
+        Matrix.rotateM(mViewMatrix, 0, getAngle(), 0f, 0f, 1.0f)
     }
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
@@ -48,7 +49,7 @@ class XGLRender : GLSurfaceView.Renderer {
     override fun onDrawFrame(unused: GL10) {
         // 首先清理屏幕，重绘背景颜色
         GLES31.glClear(GLES31.GL_COLOR_BUFFER_BIT)
-        
+
         // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
         Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
@@ -58,15 +59,28 @@ class XGLRender : GLSurfaceView.Renderer {
         // 视图转换：计算模型视图投影矩阵MVPMatrix，该矩阵可以将模型空间的坐标转换为归一化设备空间坐标
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);
 
+        when (shape) {
+            Shape.Triangle -> drawTriangle()
+            Shape.Unknown -> return
+        }
+    }
+
+    private var shape: Shape = Shape.Unknown
+    fun setupShape(shape: Shape) {
+        this.shape = shape
+    }
+
+    private fun drawTriangle() {
         // 绘制三角形
         mTriangle = Triangle()
         mTriangle.draw(mMVPMatrix)
     }
 
-/**
- * 在 SurfaceView中通过触摸事件获取到要视图矩阵旋转的角度
- * 由于渲染器代码在与应用程序的主用户界面线程在不同的线程上运行，因此必须将此公共变量声明为volatile。
- */
+
+    /**
+     * 在 SurfaceView中通过触摸事件获取到要视图矩阵旋转的角度
+     * 由于渲染器代码在与应用程序的主用户界面线程在不同的线程上运行，因此必须将此公共变量声明为volatile。
+     */
     @Volatile
     var mAngle = 0f
 
@@ -83,12 +97,16 @@ class XGLRender : GLSurfaceView.Renderer {
      * @Parameter [type]顶点着色器类型（GLES31.GL_VERTEX_SHADER）或片段着色器类型（GLES31.GL_FRAGMENT_SHADER）
      */
     companion object {
+        enum class Shape {
+            Unknown,
+            Triangle
+        }
 
         fun loadShader(type: Int, shaderCode: String): Int {
 
             // 创建一个着色器对象
             var shader = GLES31.glCreateShader(type)
-            if(shader == 0) return 0
+            if (shader == 0) return 0
 
             // 将源代码加载到着色器并进行编译
             GLES31.glShaderSource(shader, shaderCode)

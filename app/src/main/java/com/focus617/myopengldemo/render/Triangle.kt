@@ -21,21 +21,21 @@ class Triangle {
 
     // 定义片段着色器
     private val fragmentShaderCode = (
-        "#version 300 es \n " +
-                "#ifdef GL_ES\n" +
-                "precision highp float;\n" +
-                "#endif\n" +
+            "#version 300 es \n " +
+                    "#ifdef GL_ES\n" +
+                    "precision highp float;\n" +
+                    "#endif\n" +
 
-                "out vec4 FragColor; " +
-                "uniform vec4 outColor; " +
+                    "out vec4 FragColor; " +
+                    "uniform vec4 outColor; " +
 
-                "void main() {" +
-                "  FragColor = outColor;" +
-                "}")
+                    "void main() {" +
+                    "  FragColor = outColor;" +
+                    "}")
 
 
-    private val mProgramObject: Int         // 着色器程序对象
-    private val mVBOIds: IntBuffer    // 顶点缓存对象
+    private val mProgramObject: Int     // 着色器程序对象
+    private val mVBOIds: IntBuffer      // 顶点缓存对象
 
     init {
         // 创建缓存，并绑定缓存类型
@@ -63,7 +63,7 @@ class Triangle {
         if (success.get(0) == 0) {
             Timber.e(GLES31.glGetProgramInfoLog(mProgramObject))
             GLES31.glDeleteProgram(mProgramObject)
-        } else{
+        } else {
             Timber.d("GLProgram $mProgramObject is ready.")
         }
 
@@ -77,13 +77,21 @@ class Triangle {
         // 把定义的顶点数据复制到缓存中
         GLES31.glBufferData(
             GLES31.GL_ARRAY_BUFFER,
-            triangleCoords.size * 4,
+            triangleCoords.size * Float.SIZE_BYTES,
             FloatBuffer.wrap(triangleCoords),
             GLES31.GL_STATIC_DRAW
         )
 
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
-        GLES31.glVertexAttribPointer(aPosLocation, 3, GLES31.GL_FLOAT, false, vertexStride, 0)
+        // 目前只有一个顶点位置属性
+        GLES31.glVertexAttribPointer(
+            VERTEX_POS_INDEX,
+            VERTEX_POS_SIZE,
+            GLES31.GL_FLOAT,
+            false,
+            VERTEX_STRIDE,
+            VERTEX_POS_OFFSET
+        )
 
     }
 
@@ -103,13 +111,13 @@ class Triangle {
 
 
         // 启用顶点数组
-        GLES31.glEnableVertexAttribArray(aPosLocation);
+        GLES31.glEnableVertexAttribArray(VERTEX_POS_INDEX);
 
         // 图元装配，绘制三角形
         GLES31.glDrawArrays(GLES31.GL_TRIANGLES, 0, vertexCount)
 
         // 禁用顶点数组
-        GLES31.glDisableVertexAttribArray(aPosLocation)
+        GLES31.glDisableVertexAttribArray(VERTEX_POS_INDEX)
     }
 
     private fun setupBlinkColor() {
@@ -130,34 +138,33 @@ class Triangle {
     }
 
 
-
     // 顶点数据集，及其属性
     companion object {
         // 假定每个顶点有4个顶点属性一位置、法线和两个纹理坐标
 
         // 顶点坐标的每个属性的Size
-        internal const val  VERTEX_POS_SIZE         = 3     //x,y,and z
-        internal const val  VERTEX_NORMAL_SIZE      = 3     //x,y,and z
-        internal const val  VERTEX_TEXCOORDO_SIZE   = 2     //s and t
-        internal const val  VERTEX_TEXCOORD1_SIZE   = 2     //s and t
+        internal const val VERTEX_POS_SIZE = 3          //x,y,and z
+        internal const val VERTEX_NORMAL_SIZE = 3       //x,y,and z
+        internal const val VERTEX_TEXCOORDO_SIZE = 2    //s and t
+        internal const val VERTEX_TEXCOORD1_SIZE = 2    //s and t
 
         // 顶点坐标的每个属性的Index
-        internal const val  VERTEX_POS_INDEX        = 0
-        internal const val  VERTEX_NORMAL_INDEX     = 1
-        internal const val  VERTEX_TEXCOORDO_INDEX  = 2
-        internal const val  VERTEX_TEXCOORD1_INDEX  = 3
+        internal const val VERTEX_POS_INDEX = 0
+        internal const val VERTEX_NORMAL_INDEX = 1
+        internal const val VERTEX_TEXCOORDO_INDEX = 2
+        internal const val VERTEX_TEXCOORD1_INDEX = 3
 
         // the following 4 defines are used to determine the locations
         // of various attributes if vertex data are stored as an array
         //of structures
-        internal const val  VERTEX_POS_OFFSET       = 0
-        internal const val  VERTEX_NORMAL_OFFSET    = 3
-        internal const val  VERTEX_TEX_COORDO_OFFSET = 6
-        internal const val  VERTEX_TEX_COORD1_OFFSET = 8
-        internal const val  VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE
+        internal const val VERTEX_POS_OFFSET = 0
+        internal const val VERTEX_NORMAL_OFFSET = 3
+        internal const val VERTEX_TEX_COORDO_OFFSET = 6
+        internal const val VERTEX_TEX_COORD1_OFFSET = 8
+        internal const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE
         // (VERTEX_POS_SIZE+ VERTEX_NORMAL_SIZE+ VERTEX_TEXCOORDO_SIZE+ VERTEX_TEXCOORD1_SIZE)
 
-       // 一个等边三角形的顶点输入
+        // 一个等边三角形的顶点输入
         internal var triangleCoords = floatArrayOf(  // 按逆时针顺序
             0.0f, 0.622008459f, 0.0f,   // 上
             -0.5f, -0.311004243f, 0.0f, // 左下
@@ -168,11 +175,6 @@ class Triangle {
         internal val vertexCount = triangleCoords.size / VERTEX_ATTRIBUTE_SIZE
 
         // 连续的顶点属性组之间的间隔
-        internal const val vertexStride = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
-
-        // aPos的位置偏移
-        internal const val aPosLocation = 0
-
-
+        internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
     }
 }

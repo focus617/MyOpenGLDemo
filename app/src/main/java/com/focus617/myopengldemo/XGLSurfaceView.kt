@@ -38,6 +38,10 @@ class XGLSurfaceView @JvmOverloads constructor(context: Context?, attrs: Attribu
         renderMode = RENDERMODE_CONTINUOUSLY
     }
 
+    fun setupShape(shape: XGLRender.Companion.Shape) {
+        mRenderer.setupShape(shape)
+    }
+
     /*
     * 通过触摸事件获取要求视图矩阵旋转的角度
     */
