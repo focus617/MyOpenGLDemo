@@ -37,7 +37,7 @@ class Cube : DrawingObject() {
     private var mVBOIds = IntBuffer.allocate(2)  // 顶点缓存对象
 
     init {
-        mProgramObject = XGLRender.loadProgram(vertexShaderCode, fragmentShaderCode)
+        mProgramObject = XGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
 
         // 创建缓存，并绑定缓存类型
         // mVBOIds[O] - used to store vertex attribute data

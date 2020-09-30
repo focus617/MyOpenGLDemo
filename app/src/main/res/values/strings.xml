@@ -3,4 +3,5 @@
     <string name="action_triangle">Triangle</string>
     <string name="action_square">Square</string>
     <string name="action_cube">Cube</string>
+    <string name="action_air_hockey">AirHockey</string>
 </resources>

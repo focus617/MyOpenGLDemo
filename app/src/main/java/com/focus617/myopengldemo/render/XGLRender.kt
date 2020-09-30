@@ -21,6 +21,7 @@ class XGLRender : GLSurfaceView.Renderer {
     private var mTriangle: Triangle? = null
     private var mSquare: Square? = null
     private var mCube: Cube? = null
+    private var mAirHockey: AirHockey? = null
 
     // 处理旋转
     private fun setupRotation() {
@@ -76,6 +77,11 @@ class XGLRender : GLSurfaceView.Renderer {
                 if(mCube == null) mCube = Cube()
                 mCube!!.draw(mMVPMatrix)
             }
+            Shape.AirHockey -> {
+                // 绘制正方形
+                if(mAirHockey == null) mAirHockey = AirHockey()
+                mAirHockey!!.draw(mMVPMatrix)
+            }
             Shape.Unknown -> return
         }
     }
@@ -108,11 +114,12 @@ class XGLRender : GLSurfaceView.Renderer {
             Unknown,
             Triangle,
             Square,
-            Cube
+            Cube,
+            AirHockey
         }
 
         // Create the program object
-        fun loadProgram(vertexShaderCode: String, fragmentShaderCode: String):Int{
+        fun buildProgram(vertexShaderCode: String, fragmentShaderCode: String):Int{
             // 顶点着色器
             val vertexShader = loadShader(GL_VERTEX_SHADER, vertexShaderCode)
 

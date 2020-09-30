@@ -23,4 +23,10 @@
         android:id="@+id/action_cube"
         android:title="@string/action_cube"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_air_hockey"
+        android:title="@string/action_air_hockey"
+        app:showAsAction="never" />
+
 </menu>

@@ -55,6 +55,11 @@ class MainActivity : AppCompatActivity() {
                 mGLSurfaceView.setupShape(Shape.Cube)
                 true
             }
+            R.id.action_air_hockey -> {
+                Toast.makeText(this, "AirHockey", Toast.LENGTH_SHORT).show()
+                mGLSurfaceView.setupShape(Shape.AirHockey)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

@@ -4,11 +4,10 @@ import android.opengl.GLES31.*
 import timber.log.Timber
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
+import java.nio.ShortBuffer
 import kotlin.math.sin
 
-
-class Triangle : DrawingObject() {
-
+class AirHockey : DrawingObject() {
     // 定义顶点着色器
     // [mMVPMatrix] 模型视图投影矩阵
     private val vertexShaderCode =
@@ -20,57 +19,58 @@ class Triangle : DrawingObject() {
                 "}"
 
     // 定义片段着色器
-    private val fragmentShaderCode = (
-            "#version 300 es \n " +
-                    "#ifdef GL_ES\n" +
-                    "precision highp float;\n" +
-                    "#endif\n" +
+    private val fragmentShaderCode =
+        "#version 300 es \n " +
+                "#ifdef GL_ES\n" +
+                "precision highp float;\n" +
+                "#endif\n" +
 
-                    "out vec4 FragColor; " +
-                    "uniform vec4 outColor; " +
+                "out vec4 FragColor; " +
+                "uniform vec4 outColor; " +
 
-                    "void main() {" +
-                    "  FragColor = outColor;" +
-                    "}")
+                "void main() {" +
+                "  FragColor = outColor;" +
+                "}"
 
-
-    private val mProgramObject: Int     // 着色器程序对象
-    private val mVBOIds: IntBuffer      // 顶点缓存对象
+    private var mProgramObject: Int = 0    // 着色器程序对象
+    private var mVAOId  = IntBuffer.allocate(1)  // 顶点数组对象
+    private var mVBOIds = IntBuffer.allocate(2)  // 顶点缓存对象
 
     init {
         mProgramObject = XGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
 
         // 创建缓存，并绑定缓存类型
         // mVBOIds[O] - used to store vertex attribute data
-        mVBOIds = IntBuffer.allocate(1)
-        glGenBuffers(1, mVBOIds)
-        Timber.d("VBO ID: ${mVBOIds.get(0)}")
-        glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
+        // mVBOIds[l] - used to store element indices
+        // allocate only on the first draw
+        glGenBuffers(2, mVBOIds)
+        Timber.d("VBO ID: $mVBOIds")
 
+        glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
         // 把定义的顶点数据复制到缓存中
         glBufferData(
             GL_ARRAY_BUFFER,
-            triangleCoords.size * Float.SIZE_BYTES,
-            FloatBuffer.wrap(triangleCoords),
+            vertices.size * Float.SIZE_BYTES,
+            FloatBuffer.wrap(vertices),
             GL_STATIC_DRAW
         )
-    }
 
-    fun draw(mvpMatrix: FloatArray) {
+        // bind buffer object for element indices
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(1))
+        glBufferData(
+            GL_ELEMENT_ARRAY_BUFFER,
+            indices.size * Short.SIZE_BYTES,
+            ShortBuffer.wrap(indices),
+            GL_STATIC_DRAW
+        )
 
-        // 将程序添加到OpenGL ES环境
-        glUseProgram(mProgramObject)
-
-        // 获取模型视图投影矩阵的句柄
-        val mMVPMatrixHandle = glGetUniformLocation(mProgramObject, "uMVPMatrix")
-        // 将模型视图投影矩阵传递给顶点着色器
-        glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
-
-        // 设置片元着色器使用的颜色
-        setupBlinkColor()
-        //setupSolidColor()
+        //Generate VAO ID
+        glGenVertexArrays(1, mVAOId)
+        // Bind the VAO and then set up the vertex attributes
+        glBindVertexArray(mVAOId.get(0))
 
         glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(1))
 
         // 启用顶点数组
         glEnableVertexAttribArray(VERTEX_POS_INDEX)
@@ -86,12 +86,37 @@ class Triangle : DrawingObject() {
             VERTEX_POS_OFFSET
         )
 
-        // 图元装配，绘制三角形
-        glDrawArrays(GL_TRIANGLES, 0, vertexCount)
+        // 以下方法不需要再调用了，否则会出错
+        //glDisableVertexAttribArray(VERTEX_POS_INDEX)
+        //glBindBuffer(GL_ARRAY_BUFFER, 0)
+        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
 
-        // 禁用顶点数组
-        glDisableVertexAttribArray(VERTEX_POS_INDEX)
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        // Reset to the default VAO
+        glBindVertexArray(0)
+    }
+
+    fun draw(mvpMatrix: FloatArray) {
+
+        // 将程序添加到OpenGL ES环境
+        glUseProgram(mProgramObject)
+
+        // 获取模型视图投影矩阵的句柄
+        val mMVPMatrixHandle = glGetUniformLocation(mProgramObject, "uMVPMatrix")
+        // 将模型视图投影矩阵传递给顶点着色器
+        glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
+
+        // 设置片元着色器使用的颜色
+        //setupBlinkColor()
+        setupSolidColor()
+
+        // Bind the VAO and then draw with VAO settings
+        glBindVertexArray(mVAOId.get(0))
+
+        // 图元装配，绘制三角形
+        glDrawElements(GL_TRIANGLES, indices.size, GL_UNSIGNED_SHORT, 0)
+
+        // Reset to the default VAO
+        glBindVertexArray(0)
     }
 
     private fun setupBlinkColor() {
@@ -139,17 +164,28 @@ class Triangle : DrawingObject() {
         internal const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE
         // (VERTEX_POS_SIZE+ VERTEX_NORMAL_SIZE+ VERTEX_TEXCOORDO_SIZE+ VERTEX_TEXCOORD1_SIZE)
 
-        // 一个等边三角形的顶点输入
-        internal var triangleCoords = floatArrayOf(  // 按逆时针顺序
-            0.0f, 0.622008459f, 0.0f,   // 上
-            -0.5f, -0.311004243f, 0.0f, // 左下
-            0.5f, -0.311004243f, 0.0f   // 右下
+        // 球桌矩形的顶点
+        internal var vertices = floatArrayOf(  // 按逆时针顺序
+            -0.45f,  0.7f, 0.0f,    // top left
+            -0.45f, -0.7f, 0.0f,    // bottom left
+             0.45f, -0.7f, 0.0f,    // bottom right
+             0.45f,  0.7f, 0.0f,    // top right
+            -0.45f,  0.0f, 0.0f,    // middle line left
+             0.45f,  0.0f, 0.0f,    // middle line right
+             0.00f,  0.5f, 0.0f,    // Mallets far-end
+             0.00f, -0.5f, 0.0f     // Mallets near-end
         )
 
         // 顶点的数量
-        internal val vertexCount = triangleCoords.size / VERTEX_ATTRIBUTE_SIZE
+        internal val vertexCount = vertices.size / VERTEX_ATTRIBUTE_SIZE
 
         // 连续的顶点属性组之间的间隔
         internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
+
+
+        // 球桌矩形的顶点索引
+        var indices = shortArrayOf(
+            0, 1, 2, 0, 2, 3
+        )
     }
 }
