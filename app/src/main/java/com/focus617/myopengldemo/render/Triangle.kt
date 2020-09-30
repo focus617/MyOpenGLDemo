@@ -1,6 +1,6 @@
 package com.focus617.myopengldemo.render
 
-import android.opengl.GLES31
+import android.opengl.GLES31.*
 import timber.log.Timber
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
@@ -43,55 +43,55 @@ class Triangle : DrawingObject() {
         // 创建缓存，并绑定缓存类型
         // mVBOIds[O] - used to store vertex attribute data
         mVBOIds = IntBuffer.allocate(1)
-        GLES31.glGenBuffers(1, mVBOIds)
+        glGenBuffers(1, mVBOIds)
         Timber.d("VBO ID: ${mVBOIds.get(0)}")
-        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mVBOIds.get(0))
+        glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
 
         // 把定义的顶点数据复制到缓存中
-        GLES31.glBufferData(
-            GLES31.GL_ARRAY_BUFFER,
+        glBufferData(
+            GL_ARRAY_BUFFER,
             triangleCoords.size * Float.SIZE_BYTES,
             FloatBuffer.wrap(triangleCoords),
-            GLES31.GL_STATIC_DRAW
+            GL_STATIC_DRAW
         )
     }
 
     fun draw(mvpMatrix: FloatArray) {
 
         // 将程序添加到OpenGL ES环境
-        GLES31.glUseProgram(mProgramObject)
+        glUseProgram(mProgramObject)
 
         // 获取模型视图投影矩阵的句柄
-        val mMVPMatrixHandle = GLES31.glGetUniformLocation(mProgramObject, "uMVPMatrix")
+        val mMVPMatrixHandle = glGetUniformLocation(mProgramObject, "uMVPMatrix")
         // 将模型视图投影矩阵传递给顶点着色器
-        GLES31.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
+        glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
 
         // 设置片元着色器使用的颜色
         setupBlinkColor()
         //setupSolidColor()
 
-        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mVBOIds.get(0))
+        glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
 
         // 启用顶点数组
-        GLES31.glEnableVertexAttribArray(VERTEX_POS_INDEX);
+        glEnableVertexAttribArray(VERTEX_POS_INDEX)
 
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
         // 目前只有一个顶点位置属性
-        GLES31.glVertexAttribPointer(
+        glVertexAttribPointer(
             VERTEX_POS_INDEX,
             VERTEX_POS_SIZE,
-            GLES31.GL_FLOAT,
+            GL_FLOAT,
             false,
             VERTEX_STRIDE,
             VERTEX_POS_OFFSET
         )
 
         // 图元装配，绘制三角形
-        GLES31.glDrawArrays(GLES31.GL_TRIANGLES, 0, vertexCount)
+        glDrawArrays(GL_TRIANGLES, 0, vertexCount)
 
         // 禁用顶点数组
-        GLES31.glDisableVertexAttribArray(VERTEX_POS_INDEX)
-        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, 0)
+        glDisableVertexAttribArray(VERTEX_POS_INDEX)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 
     private fun setupBlinkColor() {
@@ -100,15 +100,15 @@ class Triangle : DrawingObject() {
         val greenValue = sin((timeValue / 300 % 50).toDouble()) / 2 + 0.5
 
         // 查询 uniform ourColor的位置值
-        val fragmentColorLocation = GLES31.glGetUniformLocation(mProgramObject, "outColor")
-        GLES31.glUniform4f(fragmentColorLocation, greenValue.toFloat(), 0.5f, 0.2f, 1.0f)
+        val fragmentColorLocation = glGetUniformLocation(mProgramObject, "outColor")
+        glUniform4f(fragmentColorLocation, greenValue.toFloat(), 0.5f, 0.2f, 1.0f)
     }
 
     private fun setupSolidColor() {
 
         // 查询 uniform ourColor的位置值
-        val fragmentColorLocation = GLES31.glGetUniformLocation(mProgramObject, "outColor")
-        GLES31.glUniform4f(fragmentColorLocation, 1.0f, 0.5f, 0.2f, 1.0f)
+        val fragmentColorLocation = glGetUniformLocation(mProgramObject, "outColor")
+        glUniform4f(fragmentColorLocation, 1.0f, 0.5f, 0.2f, 1.0f)
     }
 
 

@@ -50,6 +50,11 @@ class MainActivity : AppCompatActivity() {
                 mGLSurfaceView.setupShape(Shape.Square)
                 true
             }
+            R.id.action_cube -> {
+                Toast.makeText(this, "Cube", Toast.LENGTH_SHORT).show()
+                mGLSurfaceView.setupShape(Shape.Cube)
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

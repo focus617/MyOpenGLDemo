@@ -32,8 +32,7 @@ class XGLSurfaceView @JvmOverloads constructor(context: Context?, attrs: Attribu
         // 设置渲染器（Renderer）以在GLSurfaceView上绘制
         setRenderer(mRenderer)
 
-        // 仅在绘图数据发生更改时才渲染视图
-        // 在该模式下当渲染内容变化时不会主动刷新效果，需要手动调用requestRender() 才行
+        // 仅在绘图数据发生更改时才渲染视图: 在该模式下当渲染内容变化时不会主动刷新效果，需要手动调用requestRender()
         //renderMode = RENDERMODE_WHEN_DIRTY
         renderMode = RENDERMODE_CONTINUOUSLY
     }

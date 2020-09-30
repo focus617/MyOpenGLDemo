@@ -1,6 +1,6 @@
 package com.focus617.myopengldemo.render
 
-import android.opengl.GLES31
+import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import timber.log.Timber
@@ -20,7 +20,7 @@ class XGLRender : GLSurfaceView.Renderer {
 
     private var mTriangle: Triangle? = null
     private var mSquare: Square? = null
-
+    private var mCube: Cube? = null
 
     // 处理旋转
     private fun setupRotation() {
@@ -33,13 +33,13 @@ class XGLRender : GLSurfaceView.Renderer {
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         // 设置重绘背景框架颜色
-        GLES31.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
         // 设置渲染的OpenGL场景（视口）的位置和大小
         Timber.d("width = $width, height = $height")
-        GLES31.glViewport(0, 0, width, height)
+        glViewport(0, 0, width, height)
 
         // 计算透视投影矩阵 (Project Matrix)，而后将应用于onDrawFrame（）方法中的对象坐标
         val aspect: Float = width.toFloat() / height.toFloat()
@@ -49,7 +49,7 @@ class XGLRender : GLSurfaceView.Renderer {
 
     override fun onDrawFrame(unused: GL10) {
         // 首先清理屏幕，重绘背景颜色
-        GLES31.glClear(GLES31.GL_COLOR_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT)
 
         // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
         Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
@@ -70,6 +70,11 @@ class XGLRender : GLSurfaceView.Renderer {
                 // 绘制正方形
                 if(mSquare == null) mSquare = Square()
                 mSquare!!.draw(mMVPMatrix)
+            }
+            Shape.Cube -> {
+                // 绘制正方形
+                if(mCube == null) mCube = Cube()
+                mCube!!.draw(mMVPMatrix)
             }
             Shape.Unknown -> return
         }
@@ -102,37 +107,39 @@ class XGLRender : GLSurfaceView.Renderer {
         enum class Shape {
             Unknown,
             Triangle,
-            Square
+            Square,
+            Cube
         }
 
+        // Create the program object
         fun loadProgram(vertexShaderCode: String, fragmentShaderCode: String):Int{
             // 顶点着色器
-            val vertexShader = loadShader(GLES31.GL_VERTEX_SHADER, vertexShaderCode)
+            val vertexShader = loadShader(GL_VERTEX_SHADER, vertexShaderCode)
 
             // 片元着色器
-            val fragmentShader = loadShader(GLES31.GL_FRAGMENT_SHADER, fragmentShaderCode)
+            val fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentShaderCode)
 
             // 把着色器链接为一个着色器程序对象
-            var mProgramObject = GLES31.glCreateProgram()
-            GLES31.glAttachShader(mProgramObject, vertexShader)
-            GLES31.glAttachShader(mProgramObject, fragmentShader)
-            GLES31.glLinkProgram(mProgramObject)
+            var mProgramObject = glCreateProgram()
+            glAttachShader(mProgramObject, vertexShader)
+            glAttachShader(mProgramObject, fragmentShader)
+            glLinkProgram(mProgramObject)
 
             val success: IntBuffer = IntBuffer.allocate(1)
-            GLES31.glGetProgramiv(mProgramObject, GLES31.GL_LINK_STATUS, success)
+            glGetProgramiv(mProgramObject, GL_LINK_STATUS, success)
             if (success.get(0) == 0) {
-                Timber.e(GLES31.glGetProgramInfoLog(mProgramObject))
-                GLES31.glDeleteProgram(mProgramObject)
+                Timber.e(glGetProgramInfoLog(mProgramObject))
+                glDeleteProgram(mProgramObject)
                 mProgramObject = 0
             } else {
                 Timber.d("GLProgram $mProgramObject is ready.")
             }
 
             // 销毁不再需要的着色器对象
-            GLES31.glDeleteShader(vertexShader)
-            GLES31.glDeleteShader(fragmentShader)
+            glDeleteShader(vertexShader)
+            glDeleteShader(fragmentShader)
             // 释放着色器编译器使用的资源
-            GLES31.glReleaseShaderCompiler()
+            glReleaseShaderCompiler()
 
             return mProgramObject
         }
@@ -144,19 +151,19 @@ class XGLRender : GLSurfaceView.Renderer {
         private fun loadShader(type: Int, shaderCode: String): Int {
 
             // 创建一个着色器对象
-            var shader = GLES31.glCreateShader(type)
+            var shader = glCreateShader(type)
             if (shader == 0) return 0
 
             // 将源代码加载到着色器并进行编译
-            GLES31.glShaderSource(shader, shaderCode)
-            GLES31.glCompileShader(shader)
+            glShaderSource(shader, shaderCode)
+            glCompileShader(shader)
 
             // 检查编译状态
             val success: IntBuffer = IntBuffer.allocate(1)
-            GLES31.glGetShaderiv(shader, GLES31.GL_COMPILE_STATUS, success)
+            glGetShaderiv(shader, GL_COMPILE_STATUS, success)
             if (success.get(0) == 0) {
-                Timber.e(GLES31.glGetShaderInfoLog(shader))
-                GLES31.glDeleteShader(shader)
+                Timber.e(glGetShaderInfoLog(shader))
+                glDeleteShader(shader)
                 shader = 0
             }
 
