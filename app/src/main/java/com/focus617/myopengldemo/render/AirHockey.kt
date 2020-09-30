@@ -19,6 +19,7 @@ class AirHockey : DrawingObject() {
                 "uniform mat4 uMVPMatrix;" +
                 "void main() {" +
                 "   gl_Position = uMVPMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);" +
+                "   gl_PointSize = 10.0;" +
                 "}"
 
     // 定义片段着色器
@@ -36,7 +37,7 @@ class AirHockey : DrawingObject() {
                 "}"
 
     private var mProgramObject: Int = 0    // 着色器程序对象
-    private var mVAOId  = IntBuffer.allocate(1)  // 顶点数组对象
+    private var mVAOId = IntBuffer.allocate(1)  // 顶点数组对象
     private var mVBOIds = IntBuffer.allocate(2)  // 顶点缓存对象
 
     init {
@@ -73,10 +74,6 @@ class AirHockey : DrawingObject() {
         glBindVertexArray(mVAOId.get(0))
 
         glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(1))
-
-        // 启用顶点数组
-        glEnableVertexAttribArray(VERTEX_POS_INDEX)
 
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
         // 目前只有一个顶点位置属性
@@ -89,10 +86,10 @@ class AirHockey : DrawingObject() {
             VERTEX_POS_OFFSET
         )
 
-        // 以下方法不需要再调用了，否则会出错
-        //glDisableVertexAttribArray(VERTEX_POS_INDEX)
-        //glBindBuffer(GL_ARRAY_BUFFER, 0)
-        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
+        // 启用顶点数组
+        glEnableVertexAttribArray(VERTEX_POS_INDEX)
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(1))
 
         // Reset to the default VAO
         glBindVertexArray(0)
@@ -108,33 +105,50 @@ class AirHockey : DrawingObject() {
         // 将模型视图投影矩阵传递给顶点着色器
         glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
 
-        // 设置片元着色器使用的颜色
-        setupColor(blink = true)
-
         // Bind the VAO and then draw with VAO settings
         glBindVertexArray(mVAOId.get(0))
 
+        // 设置片元着色器使用的颜色
+        setupColor(1.0f, 1.0f, 1.0f)
         // 图元装配，绘制三角形
-        glDrawElements(GL_TRIANGLES, indices.size, GL_UNSIGNED_SHORT, 0)
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, 0)
+
+        // 设置片元着色器使用的颜色
+        setupColor(1.0f, 0.0f, 0.0f)
+        // 图元装配，绘制球桌中间的分隔线
+        glDrawElements(GL_LINES, 2, GL_UNSIGNED_SHORT, 12)
+
+        // 设置片元着色器使用的颜色
+        setupColor(0.0f, 0.0f, 1.0f)
+        // 图元装配，绘制桌球 mallet blue
+        glDrawElements(GL_POINTS, 1, GL_UNSIGNED_SHORT, 14)
+        // 设置片元着色器使用的颜色
+        setupColor(1.0f, 0.0f, 0.0f)
+        // 图元装配，绘制桌球 mallet red
+        glDrawElements(GL_POINTS, 1, GL_UNSIGNED_SHORT, 15)
 
         // Reset to the default VAO
         glBindVertexArray(0)
+
     }
 
-    private fun setupColor(blink: Boolean= false) {
+    private fun setupColor(
+        red: Float, green: Float, blue: Float, alpha: Float = 1.0f, blink: Boolean = false
+    ) {
+        var redValue: Float = red
 
         // 查询 uniform ourColor的位置值
         val fragmentColorLocation = glGetUniformLocation(mProgramObject, U_COLOR)
-        if(blink){
+        if (blink) {
             // 使用sin函数让颜色随时间在0.0到1.0之间改变
             val timeValue = System.currentTimeMillis()
-            val greenValue = sin((timeValue / 300 % 50).toDouble()) / 2 + 0.5
-            glUniform4f(fragmentColorLocation, greenValue.toFloat(), 0.5f, 0.2f, 1.0f)
+            val value = sin((timeValue / 300 % 50).toDouble()) / 2 + 0.5
+            redValue = value.toFloat()
+            //([0,1], 0.5f, 0.2f, 1.0f)
         }
-        else{
-            glUniform4f(fragmentColorLocation, 1.0f, 0.5f, 0.2f, 1.0f)
-        }
-    }
+        glUniform4f(fragmentColorLocation, redValue, green, blue, alpha)
+
+}
 
 
     // 顶点数据集，及其属性
@@ -142,13 +156,15 @@ class AirHockey : DrawingObject() {
         // 假定每个顶点有4个顶点属性一位置、法线和两个纹理坐标
 
         // 顶点坐标的每个属性的Size
-        internal const val VERTEX_POS_SIZE = 3          //x,y,and z
-        internal const val VERTEX_NORMAL_SIZE = 3       //x,y,and z
-        internal const val VERTEX_TEXCOORDO_SIZE = 2    //s and t
-        internal const val VERTEX_TEXCOORD1_SIZE = 2    //s and t
+        internal const val VERTEX_POS_SIZE = 2          // x,y
+        internal const val VERTEX_COLOR_SIZE = 3        // r,g,b
+        internal const val VERTEX_NORMAL_SIZE = 3       // x,y,z
+        internal const val VERTEX_TEXCOORDO_SIZE = 2    // s,t
+        internal const val VERTEX_TEXCOORD1_SIZE = 2    // s,t
 
         // 顶点坐标的每个属性的Index
         internal const val VERTEX_POS_INDEX = 0
+        internal const val VERTEX_COLOR_INDEX = 1
         internal const val VERTEX_NORMAL_INDEX = 1
         internal const val VERTEX_TEXCOORDO_INDEX = 2
         internal const val VERTEX_TEXCOORD1_INDEX = 3
@@ -157,23 +173,26 @@ class AirHockey : DrawingObject() {
         // of various attributes if vertex data are stored as an array
         //of structures
         internal const val VERTEX_POS_OFFSET = 0
+        internal const val VERTEX_COLOR_OFFSET = 2
         internal const val VERTEX_NORMAL_OFFSET = 3
         internal const val VERTEX_TEX_COORDO_OFFSET = 6
         internal const val VERTEX_TEX_COORD1_OFFSET = 8
 
-        internal const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE
+        internal const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE+VERTEX_COLOR_SIZE
         // (VERTEX_POS_SIZE+ VERTEX_NORMAL_SIZE+ VERTEX_TEXCOORDO_SIZE+ VERTEX_TEXCOORD1_SIZE)
 
         // 球桌矩形的顶点
         internal var vertices = floatArrayOf(  // 按逆时针顺序
-            -0.45f,  0.7f, 0.0f,    // top left
-            -0.45f, -0.7f, 0.0f,    // bottom left
-             0.45f, -0.7f, 0.0f,    // bottom right
-             0.45f,  0.7f, 0.0f,    // top right
-            -0.45f,  0.0f, 0.0f,    // middle line left
-             0.45f,  0.0f, 0.0f,    // middle line right
-             0.00f,  0.5f, 0.0f,    // Mallets far-end
-             0.00f, -0.5f, 0.0f     // Mallets near-end
+             0.0f,  0.00f, 1.0f, 1.0f, 1.0f,   // middle
+            -0.5f, -0.75f, 0.7f, 0.7f, 0.7f,   // bottom left
+             0.5f, -0.75f, 0.7f, 0.7f, 0.7f,   // bottom right
+             0.5f,  0.75f, 0.7f, 0.7f, 0.7f,   // top right
+            -0.5f,  0.75f, 0.7f, 0.7f, 0.7f,   // top left
+            -0.5f, -0.75f, 0.7f, 0.7f, 0.7f,   // bottom left
+            -0.5f,  0.00f, 1.0f, 0.0f, 0.0f,   // middle line left
+             0.5f,  0.00f, 1.0f, 0.0f, 0.0f,   // middle line right
+             0.0f, -0.55f, 0.0f, 0.0f, 1.0f,   // Blue Mallets
+             0.0f,  0.55f, 1.0f, 0.0f, 0.0f    // Red  Mallets
         )
 
         // 顶点的数量
@@ -185,7 +204,8 @@ class AirHockey : DrawingObject() {
 
         // 球桌矩形的顶点索引
         var indices = shortArrayOf(
-            0, 1, 2, 0, 2, 3
+            0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5,
+            4, 5, 6, 7
         )
     }
 }

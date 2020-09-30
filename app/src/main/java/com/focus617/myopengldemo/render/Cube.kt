@@ -9,7 +9,7 @@ import kotlin.math.sin
 
 class Cube : DrawingObject() {
 
-    private val U_COLOR = "u_Color"
+    private val U_COLOR = "a_Color"
 
     // 定义顶点着色器
     // [mMVPMatrix] 模型视图投影矩阵
@@ -17,8 +17,11 @@ class Cube : DrawingObject() {
         "#version 300 es \n" +
                 "layout (location = 0) in vec3 aPos;" +
                 "uniform mat4 uMVPMatrix;" +
+                "attribute vec4 a_Color;"+
+                "varying vec4 v_Color;"+
                 "void main() {" +
                 "   gl_Position = uMVPMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);" +
+                "   v_Color = a_Color" +
                 "}"
 
     // 定义片段着色器
@@ -29,24 +32,25 @@ class Cube : DrawingObject() {
                 "#endif\n" +
 
                 "out vec4 FragColor; " +
-                "uniform vec4 u_Color; " +
+                "varying vec4 v_Color; " +
 
                 "void main() {" +
-                "  FragColor = u_Color;" +
+                "  FragColor = v_Color;" +
                 "}"
 
     private var mProgramObject: Int = 0    // 着色器程序对象
     private var mVAOId  = IntBuffer.allocate(1)  // 顶点数组对象
-    private var mVBOIds = IntBuffer.allocate(2)  // 顶点缓存对象
+    private var mVBOIds = IntBuffer.allocate(3)  // 顶点缓存对象
 
     init {
         mProgramObject = XGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
 
         // 创建缓存，并绑定缓存类型
         // mVBOIds[O] - used to store vertex attribute data
-        // mVBOIds[l] - used to store element indices
+        // mVBOIds[l] - used to store vertex color
+        // mVBOIds[2] - used to store element indices
         // allocate only on the first draw
-        glGenBuffers(2, mVBOIds)
+        glGenBuffers(3, mVBOIds)
         Timber.d("VBO ID: $mVBOIds")
 
         glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
@@ -58,8 +62,17 @@ class Cube : DrawingObject() {
             GL_STATIC_DRAW
         )
 
+        glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(1))
+        // 把定义的顶点数据复制到缓存中
+        glBufferData(
+            GL_ARRAY_BUFFER,
+            colors.size * Float.SIZE_BYTES,
+            FloatBuffer.wrap(colors),
+            GL_STATIC_DRAW
+        )
+
         // bind buffer object for element indices
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(1))
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(2))
         glBufferData(
             GL_ELEMENT_ARRAY_BUFFER,
             indices.size * Short.SIZE_BYTES,
@@ -72,12 +85,9 @@ class Cube : DrawingObject() {
         // Bind the VAO and then set up the vertex attributes
         glBindVertexArray(mVAOId.get(0))
 
-        glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(1))
-
         // 启用顶点数组
-        glEnableVertexAttribArray(VERTEX_POS_INDEX)
-
+        glEnableVertexAttribArray(0)
+        glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
         // 目前只有一个顶点位置属性
         glVertexAttribPointer(
@@ -89,10 +99,20 @@ class Cube : DrawingObject() {
             VERTEX_POS_OFFSET
         )
 
-        // 以下方法不需要再调用了，否则会出错
-        //glDisableVertexAttribArray(VERTEX_POS_INDEX)
-        //glBindBuffer(GL_ARRAY_BUFFER, 0)
-        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
+        // 查询 uniform ourColor的位置值
+        val fragmentColorLocation = glGetUniformLocation(mProgramObject, U_COLOR)
+
+        glEnableVertexAttribArray(1)
+        glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(1))
+        glVertexAttribPointer(
+            fragmentColorLocation,
+            4,
+            GL_FLOAT,
+            false,
+            0,
+            0)
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(2))
 
         // Reset to the default VAO
         glBindVertexArray(0)
@@ -108,9 +128,6 @@ class Cube : DrawingObject() {
         // 将模型视图投影矩阵传递给顶点着色器
         glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
 
-        // 设置片元着色器使用的颜色
-        setupColor()
-
         // Bind the VAO and then draw with VAO settings
         glBindVertexArray(mVAOId.get(0))
 
@@ -120,22 +137,6 @@ class Cube : DrawingObject() {
         // Reset to the default VAO
         glBindVertexArray(0)
     }
-
-    private fun setupColor(blink: Boolean= false) {
-
-        // 查询 uniform ourColor的位置值
-        val fragmentColorLocation = glGetUniformLocation(mProgramObject, U_COLOR)
-        if(blink){
-            // 使用sin函数让颜色随时间在0.0到1.0之间改变
-            val timeValue = System.currentTimeMillis()
-            val greenValue = sin((timeValue / 300 % 50).toDouble()) / 2 + 0.5
-            glUniform4f(fragmentColorLocation, greenValue.toFloat(), 0.5f, 0.2f, 1.0f)
-        }
-        else{
-        glUniform4f(fragmentColorLocation, 1.0f, 0.5f, 0.2f, 1.0f)
-        }
-    }
-
 
     // 顶点数据集，及其属性
     companion object {
