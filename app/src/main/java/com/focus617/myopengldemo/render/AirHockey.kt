@@ -8,6 +8,9 @@ import java.nio.ShortBuffer
 import kotlin.math.sin
 
 class AirHockey : DrawingObject() {
+
+    private val U_COLOR = "u_Color"
+
     // 定义顶点着色器
     // [mMVPMatrix] 模型视图投影矩阵
     private val vertexShaderCode =
@@ -26,10 +29,10 @@ class AirHockey : DrawingObject() {
                 "#endif\n" +
 
                 "out vec4 FragColor; " +
-                "uniform vec4 outColor; " +
+                "uniform vec4 u_Color; " +
 
                 "void main() {" +
-                "  FragColor = outColor;" +
+                "  FragColor = u_Color;" +
                 "}"
 
     private var mProgramObject: Int = 0    // 着色器程序对象
@@ -106,8 +109,7 @@ class AirHockey : DrawingObject() {
         glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0)
 
         // 设置片元着色器使用的颜色
-        //setupBlinkColor()
-        setupSolidColor()
+        setupColor(blink = true)
 
         // Bind the VAO and then draw with VAO settings
         glBindVertexArray(mVAOId.get(0))
@@ -119,21 +121,19 @@ class AirHockey : DrawingObject() {
         glBindVertexArray(0)
     }
 
-    private fun setupBlinkColor() {
-        // 使用sin函数让颜色随时间在0.0到1.0之间改变
-        val timeValue = System.currentTimeMillis()
-        val greenValue = sin((timeValue / 300 % 50).toDouble()) / 2 + 0.5
+    private fun setupColor(blink: Boolean= false) {
 
         // 查询 uniform ourColor的位置值
-        val fragmentColorLocation = glGetUniformLocation(mProgramObject, "outColor")
-        glUniform4f(fragmentColorLocation, greenValue.toFloat(), 0.5f, 0.2f, 1.0f)
-    }
-
-    private fun setupSolidColor() {
-
-        // 查询 uniform ourColor的位置值
-        val fragmentColorLocation = glGetUniformLocation(mProgramObject, "outColor")
-        glUniform4f(fragmentColorLocation, 1.0f, 0.5f, 0.2f, 1.0f)
+        val fragmentColorLocation = glGetUniformLocation(mProgramObject, U_COLOR)
+        if(blink){
+            // 使用sin函数让颜色随时间在0.0到1.0之间改变
+            val timeValue = System.currentTimeMillis()
+            val greenValue = sin((timeValue / 300 % 50).toDouble()) / 2 + 0.5
+            glUniform4f(fragmentColorLocation, greenValue.toFloat(), 0.5f, 0.2f, 1.0f)
+        }
+        else{
+            glUniform4f(fragmentColorLocation, 1.0f, 0.5f, 0.2f, 1.0f)
+        }
     }
 
 
