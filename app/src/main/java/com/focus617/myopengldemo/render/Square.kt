@@ -36,34 +36,9 @@ class Square : DrawingObject() {
     private var mVBOIds: IntBuffer = IntBuffer.allocate(2)  // 顶点缓存对象
 
     init {
-        var success: IntBuffer = IntBuffer.allocate(1)
+        mProgramObject = XGLRender.loadProgram(vertexShaderCode, fragmentShaderCode)
 
-        // 顶点着色器
-        var vertexShader = XGLRender.loadShader(GLES31.GL_VERTEX_SHADER, vertexShaderCode)
-
-        // 片元着色器
-        var fragmentShader = XGLRender.loadShader(GLES31.GL_FRAGMENT_SHADER, fragmentShaderCode)
-
-        // 把着色器链接为一个着色器程序对象
-        mProgramObject = GLES31.glCreateProgram()
-        GLES31.glAttachShader(mProgramObject, vertexShader)
-        GLES31.glAttachShader(mProgramObject, fragmentShader)
-        GLES31.glLinkProgram(mProgramObject)
-
-        GLES31.glGetProgramiv(mProgramObject, GLES31.GL_LINK_STATUS, success)
-        if (success.get(0) == 0) {
-            Timber.e(GLES31.glGetProgramInfoLog(mProgramObject))
-            GLES31.glDeleteProgram(mProgramObject)
-        } else {
-            Timber.d("GLProgram $mProgramObject is ready.")
-        }
-
-        // 销毁不再需要的着色器对象
-        GLES31.glDeleteShader(vertexShader)
-        GLES31.glDeleteShader(fragmentShader)
-        // 释放着色器编译器使用的资源
-        GLES31.glReleaseShaderCompiler()
-
+        // 创建缓存，并绑定缓存类型
         // mVBOIds[O] - used to store vertex attribute data
         // mVBOIds[l] - used to store element indices
         // allocate only on the first draw
@@ -74,8 +49,8 @@ class Square : DrawingObject() {
         // 把定义的顶点数据复制到缓存中
         GLES31.glBufferData(
             GLES31.GL_ARRAY_BUFFER,
-            vertexCoords.size * Float.SIZE_BYTES,
-            FloatBuffer.wrap(vertexCoords),
+            vertices.size * Float.SIZE_BYTES,
+            FloatBuffer.wrap(vertices),
             GLES31.GL_STATIC_DRAW
         )
 
@@ -179,7 +154,7 @@ class Square : DrawingObject() {
         // (VERTEX_POS_SIZE+ VERTEX_NORMAL_SIZE+ VERTEX_TEXCOORDO_SIZE+ VERTEX_TEXCOORD1_SIZE)
 
         // 正方形的顶点
-        internal var vertexCoords = floatArrayOf(  // 按逆时针顺序
+        internal var vertices = floatArrayOf(  // 按逆时针顺序
             -0.5f, 0.5f, 0.0f,   // top left
             -0.5f, -0.5f, 0.0f,  // bottom left
             0.5f, -0.5f, 0.0f,   // bottom right
@@ -187,7 +162,7 @@ class Square : DrawingObject() {
         )
 
         // 顶点的数量
-        internal val vertexCount = vertexCoords.size / VERTEX_ATTRIBUTE_SIZE
+        internal val vertexCount = vertices.size / VERTEX_ATTRIBUTE_SIZE
 
         // 连续的顶点属性组之间的间隔
         internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES

@@ -38,42 +38,15 @@ class Triangle : DrawingObject() {
     private val mVBOIds: IntBuffer      // 顶点缓存对象
 
     init {
+        mProgramObject = XGLRender.loadProgram(vertexShaderCode, fragmentShaderCode)
+
         // 创建缓存，并绑定缓存类型
+        // mVBOIds[O] - used to store vertex attribute data
         mVBOIds = IntBuffer.allocate(1)
         GLES31.glGenBuffers(1, mVBOIds)
         Timber.d("VBO ID: ${mVBOIds.get(0)}")
-
-        var success: IntBuffer = IntBuffer.allocate(1)
-
-        // 顶点着色器
-        var vertexShader = XGLRender.loadShader(GLES31.GL_VERTEX_SHADER, vertexShaderCode)
-
-        // 片元着色器
-        var fragmentShader = XGLRender.loadShader(GLES31.GL_FRAGMENT_SHADER, fragmentShaderCode)
-        // TODO: check why fragment Shader can't work without below
-        GLES31.glGetShaderiv(fragmentShader, GLES31.GL_COMPILE_STATUS, success)
-
-        // 把着色器链接为一个着色器程序对象
-        mProgramObject = GLES31.glCreateProgram()
-        GLES31.glAttachShader(mProgramObject, vertexShader)
-        GLES31.glAttachShader(mProgramObject, fragmentShader)
-        GLES31.glLinkProgram(mProgramObject)
-
-        GLES31.glGetProgramiv(mProgramObject, GLES31.GL_LINK_STATUS, success)
-        if (success.get(0) == 0) {
-            Timber.e(GLES31.glGetProgramInfoLog(mProgramObject))
-            GLES31.glDeleteProgram(mProgramObject)
-        } else {
-            Timber.d("GLProgram $mProgramObject is ready.")
-        }
-
-        // 销毁不再需要的着色器对象
-        GLES31.glDeleteShader(vertexShader)
-        GLES31.glDeleteShader(fragmentShader)
-        // 释放着色器编译器使用的资源
-        GLES31.glReleaseShaderCompiler()
-
         GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mVBOIds.get(0))
+
         // 把定义的顶点数据复制到缓存中
         GLES31.glBufferData(
             GLES31.GL_ARRAY_BUFFER,

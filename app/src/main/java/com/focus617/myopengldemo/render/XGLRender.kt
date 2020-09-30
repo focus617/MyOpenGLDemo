@@ -105,11 +105,43 @@ class XGLRender : GLSurfaceView.Renderer {
             Square
         }
 
+        fun loadProgram(vertexShaderCode: String, fragmentShaderCode: String):Int{
+            // 顶点着色器
+            val vertexShader = loadShader(GLES31.GL_VERTEX_SHADER, vertexShaderCode)
+
+            // 片元着色器
+            val fragmentShader = loadShader(GLES31.GL_FRAGMENT_SHADER, fragmentShaderCode)
+
+            // 把着色器链接为一个着色器程序对象
+            var mProgramObject = GLES31.glCreateProgram()
+            GLES31.glAttachShader(mProgramObject, vertexShader)
+            GLES31.glAttachShader(mProgramObject, fragmentShader)
+            GLES31.glLinkProgram(mProgramObject)
+
+            val success: IntBuffer = IntBuffer.allocate(1)
+            GLES31.glGetProgramiv(mProgramObject, GLES31.GL_LINK_STATUS, success)
+            if (success.get(0) == 0) {
+                Timber.e(GLES31.glGetProgramInfoLog(mProgramObject))
+                GLES31.glDeleteProgram(mProgramObject)
+                mProgramObject = 0
+            } else {
+                Timber.d("GLProgram $mProgramObject is ready.")
+            }
+
+            // 销毁不再需要的着色器对象
+            GLES31.glDeleteShader(vertexShader)
+            GLES31.glDeleteShader(fragmentShader)
+            // 释放着色器编译器使用的资源
+            GLES31.glReleaseShaderCompiler()
+
+            return mProgramObject
+        }
+
         /**
          * 创建着色器：Create a shader object, load the shader source, and compile the shader
          * @Parameter [type]顶点着色器类型（GLES31.GL_VERTEX_SHADER）或片段着色器类型（GLES31.GL_FRAGMENT_SHADER）
          */
-        fun loadShader(type: Int, shaderCode: String): Int {
+        private fun loadShader(type: Int, shaderCode: String): Int {
 
             // 创建一个着色器对象
             var shader = GLES31.glCreateShader(type)
