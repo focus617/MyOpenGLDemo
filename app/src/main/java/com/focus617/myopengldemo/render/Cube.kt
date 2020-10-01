@@ -5,7 +5,6 @@ import timber.log.Timber
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
 import java.nio.ShortBuffer
-import kotlin.math.sin
 
 class Cube : DrawingObject() {
 
@@ -49,7 +48,7 @@ class Cube : DrawingObject() {
     }
 
     private fun setupProgram() {
-        mProgramObject = XGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
+        mProgramObject = XBGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
     }
 
     private fun setupVBO() {

@@ -11,9 +11,11 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 
-class XGLRender(val context: Context) : GLSurfaceView.Renderer {
+class XBGLRender(val context: Context) : GLSurfaceView.Renderer {
 
     private val mMVPMatrix = FloatArray(16)
+
+    private val mModelMatrix = FloatArray(16)
 
     private val mProjectionMatrix = FloatArray(16)
 
@@ -31,7 +33,7 @@ class XGLRender(val context: Context) : GLSurfaceView.Renderer {
 //        val angle = 0.090f * time.toInt()
 
         // 进行旋转变换
-        Matrix.rotateM(mViewMatrix, 0, getAngle(), 1.0f, 0f, 0f)
+        Matrix.rotateM(mViewMatrix, 0, getAngle(), 0f, 0f, 1.0f)
     }
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
@@ -46,7 +48,14 @@ class XGLRender(val context: Context) : GLSurfaceView.Renderer {
 
         // 计算透视投影矩阵 (Project Matrix)，而后将应用于onDrawFrame（）方法中的对象坐标
         val aspect: Float = width.toFloat() / height.toFloat()
-        Matrix.frustumM(mProjectionMatrix, 0, -aspect, aspect, -1f, 1f, 3f, 7f)
+        MatrixHelper.perspectiveM(mProjectionMatrix, 45f, aspect, 1f, 10f)
+
+        Matrix.setIdentityM(mModelMatrix, 0)
+
+        Matrix.translateM(mModelMatrix, 0, 0f, 0f, -2.8f)
+        Matrix.rotateM(mModelMatrix, 0, -60f, 1f, 0f, 0f)
+
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mModelMatrix, 0)
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -54,13 +63,13 @@ class XGLRender(val context: Context) : GLSurfaceView.Renderer {
         glClear(GL_COLOR_BUFFER_BIT)
 
         // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3.5f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
+        //Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
 
         // 处理旋转
-        setupRotation()
+        //setupRotation()
 
         // 视图转换：计算模型视图投影矩阵MVPMatrix，该矩阵可以将模型空间的坐标转换为归一化设备空间坐标
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
+        //Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
 
         when (shape) {
             Shape.Triangle -> {

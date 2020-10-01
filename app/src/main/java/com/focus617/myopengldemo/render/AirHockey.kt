@@ -8,7 +8,6 @@ import timber.log.Timber
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
 import java.nio.ShortBuffer
-import kotlin.math.sin
 
 class AirHockey(context: Context) : DrawingObject() {
 
@@ -33,7 +32,7 @@ class AirHockey(context: Context) : DrawingObject() {
             .readTextFileFromResource(context, R.raw.simple_fragment_shader)
         Timber.d("Load Fragment Shader Code:\n$fragmentShaderCode\n")
 
-        mProgramObject = XGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
+        mProgramObject = XBGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
     }
 
     private fun setupVBO() {

@@ -1,6 +1,5 @@
 package com.focus617.myopengldemo
 
-import android.opengl.GLSurfaceView
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu

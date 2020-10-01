@@ -40,7 +40,7 @@ class Triangle : DrawingObject() {
     private val mVBOIds: IntBuffer      // 顶点缓存对象
 
     init {
-        mProgramObject = XGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
+        mProgramObject = XBGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
 
         // 创建缓存，并绑定缓存类型
         // mVBOIds[O] - used to store vertex attribute data
@@ -140,9 +140,9 @@ class Triangle : DrawingObject() {
 
         // 一个等边三角形的顶点输入
         internal var triangleCoords = floatArrayOf(  // 按逆时针顺序
-            0.0f, 0.622008459f, 0.0f,   // 上
-            -0.5f, -0.311004243f, 0.0f, // 左下
-            0.5f, -0.311004243f, 0.0f   // 右下
+             0.0f,  0.622008459f, 0.0f,   // 上
+            -0.5f, -0.311004243f, 0.0f,   // 左下
+             0.5f, -0.311004243f, 0.0f    // 右下
         )
 
         // 顶点的数量
