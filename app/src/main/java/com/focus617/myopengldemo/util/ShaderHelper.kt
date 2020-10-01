@@ -44,8 +44,10 @@ object ShaderHelper {
         )
 
         // Print the shader info log to the Android log output.
-        Timber.v(("Results of compiling source:\n" +
-                "$shaderCode: ${glGetShaderInfoLog(shaderObjectId)}").trimIndent())
+        Timber.v(
+            ("Results of compiling source:\n" +
+                    "$shaderCode: ${glGetShaderInfoLog(shaderObjectId)}").trimIndent()
+        )
 
 
         // Verify the compile status.
@@ -88,8 +90,10 @@ object ShaderHelper {
             linkStatus, 0
         )
         // Print the program info log to the Android log output.
-        Timber.v(("Results of linking program:\n"
-            +"${glGetProgramInfoLog(programObjectId)}").trimIndent())
+        Timber.v(
+            ("Results of linking program:\n"
+                    + "${glGetProgramInfoLog(programObjectId)}").trimIndent()
+        )
 
         // Verify the link status.
         if (linkStatus[0] == 0) {
@@ -114,9 +118,31 @@ object ShaderHelper {
             programObjectId, GL_VALIDATE_STATUS,
             validateStatus, 0
         )
-        Timber.v(("Results of validating program: ${validateStatus[0]}\n"
-                +"Log:${glGetProgramInfoLog(programObjectId)}").trimIndent()
+        Timber.v(
+            ("Results of validating program: ${validateStatus[0]}\n"
+                    + "Log:${glGetProgramInfoLog(programObjectId)}").trimIndent()
         )
         return validateStatus[0] != 0
+    }
+
+    /**
+     * Helper function that compiles the shaders, links and validates the
+     * program, returning the program ID.
+     */
+    fun buildProgram(
+        vertexShaderSource: String?,
+        fragmentShaderSource: String?
+    ): Int {
+        val program: Int
+
+        // Compile the shaders.
+        val vertexShader = compileVertexShader(vertexShaderSource!!)
+        val fragmentShader = compileFragmentShader(fragmentShaderSource!!)
+
+        // Link them into a shader program.
+        program = linkProgram(vertexShader, fragmentShader)
+        validateProgram(program)
+
+        return program
     }
 }
