@@ -10,10 +10,10 @@ import com.focus617.myopengldemo.render.XGLRender
  * Description:
  * 暂时可以直接使用 GLSurfaceView，但后面用到捕获触摸事件来进行交互时候就需要扩展这个类了。
  */
-class XGLSurfaceView @JvmOverloads constructor(context: Context?, attrs: AttributeSet? = null) :
+class XGLSurfaceView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     GLSurfaceView(context, attrs) {
 
-    private var mRenderer = XGLRender()
+    private var mRenderer = XGLRender(context)
 
     init {
         // 创建一个OpenGL ES 3.0 的context

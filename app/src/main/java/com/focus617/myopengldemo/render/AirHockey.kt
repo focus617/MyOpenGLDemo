@@ -1,47 +1,26 @@
 package com.focus617.myopengldemo.render
 
+import android.content.Context
 import android.opengl.GLES31.*
+import com.focus617.myopengldemo.R
+import com.focus617.myopengldemo.util.TextResourceReader
 import timber.log.Timber
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
 import java.nio.ShortBuffer
 import kotlin.math.sin
 
-class AirHockey : DrawingObject() {
+class AirHockey(context: Context) : DrawingObject() {
 
     private val U_COLOR = "u_Color"
-
-    // 定义顶点着色器
-    // [mMVPMatrix] 模型视图投影矩阵
-    private val vertexShaderCode =
-        "#version 300 es \n" +
-                "layout (location = 0) in vec3 aPos;" +
-                "uniform mat4 uMVPMatrix;" +
-                "void main() {" +
-                "   gl_Position = uMVPMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);" +
-                "   gl_PointSize = 10.0;" +
-                "}"
-
-    // 定义片段着色器
-    private val fragmentShaderCode =
-        "#version 300 es \n " +
-                "#ifdef GL_ES\n" +
-                "precision highp float;\n" +
-                "#endif\n" +
-
-                "out vec4 FragColor; " +
-                "uniform vec4 u_Color; " +
-
-                "void main() {" +
-                "  FragColor = u_Color;" +
-                "}"
 
     private var mProgramObject: Int = 0    // 着色器程序对象
     private var mVAOId = IntBuffer.allocate(1)  // 顶点数组对象
     private var mVBOIds = IntBuffer.allocate(2)  // 顶点缓存对象
 
     init {
-        mProgramObject = XGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
+
+        setupProgram(context)
 
         // 创建缓存，并绑定缓存类型
         // mVBOIds[O] - used to store vertex attribute data
@@ -93,6 +72,20 @@ class AirHockey : DrawingObject() {
 
         // Reset to the default VAO
         glBindVertexArray(0)
+    }
+
+    private fun setupProgram(context: Context) {
+        // 顶点着色器
+        val vertexShaderCode = TextResourceReader
+            .readTextFileFromResource(context, R.raw.simple_vertex_shader)
+        Timber.d("Load Vertex Shader Code:\n$vertexShaderCode\n")
+
+        // 片段着色器
+        val fragmentShaderCode = TextResourceReader
+            .readTextFileFromResource(context, R.raw.simple_fragment_shader)
+        Timber.d("Load Fragment Shader Code:\n$fragmentShaderCode\n")
+
+        mProgramObject = XGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
     }
 
     fun draw(mvpMatrix: FloatArray) {
@@ -183,16 +176,16 @@ class AirHockey : DrawingObject() {
 
         // 球桌矩形的顶点
         internal var vertices = floatArrayOf(  // 按逆时针顺序
-             0.0f,  0.00f, 1.0f, 1.0f, 1.0f,   // middle
+            0.0f, 0.00f, 1.0f, 1.0f, 1.0f,   // middle
             -0.5f, -0.75f, 0.7f, 0.7f, 0.7f,   // bottom left
-             0.5f, -0.75f, 0.7f, 0.7f, 0.7f,   // bottom right
-             0.5f,  0.75f, 0.7f, 0.7f, 0.7f,   // top right
-            -0.5f,  0.75f, 0.7f, 0.7f, 0.7f,   // top left
+            0.5f, -0.75f, 0.7f, 0.7f, 0.7f,   // bottom right
+            0.5f, 0.75f, 0.7f, 0.7f, 0.7f,   // top right
+            -0.5f, 0.75f, 0.7f, 0.7f, 0.7f,   // top left
             -0.5f, -0.75f, 0.7f, 0.7f, 0.7f,   // bottom left
-            -0.5f,  0.00f, 1.0f, 0.0f, 0.0f,   // middle line left
-             0.5f,  0.00f, 1.0f, 0.0f, 0.0f,   // middle line right
-             0.0f, -0.55f, 0.0f, 0.0f, 1.0f,   // Blue Mallets
-             0.0f,  0.55f, 1.0f, 0.0f, 0.0f    // Red  Mallets
+            -0.5f, 0.00f, 1.0f, 0.0f, 0.0f,   // middle line left
+            0.5f, 0.00f, 1.0f, 0.0f, 0.0f,   // middle line right
+            0.0f, -0.55f, 0.0f, 0.0f, 1.0f,   // Blue Mallets
+            0.0f, 0.55f, 1.0f, 0.0f, 0.0f    // Red  Mallets
         )
 
         // 顶点的数量

@@ -1,5 +1,6 @@
 package com.focus617.myopengldemo.render
 
+import android.content.Context
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
@@ -9,7 +10,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 
-class XGLRender : GLSurfaceView.Renderer {
+class XGLRender(val context: Context) : GLSurfaceView.Renderer {
 
     private val mMVPMatrix = FloatArray(16)
 
@@ -77,12 +78,12 @@ class XGLRender : GLSurfaceView.Renderer {
                 if(mCube == null) mCube = Cube()
                 mCube!!.draw(mMVPMatrix)
             }
-            Shape.AirHockey -> {
+            Shape.AirHockey, Shape.Unknown -> {
                 // 绘制正方形
-                if(mAirHockey == null) mAirHockey = AirHockey()
+                if(mAirHockey == null) mAirHockey = AirHockey(context)
                 mAirHockey!!.draw(mMVPMatrix)
             }
-            Shape.Unknown -> return
+            //Shape.Unknown -> return
         }
     }
 

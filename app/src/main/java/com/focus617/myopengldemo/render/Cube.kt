@@ -14,29 +14,29 @@ class Cube : DrawingObject() {
     // 定义顶点着色器
     // [mMVPMatrix] 模型视图投影矩阵
     private val vertexShaderCode =
-        "#version 300 es \n" +
+        ("#version 300 es \n" +
                 "layout (location = 0) in vec3 aPos;" +
                 "uniform mat4 uMVPMatrix;" +
-                "attribute vec4 a_Color;"+
-                "varying vec4 v_Color;"+
+                "in vec4 a_Color;"+
+                "out vec4 v_Color;"+
                 "void main() {" +
                 "   gl_Position = uMVPMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);" +
                 "   v_Color = a_Color" +
-                "}"
+                "}")
 
     // 定义片段着色器
     private val fragmentShaderCode =
-        "#version 300 es \n " +
+        ("#version 300 es \n " +
                 "#ifdef GL_ES\n" +
                 "precision highp float;\n" +
                 "#endif\n" +
 
                 "out vec4 FragColor; " +
-                "varying vec4 v_Color; " +
+                "in vec4 v_Color; " +
 
                 "void main() {" +
                 "  FragColor = v_Color;" +
-                "}"
+                "}")
 
     private var mProgramObject: Int = 0    // 着色器程序对象
     private var mVAOId  = IntBuffer.allocate(1)  // 顶点数组对象
