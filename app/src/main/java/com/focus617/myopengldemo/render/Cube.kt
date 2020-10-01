@@ -43,8 +43,16 @@ class Cube : DrawingObject() {
     private var mVBOIds = IntBuffer.allocate(3)  // 顶点缓存对象
 
     init {
-        mProgramObject = XGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
+        setupProgram()
+        setupVBO()
+        setupVAO()
+    }
 
+    private fun setupProgram() {
+        mProgramObject = XGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
+    }
+
+    private fun setupVBO() {
         // 创建缓存，并绑定缓存类型
         // mVBOIds[O] - used to store vertex attribute data
         // mVBOIds[l] - used to store vertex color
@@ -79,19 +87,24 @@ class Cube : DrawingObject() {
             ShortBuffer.wrap(indices),
             GL_STATIC_DRAW
         )
+    }
 
+    private fun setupVAO() {
         //Generate VAO ID
         glGenVertexArrays(1, mVAOId)
+
         // Bind the VAO and then set up the vertex attributes
         glBindVertexArray(mVAOId.get(0))
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(2))
 
         // 启用顶点数组
         glEnableVertexAttribArray(VERTEX_POS_INDEX)
         glEnableVertexAttribArray(VERTEX_COLOR_INDEX)
 
-        glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
-        // 目前只有一个顶点位置属性
+        // 顶点的位置属性
+        glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
         glVertexAttribPointer(
             VERTEX_POS_INDEX,
             VERTEX_POS_SIZE,
@@ -109,9 +122,8 @@ class Cube : DrawingObject() {
             GL_FLOAT,
             false,
             VERTEX_COLOR_STRIDE,
-            0)
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(2))
+            0
+        )
 
         // Reset to the default VAO
         glBindVertexArray(0)

@@ -5,11 +5,10 @@ precision highp float;
 precision mediump float;
 #endif
 
-//in vec4 v_Color;
-uniform vec4 u_Color;
+in vec4 v_Color;
 out vec4 FragColor;
 
 void main()                    		
 {                              	
-    FragColor = u_Color;
+    FragColor = v_Color;
 }
