@@ -19,9 +19,26 @@ class AirHockey(context: Context) : DrawingObject() {
     private var mVBOIds = IntBuffer.allocate(2)  // 顶点缓存对象
 
     init {
-
         setupProgram(context)
+        setupVBO()
+        setupVAO()
+    }
 
+    private fun setupProgram(context: Context) {
+        // 顶点着色器
+        val vertexShaderCode = TextResourceReader
+            .readTextFileFromResource(context, R.raw.simple_vertex_shader)
+        Timber.d("Load Vertex Shader Code:\n$vertexShaderCode\n")
+
+        // 片段着色器
+        val fragmentShaderCode = TextResourceReader
+            .readTextFileFromResource(context, R.raw.simple_fragment_shader)
+        Timber.d("Load Fragment Shader Code:\n$fragmentShaderCode\n")
+
+        mProgramObject = XGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
+    }
+
+    private fun setupVBO() {
         // 创建缓存，并绑定缓存类型
         // mVBOIds[O] - used to store vertex attribute data
         // mVBOIds[l] - used to store element indices
@@ -46,7 +63,9 @@ class AirHockey(context: Context) : DrawingObject() {
             ShortBuffer.wrap(indices),
             GL_STATIC_DRAW
         )
+    }
 
+    private fun setupVAO() {
         //Generate VAO ID
         glGenVertexArrays(1, mVAOId)
         // Bind the VAO and then set up the vertex attributes
@@ -72,20 +91,6 @@ class AirHockey(context: Context) : DrawingObject() {
 
         // Reset to the default VAO
         glBindVertexArray(0)
-    }
-
-    private fun setupProgram(context: Context) {
-        // 顶点着色器
-        val vertexShaderCode = TextResourceReader
-            .readTextFileFromResource(context, R.raw.simple_vertex_shader)
-        Timber.d("Load Vertex Shader Code:\n$vertexShaderCode\n")
-
-        // 片段着色器
-        val fragmentShaderCode = TextResourceReader
-            .readTextFileFromResource(context, R.raw.simple_fragment_shader)
-        Timber.d("Load Fragment Shader Code:\n$fragmentShaderCode\n")
-
-        mProgramObject = XGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
     }
 
     fun draw(mvpMatrix: FloatArray) {
@@ -171,7 +176,7 @@ class AirHockey(context: Context) : DrawingObject() {
         internal const val VERTEX_TEX_COORDO_OFFSET = 6
         internal const val VERTEX_TEX_COORD1_OFFSET = 8
 
-        internal const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE+VERTEX_COLOR_SIZE
+        internal const val VERTEX_ATTRIBUTE_SIZE= VERTEX_POS_SIZE + VERTEX_COLOR_SIZE
         // (VERTEX_POS_SIZE+ VERTEX_NORMAL_SIZE+ VERTEX_TEXCOORDO_SIZE+ VERTEX_TEXCOORD1_SIZE)
 
         // 球桌矩形的顶点

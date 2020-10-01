@@ -9,19 +9,19 @@ import kotlin.math.sin
 
 class Cube : DrawingObject() {
 
-    private val U_COLOR = "a_Color"
-
     // 定义顶点着色器
     // [mMVPMatrix] 模型视图投影矩阵
     private val vertexShaderCode =
         ("#version 300 es \n" +
                 "layout (location = 0) in vec3 aPos;" +
+                "layout (location = 1) in vec4 a_Color;" +
                 "uniform mat4 uMVPMatrix;" +
-                "in vec4 a_Color;"+
+
                 "out vec4 v_Color;"+
+
                 "void main() {" +
+                "   v_Color = a_Color;" +
                 "   gl_Position = uMVPMatrix * vec4(aPos.x, aPos.y, aPos.z, 1.0);" +
-                "   v_Color = a_Color" +
                 "}")
 
     // 定义片段着色器
@@ -31,8 +31,8 @@ class Cube : DrawingObject() {
                 "precision highp float;\n" +
                 "#endif\n" +
 
-                "out vec4 FragColor; " +
                 "in vec4 v_Color; " +
+                "out vec4 FragColor; " +
 
                 "void main() {" +
                 "  FragColor = v_Color;" +
@@ -86,7 +86,9 @@ class Cube : DrawingObject() {
         glBindVertexArray(mVAOId.get(0))
 
         // 启用顶点数组
-        glEnableVertexAttribArray(0)
+        glEnableVertexAttribArray(VERTEX_POS_INDEX)
+        glEnableVertexAttribArray(VERTEX_COLOR_INDEX)
+
         glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
         // 目前只有一个顶点位置属性
@@ -99,17 +101,14 @@ class Cube : DrawingObject() {
             VERTEX_POS_OFFSET
         )
 
-        // 查询 uniform ourColor的位置值
-        val fragmentColorLocation = glGetUniformLocation(mProgramObject, U_COLOR)
-
-        glEnableVertexAttribArray(1)
+        // 顶点的颜色属性
         glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(1))
         glVertexAttribPointer(
-            fragmentColorLocation,
-            4,
+            VERTEX_COLOR_INDEX,
+            VERTEX_COLOR_SIZE,
             GL_FLOAT,
             false,
-            0,
+            VERTEX_COLOR_STRIDE,
             0)
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(2))
@@ -142,17 +141,17 @@ class Cube : DrawingObject() {
     companion object {
         // 假定每个顶点有4个顶点属性一位置、法线和两个纹理坐标
 
-        // 顶点坐标的每个属性的Size
-        internal const val VERTEX_POS_SIZE = 3          //x,y,and z
-        internal const val VERTEX_NORMAL_SIZE = 3       //x,y,and z
-        internal const val VERTEX_TEXCOORDO_SIZE = 2    //s and t
-        internal const val VERTEX_TEXCOORD1_SIZE = 2    //s and t
-
         // 顶点坐标的每个属性的Index
         internal const val VERTEX_POS_INDEX = 0
         internal const val VERTEX_NORMAL_INDEX = 1
         internal const val VERTEX_TEXCOORDO_INDEX = 2
         internal const val VERTEX_TEXCOORD1_INDEX = 3
+
+        // 顶点坐标的每个属性的Size
+        internal const val VERTEX_POS_SIZE = 3          //x,y,and z
+        internal const val VERTEX_NORMAL_SIZE = 3       //x,y,and z
+        internal const val VERTEX_TEXCOORDO_SIZE = 2    //s and t
+        internal const val VERTEX_TEXCOORD1_SIZE = 2    //s and t
 
         // the following 4 defines are used to determine the locations
         // of various attributes if vertex data are stored as an array
@@ -168,15 +167,15 @@ class Cube : DrawingObject() {
         // 正方形的顶点
         internal var vertices = floatArrayOf(  // 按逆时针顺序
             //正面矩形
-            0.25f, 0.25f, 0.0f, //V0
-            -0.75f, 0.25f, 0.0f, //V1
+             0.25f,  0.25f, 0.0f, //V0
+            -0.75f,  0.25f, 0.0f, //V1
             -0.75f, -0.75f, 0.0f, //V2
-            0.25f, -0.75f, 0.0f, //V3
+             0.25f, -0.75f, 0.0f, //V3
 
             //背面矩形
-            0.75f, -0.25f, 0.0f, //V4
-            0.75f, 0.75f, 0.0f, //V5
-            -0.25f, 0.75f, 0.0f, //V6
+             0.75f, -0.25f, 0.0f, //V4
+             0.75f,  0.75f, 0.0f, //V5
+            -0.25f,  0.75f, 0.0f, //V6
             -0.25f, -0.25f, 0.0f  //V7
         )
 
@@ -204,7 +203,13 @@ class Cube : DrawingObject() {
         )
 
         // 立方体的顶点颜色
-        private val colors = floatArrayOf(
+        // 顶点坐标的每个属性的Size
+        internal const val VERTEX_COLOR_INDEX = 1
+        internal const val VERTEX_COLOR_SIZE = 4          // r,g,b,alpha
+        internal const val VERTEX_COLOR_OFFSET = 0
+        internal const val VERTEX_COLOR_STRIDE = VERTEX_COLOR_SIZE * Float.SIZE_BYTES
+
+        val colors = floatArrayOf(
             0.3f, 0.4f, 0.5f, 1f,  //V0
             0.3f, 0.4f, 0.5f, 1f,  //V1
             0.3f, 0.4f, 0.5f, 1f,  //V2
