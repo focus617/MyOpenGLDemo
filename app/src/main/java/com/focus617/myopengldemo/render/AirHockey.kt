@@ -61,6 +61,9 @@ class AirHockey(context: Context) : DrawingObject() {
             ShortBuffer.wrap(indices),
             GL_STATIC_DRAW
         )
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
     private fun setupVAO() {
@@ -115,7 +118,7 @@ class AirHockey(context: Context) : DrawingObject() {
         glBindVertexArray(mVAOId.get(0))
 
         // 图元装配，绘制三角形
-        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, 0)
+        glDrawElements(GL_TRIANGLES, 15, GL_UNSIGNED_SHORT, 0)
 
         // 图元装配，绘制球桌中间的分隔线
         glDrawElements(GL_LINES, 2, GL_UNSIGNED_SHORT, 12)

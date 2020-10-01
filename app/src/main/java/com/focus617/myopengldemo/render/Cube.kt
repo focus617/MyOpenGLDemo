@@ -87,6 +87,9 @@ class Cube : DrawingObject() {
             ShortBuffer.wrap(indices),
             GL_STATIC_DRAW
         )
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
     private fun setupVAO() {
