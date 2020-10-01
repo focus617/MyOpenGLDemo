@@ -145,7 +145,7 @@ class AirHockey(context: Context) : DrawingObject() {
         internal const val VERTEX_TEXCOORD1_INDEX = 3
 
         // 顶点坐标的每个属性的Size
-        internal const val VERTEX_POS_SIZE = 2          // x,y
+        internal const val VERTEX_POS_SIZE = 4          // x,y,z,w
         internal const val VERTEX_COLOR_SIZE = 3        // r,g,b
         internal const val VERTEX_NORMAL_SIZE = 3       // x,y,z
         internal const val VERTEX_TEXCOORDO_SIZE = 2    // s,t
@@ -155,7 +155,7 @@ class AirHockey(context: Context) : DrawingObject() {
         // of various attributes if vertex data are stored as an array
         //of structures
         internal const val VERTEX_POS_OFFSET = 0
-        internal const val VERTEX_COLOR_OFFSET = 2
+        internal const val VERTEX_COLOR_OFFSET = VERTEX_POS_SIZE
         internal const val VERTEX_NORMAL_OFFSET = 3
         internal const val VERTEX_TEX_COORDO_OFFSET = 6
         internal const val VERTEX_TEX_COORD1_OFFSET = 8
@@ -165,16 +165,19 @@ class AirHockey(context: Context) : DrawingObject() {
 
         // 球桌矩形的顶点
         internal var vertices = floatArrayOf(  // 按逆时针顺序
-             0.0f,  0.00f, 1.0f, 1.0f, 1.0f,   // 0 middle
-            -0.5f, -0.75f, 0.7f, 0.7f, 0.7f,   // 1 bottom left
-             0.5f, -0.75f, 0.7f, 0.7f, 0.7f,   // 2 bottom right
-             0.5f,  0.75f, 0.7f, 0.7f, 0.7f,   // 3 top right
-            -0.5f,  0.75f, 0.7f, 0.7f, 0.7f,   // 4 top left
-            -0.5f, -0.75f, 0.7f, 0.7f, 0.7f,   // 5 bottom left
-            -0.5f,  0.00f, 1.0f, 0.0f, 0.0f,   // 6 middle line left
-             0.5f,  0.00f, 1.0f, 0.0f, 0.0f,   // 7 middle line right
-             0.0f, -0.55f, 0.0f, 0.0f, 1.0f,   // 8 Blue Mallets
-             0.0f,  0.55f, 1.0f, 0.0f, 0.0f    // 9 Red  Mallets
+        // Order of coordinates: X, Y, Z, W, R, G, B
+             0.0f,  0.0f, 0.0f, 1.5f, 1.0f, 1.0f, 1.0f,   // 0 middle
+            -0.5f, -0.8f, 0.0f, 1.0f, 0.7f, 0.7f, 0.7f,   // 1 bottom left
+             0.5f, -0.8f, 0.0f, 1.0f, 0.7f, 0.7f, 0.7f,   // 2 bottom right
+             0.5f,  0.8f, 0.0f, 2.0f, 0.7f, 0.7f, 0.7f,   // 3 top right
+            -0.5f,  0.8f, 0.0f, 2.0f, 0.7f, 0.7f, 0.7f,   // 4 top left
+            -0.5f, -0.8f, 0.0f, 1.0f, 0.7f, 0.7f, 0.7f,   // 5 bottom left
+
+            -0.5f,  0.0f, 0.0f, 1.5f, 1.0f, 0.0f, 0.0f,   // 6 middle line left
+             0.5f,  0.0f, 0.0f, 1.5f, 1.0f, 0.0f, 0.0f,   // 7 middle line right
+
+             0.0f, -0.4f, 0.0f, 1.25f, 0.0f, 0.0f, 1.0f,   // 8 Blue Mallets
+             0.0f,  0.4f, 0.0f, 1.75f, 1.0f, 0.0f, 0.0f    // 9 Red  Mallets
         )
 
         // 顶点的数量
