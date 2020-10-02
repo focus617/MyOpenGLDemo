@@ -10,7 +10,9 @@ import java.nio.IntBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-
+/**
+ * 自己构造的 Model - Projection matrix
+ * */
 class XBGLRender(val context: Context) : GLSurfaceView.Renderer {
 
     private val mMVPMatrix = FloatArray(16)

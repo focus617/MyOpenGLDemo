@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.airhockey.objects
+package com.focus617.myopengldemo.objects.airhockey
 
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.data.VertexArray
@@ -8,6 +8,7 @@ class Table {
     private val vertexArray= VertexArray(VERTEX_DATA)
 
     fun bindData(textureProgram: TextureShaderProgram) {
+        // TODO: improve below implementation with VBO and VAO
         vertexArray.setVertexAttribPointer(
             0,
             textureProgram.getPositionAttributeLocation(),

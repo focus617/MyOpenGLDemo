@@ -18,8 +18,9 @@ class ColorShaderProgram(context: Context?) :
     private val uMatrixLocation: Int = glGetUniformLocation(program, U_MATRIX)
 
     // Attribute locations for the shader program.
-    private val positionAttributeLocation = glGetAttribLocation(program, A_POSITION)
-    private val colorAttributeLocation = glGetAttribLocation(program, A_COLOR)
+    fun getPositionAttributeLocation() = glGetAttribLocation(program, A_POSITION)
+
+    fun getColorAttributeLocation() = glGetAttribLocation(program, A_COLOR)
 
     fun setUniforms(matrix: FloatArray?) {
         // Pass the matrix into the shader program.

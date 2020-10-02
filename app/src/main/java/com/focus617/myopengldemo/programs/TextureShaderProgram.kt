@@ -13,12 +13,14 @@ class TextureShaderProgram(context: Context) : ShaderProgram(
     R.raw.texture_vertex_shader,
     R.raw.texture_fragment_shader
 ) {
+
     // Retrieve uniform locations for the shader program.
     private val uMatrixLocation: Int = glGetUniformLocation(program, U_MATRIX)
     private val uTextureUnitLocation: Int = glGetUniformLocation(program, U_TEXTURE_UNIT)
 
     // Retrieve attribute locations for the shader program.
     fun getPositionAttributeLocation(): Int = glGetAttribLocation(program, A_POSITION)
+
     fun getTextureCoordinatesAttributeLocation(): Int =
         glGetAttribLocation(program, A_TEXTURE_COORDINATES)
 
