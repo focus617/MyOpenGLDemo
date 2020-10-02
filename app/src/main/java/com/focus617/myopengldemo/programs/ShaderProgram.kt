@@ -1,13 +1,14 @@
 package com.focus617.myopengldemo.programs
 
 import android.content.Context
-import android.opengl.GLES31.*
+import android.opengl.GLES31.glUseProgram
 import com.focus617.myopengldemo.util.ShaderHelper
 import com.focus617.myopengldemo.util.TextResourceReader
 
 object ShaderProgramConstants {
     // Uniform constants
     const val U_MATRIX = "u_MVPMatrix"
+    const val U_COLOR = "u_Color"
     const val U_TEXTURE_UNIT = "u_TextureUnit"
 
     // Attribute constants

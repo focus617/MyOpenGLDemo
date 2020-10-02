@@ -26,7 +26,7 @@ class AirHockeyRendererEs3(override val context: Context) : XGLRenderer(context)
         super.onSurfaceCreated(glUnused,config)
 
         table = Table()
-        mallet = Mallet()
+        mallet = Mallet(0.08f, 0.15f, 32)
 
         textureProgram = TextureShaderProgram(context)
         colorProgram = ColorShaderProgram(context)
@@ -46,7 +46,7 @@ class AirHockeyRendererEs3(override val context: Context) : XGLRenderer(context)
 
         // Draw the mallets.
         colorProgram.useProgram()
-        colorProgram.setUniforms(mMVPMatrix)
+        colorProgram.setUniforms(mMVPMatrix, 1f, 0f, 0f)
         mallet.drawEs3()
     }
 }

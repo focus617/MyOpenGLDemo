@@ -3,14 +3,26 @@ package com.focus617.myopengldemo.objects.airhockey
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.data.VertexArrayEs2
 import com.focus617.myopengldemo.data.VertexArrayEs3
+import com.focus617.myopengldemo.objects.airhockey.ObjectBuilder.Companion.DrawCommand
+import com.focus617.myopengldemo.objects.airhockey.ObjectBuilder.Companion.GeneratedData
 import com.focus617.myopengldemo.programs.ColorShaderProgram
-import com.focus617.myopengldemo.render.AirHockeyV1
-import com.focus617.myopengldemo.render.Triangle
+import com.focus617.myopengldemo.util.Geometry.Point
 
-class Mallet {
 
+class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
+
+    private val generatedData: GeneratedData = ObjectBuilder.createMallet(
+        Point(0f, 0f, 0f),
+        radius,
+        height,
+        numPointsAroundMallet
+    )
+    private val vertexData = VertexArrayEs3(generatedData.vertexData)
+    private val drawList: List<DrawCommand> = generatedData.drawList
+
+    ////////////////////////////////////////////////////////////
     // TODO: clean below ES2 implementation
-    private val vertexArray: VertexArrayEs2 = VertexArrayEs2(vertices)
+    private val vertexArray: VertexArrayEs2 = VertexArrayEs2(generatedData.vertexData)
 
     fun bindDataEs2(colorProgram: ColorShaderProgram) {
         vertexArray.setVertexAttribPointer(
@@ -19,20 +31,21 @@ class Mallet {
             VERTEX_POS_COMPONENT_COUNT,
             VERTEX_STRIDE
         )
-        vertexArray.setVertexAttribPointer(
-            VERTEX_POS_COMPONENT_COUNT,
-            colorProgram.getColorAttributeLocation(),
-            VERTEX_COLOR_COMPONENT_COUNT,
-            VERTEX_STRIDE
-        )
+//        vertexArray.setVertexAttribPointer(
+//            VERTEX_POS_COMPONENT_COUNT,
+//            colorProgram.getColorAttributeLocation(),
+//            VERTEX_COLOR_COMPONENT_COUNT,
+//            VERTEX_STRIDE
+//        )
     }
 
     fun drawEs2() {
-        glDrawArrays(GL_POINTS, 0, 2)
+        for (drawCommand in drawList) {
+            drawCommand.draw()
+        }
     }
 
     ////////////////////////////////////////////////////////////
-    private val vertexData = VertexArrayEs3(vertices)
 
     fun bindDataEs3(colorProgram: ColorShaderProgram) {
 
@@ -49,18 +62,18 @@ class Mallet {
             VERTEX_POS_OFFSET
         )
         // 顶点目前有两个属性：第二个是颜色属性
-        glVertexAttribPointer(
-            VERTEX_COLOR_INDEX,
-            VERTEX_COLOR_COMPONENT_COUNT,
-            GL_FLOAT,
-            false,
-            VERTEX_STRIDE,
-            (VERTEX_COLOR_OFFSET * Float.SIZE_BYTES)
-        )
+//        glVertexAttribPointer(
+//            VERTEX_COLOR_INDEX,
+//            VERTEX_COLOR_COMPONENT_COUNT,
+//            GL_FLOAT,
+//            false,
+//            VERTEX_STRIDE,
+//            (VERTEX_COLOR_OFFSET * Float.SIZE_BYTES)
+//        )
 
         // 启用顶点数组
         glEnableVertexAttribArray(VERTEX_POS_INDEX)
-        glEnableVertexAttribArray(VERTEX_COLOR_INDEX)
+//        glEnableVertexAttribArray(VERTEX_COLOR_INDEX)
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
@@ -70,7 +83,9 @@ class Mallet {
         glBindBuffer(GL_ARRAY_BUFFER, vertexData.mVBOIds.get(0))
 
         // 图元装配，绘制木槌
-        glDrawArrays(GL_POINTS, 0, VERTEX_COUNT)
+        for (drawCommand in drawList) {
+            drawCommand.draw()
+        }
 
         // 禁用顶点数组
         glBindBuffer(GL_ARRAY_BUFFER, 0)
@@ -82,10 +97,10 @@ class Mallet {
 
         // 木槌的顶点属性
         // Order of coordinates: X, Y, R, G, B
-        private val vertices = floatArrayOf(
-            0f, -0.4f, 0f, 0f, 1f,
-            0f,  0.4f, 1f, 0f, 0f
-        )
+//        private val vertices = floatArrayOf(
+//            0f, -0.4f, 0f, 0f, 1f,
+//            0f, 0.4f, 1f, 0f, 0f
+//        )
 
         // 顶点坐标的每个属性的Index
         internal const val VERTEX_POS_INDEX = 0
@@ -95,7 +110,7 @@ class Mallet {
 //        internal const val VERTEX_TEXCOORD1_INDEX = 3
 
         // 顶点坐标的每个属性的Size
-        internal const val VERTEX_POS_COMPONENT_COUNT = 2          // x,y
+        internal const val VERTEX_POS_COMPONENT_COUNT = 3          // x,y,z
         internal const val VERTEX_COLOR_COMPONENT_COUNT = 3        // r,g,b
 //        internal const val VERTEX_NORMAL_COMPONENT_COUNT = 3     // x,y,z
 //        internal const val VERTEX_TEXCOORDO_COMPONENT_COUNT = 2  // s,t
@@ -114,7 +129,7 @@ class Mallet {
             VERTEX_POS_COMPONENT_COUNT + VERTEX_COLOR_COMPONENT_COUNT
 
         // 顶点的数量
-        internal val VERTEX_COUNT = vertices.size / VERTEX_ATTRIBUTE_SIZE
+//        internal val VERTEX_COUNT = vertices.size / VERTEX_ATTRIBUTE_SIZE
 
         // 连续的顶点属性组之间的间隔
         internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
