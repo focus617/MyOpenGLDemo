@@ -9,6 +9,7 @@ object ShaderHelper {
      * Loads and compiles a vertex shader, returning the OpenGL object ID.
      */
     fun compileVertexShader(shaderCode: String): Int {
+        Timber.d("compileVertexShader()")
         return compileShader(GL_VERTEX_SHADER, shaderCode)
     }
 
@@ -16,6 +17,7 @@ object ShaderHelper {
      * Loads and compiles a fragment shader, returning the OpenGL object ID.
      */
     fun compileFragmentShader(shaderCode: String): Int {
+        Timber.d("compileFragmentShader()")
         return compileShader(GL_FRAGMENT_SHADER, shaderCode)
     }
 
@@ -23,6 +25,9 @@ object ShaderHelper {
      * Compiles a shader, returning the OpenGL object ID.
      */
     private fun compileShader(type: Int, shaderCode: String): Int {
+
+        Timber.d("compileShader()")
+
         // Create a new shader object.
         val shaderObjectId = glCreateShader(type)
         if (shaderObjectId == 0) {
@@ -67,6 +72,9 @@ object ShaderHelper {
      * program. Returns the OpenGL program object ID, or 0 if linking failed.
      */
     fun linkProgram(vertexShaderId: Int, fragmentShaderId: Int): Int {
+
+        Timber.d("linkProgram()")
+
         // Create a new program object.
         val programObjectId = glCreateProgram()
         if (programObjectId == 0) {
@@ -133,6 +141,8 @@ object ShaderHelper {
         vertexShaderSource: String?,
         fragmentShaderSource: String?
     ): Int {
+
+        Timber.d("buildProgram()")
         val program: Int
 
         // Compile the shaders.

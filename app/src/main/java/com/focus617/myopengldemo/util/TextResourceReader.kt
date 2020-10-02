@@ -2,6 +2,7 @@ package com.focus617.myopengldemo.util
 
 import android.content.Context
 import android.content.res.Resources
+import timber.log.Timber
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -12,6 +13,8 @@ object TextResourceReader {
      * text.
      */
     fun readTextFileFromResource(context: Context, resourceId: Int): String {
+
+        Timber.d("readTextFileFromResource($resourceId)")
 
         val body = StringBuilder()
 

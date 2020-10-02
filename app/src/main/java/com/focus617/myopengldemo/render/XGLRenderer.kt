@@ -10,7 +10,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 
-class XGLRenderer(val context: Context) : GLSurfaceView.Renderer {
+open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     private val mMVPMatrix = FloatArray(16)
 

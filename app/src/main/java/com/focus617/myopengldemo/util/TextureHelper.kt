@@ -16,6 +16,9 @@ object TextureHelper {
      * @return
      */
     fun loadTexture(context: Context, resourceId: Int): Int {
+
+        Timber.d("loadTexture($resourceId)")
+
         val textureObjectIds = IntArray(1)
         glGenTextures(1, textureObjectIds, 0)
         if (textureObjectIds[0] == 0) {
