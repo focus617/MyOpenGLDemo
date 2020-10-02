@@ -37,7 +37,7 @@ class Square : DrawingObject() {
     private var mVBOIds = IntBuffer.allocate(2)  // 顶点缓存对象
 
     init {
-        mProgramObject = XBGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
+        mProgramObject = XBGLRenderer.buildProgram(vertexShaderCode, fragmentShaderCode)
 
         // 创建缓存，并绑定缓存类型
         // mVBOIds[O] - used to store vertex attribute data

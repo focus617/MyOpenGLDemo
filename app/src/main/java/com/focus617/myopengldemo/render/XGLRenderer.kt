@@ -4,14 +4,13 @@ import android.content.Context
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
-import com.focus617.myopengldemo.util.MatrixHelper
 import timber.log.Timber
 import java.nio.IntBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 
-class XGLRender(val context: Context) : GLSurfaceView.Renderer {
+class XGLRenderer(val context: Context) : GLSurfaceView.Renderer {
 
     private val mMVPMatrix = FloatArray(16)
 
@@ -23,7 +22,7 @@ class XGLRender(val context: Context) : GLSurfaceView.Renderer {
     private var mTriangle: Triangle? = null
     private var mSquare: Square? = null
     private var mCube: Cube? = null
-    private var mAirHockey: AirHockey? = null
+    private var mAirHockey: AirHockeyV1? = null
 
     // 处理旋转
     private fun setupRotation() {
@@ -80,7 +79,7 @@ class XGLRender(val context: Context) : GLSurfaceView.Renderer {
             }
             Shape.AirHockey, Shape.Unknown -> {
                 // 绘制正方形
-                if (mAirHockey == null) mAirHockey = AirHockey(context)
+                if (mAirHockey == null) mAirHockey = AirHockeyV1(context)
                 mAirHockey!!.draw(mMVPMatrix)
             }
             //Shape.Unknown -> return

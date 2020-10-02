@@ -48,7 +48,7 @@ class Cube : DrawingObject() {
     }
 
     private fun setupProgram() {
-        mProgramObject = XBGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
+        mProgramObject = XBGLRenderer.buildProgram(vertexShaderCode, fragmentShaderCode)
     }
 
     private fun setupVBO() {

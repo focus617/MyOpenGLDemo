@@ -9,7 +9,7 @@ import java.nio.FloatBuffer
 import java.nio.IntBuffer
 import java.nio.ShortBuffer
 
-class AirHockey(context: Context) : DrawingObject() {
+class AirHockeyV1(context: Context) : DrawingObject() {
 
     private var mProgramObject: Int = 0    // 着色器程序对象
     private var mVAOId = IntBuffer.allocate(1)  // 顶点数组对象
@@ -32,7 +32,7 @@ class AirHockey(context: Context) : DrawingObject() {
             .readTextFileFromResource(context, R.raw.simple_fragment_shader)
         Timber.d("Load Fragment Shader Code:\n$fragmentShaderCode\n")
 
-        mProgramObject = XBGLRender.buildProgram(vertexShaderCode, fragmentShaderCode)
+        mProgramObject = XBGLRenderer.buildProgram(vertexShaderCode, fragmentShaderCode)
     }
 
     private fun setupVBO() {

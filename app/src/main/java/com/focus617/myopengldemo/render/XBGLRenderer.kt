@@ -13,7 +13,7 @@ import javax.microedition.khronos.opengles.GL10
 /**
  * 自己构造的 Model - Projection matrix
  * */
-class XBGLRender(val context: Context) : GLSurfaceView.Renderer {
+class XBGLRenderer(val context: Context) : GLSurfaceView.Renderer {
 
     private val mMVPMatrix = FloatArray(16)
 
@@ -27,7 +27,7 @@ class XBGLRender(val context: Context) : GLSurfaceView.Renderer {
     private var mTriangle: Triangle? = null
     private var mSquare: Square? = null
     private var mCube: Cube? = null
-    private var mAirHockey: AirHockey? = null
+    private var mAirHockey: AirHockeyV1? = null
 
     // 处理旋转
     private fun setupRotation() {
@@ -91,7 +91,7 @@ class XBGLRender(val context: Context) : GLSurfaceView.Renderer {
             }
             Shape.AirHockey, Shape.Unknown -> {
                 // 绘制正方形
-                if (mAirHockey == null) mAirHockey = AirHockey(context)
+                if (mAirHockey == null) mAirHockey = AirHockeyV1(context)
                 mAirHockey!!.draw(mMVPMatrix)
             }
             //Shape.Unknown -> return

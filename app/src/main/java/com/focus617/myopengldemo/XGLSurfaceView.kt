@@ -4,7 +4,7 @@ import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import android.view.MotionEvent
-import com.focus617.myopengldemo.render.XGLRender
+import com.focus617.myopengldemo.render.XGLRenderer
 
 /**
  * Description:
@@ -13,32 +13,28 @@ import com.focus617.myopengldemo.render.XGLRender
 class XGLSurfaceView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     GLSurfaceView(context, attrs) {
 
-    private var mRenderer = XGLRender(context)
-
-    init {
-        // 创建一个OpenGL ES 3.0 的context
-        setEGLContextClientVersion(3)
-
+    private var mRenderer: XGLRenderer? = null
+    override fun setRenderer(renderer: Renderer?) {
         /*
-        * 一个给定的Android设备可能支持多个EGLConfig渲染配置。
-        * 可用的配置可能在有多少个数据通道和分配给每个数据通道的比特数上不同。
-        * 默认情况下，GLSurfaceView选择的EGLConfig有RGB_888像素格式，至少有16位深度缓冲和没有模板。
-        * 安装一个ConfigChooser，它将至少具有指定的depthSize和stencilSize的配置，并精确指定redSize、
-        * greenSize、blueSize和alphaSize(Alpha used for plane blending)。
-        * .
-        */
-        setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+      * 一个给定的Android设备可能支持多个EGLConfig渲染配置。
+      * 可用的配置可能在有多少个数据通道和分配给每个数据通道的比特数上不同。
+      * 默认情况下，GLSurfaceView选择的EGLConfig有RGB_888像素格式，至少有16位深度缓冲和没有模板。
+      * 安装一个ConfigChooser，它将至少具有指定的depthSize和stencilSize的配置，并精确指定redSize、
+      * greenSize、blueSize和alphaSize(Alpha used for plane blending)。
+      * .
+      */
+        setEGLConfigChooser(8, 8, 8, 8, 16, 0)
 
-        // 设置渲染器（Renderer）以在GLSurfaceView上绘制
-        setRenderer(mRenderer)
+        super.setRenderer(renderer)
+        mRenderer = renderer as XGLRenderer
 
         // 仅在绘图数据发生更改时才渲染视图: 在该模式下当渲染内容变化时不会主动刷新效果，需要手动调用requestRender()
         //renderMode = RENDERMODE_WHEN_DIRTY
         renderMode = RENDERMODE_CONTINUOUSLY
     }
 
-    fun setupShape(shape: XGLRender.Companion.Shape) {
-        mRenderer.setupShape(shape)
+    fun setupShape(shape: XGLRenderer.Companion.Shape) {
+        mRenderer?.setupShape(shape)
     }
 
     /*
@@ -70,10 +66,9 @@ class XGLSurfaceView @JvmOverloads constructor(context: Context, attrs: Attribut
                 if (x < width / 2) {
                     dy *= -1
                 }
-                mRenderer.setAngle(
-                    mRenderer.getAngle() -
-                            (dx + dy) * TOUCH_SCALE_FACTOR
-                )
+                mRenderer?.getAngle()?.minus((dx + dy) * TOUCH_SCALE_FACTOR)?.let {
+                    mRenderer?.setAngle(it)
+                }
                 requestRender()
             }
         }
