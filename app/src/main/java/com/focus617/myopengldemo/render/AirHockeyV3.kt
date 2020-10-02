@@ -32,6 +32,9 @@ class AirHockeyRendererEs3(override val context: Context) : XGLRenderer(context)
         colorProgram = ColorShaderProgram(context)
 
         texture = TextureHelper.loadTexture(context, R.drawable.air_hockey_surface)
+
+        table.bindDataEs3(textureProgram)
+        mallet.bindDataEs3(colorProgram)
     }
 
     override fun onDrawShape() {
@@ -39,13 +42,11 @@ class AirHockeyRendererEs3(override val context: Context) : XGLRenderer(context)
         // Draw the table.
         textureProgram.useProgram()
         textureProgram.setUniforms(mMVPMatrix, texture)
-        table.bindDataEs3(textureProgram)
         table.drawEs3()
 
         // Draw the mallets.
         colorProgram.useProgram()
         colorProgram.setUniforms(mMVPMatrix)
-        mallet.bindDataEs3(colorProgram)
         mallet.drawEs3()
     }
 }

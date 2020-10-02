@@ -36,11 +36,7 @@ class Table : DrawingObject() {
 //    private lateinit var mProgramObject: TextureShaderProgram    // 着色器程序对象
 
     fun bindDataEs3(textureProgram: TextureShaderProgram) {
-//        this.mProgramObject = textureProgram
-        setupVAO()
-    }
 
-    private fun setupVAO() {
         //Generate VAO ID
         glGenVertexArrays(1, vertexData.mVAOId)
 
