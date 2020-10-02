@@ -82,13 +82,13 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         // 恢复渲染线程，如果有必要的话重新创建OpenGL上下文，它和onPause对应
-        mGLSurfaceView.onResume()
+        if (supportsEs3) mGLSurfaceView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
         // 暂停渲染线程
-        mGLSurfaceView.onPause()
+        if (supportsEs3) mGLSurfaceView.onPause()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
