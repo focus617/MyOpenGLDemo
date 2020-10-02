@@ -1,48 +1,152 @@
 package com.focus617.myopengldemo.objects.airhockey
 
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.data.VertexArray
+import com.focus617.myopengldemo.data.VertexArrayEs2
+import com.focus617.myopengldemo.data.VertexArrayEs3
 import com.focus617.myopengldemo.programs.TextureShaderProgram
+import com.focus617.myopengldemo.render.DrawingObject
 
-class Table {
-    private val vertexArray= VertexArray(VERTEX_DATA)
+class Table : DrawingObject() {
+    // TODO: clean below ES2 implementation
+    private val vertexArray = VertexArrayEs2(vertices)
 
-    fun bindData(textureProgram: TextureShaderProgram) {
-        // TODO: improve below implementation with VBO and VAO
+    fun bindDataEs2(textureProgram: TextureShaderProgram) {
         vertexArray.setVertexAttribPointer(
             0,
             textureProgram.getPositionAttributeLocation(),
-            POSITION_COMPONENT_COUNT,
-            STRIDE
+            VERTEX_POS_COMPONENT_COUNT,
+            VERTEX_STRIDE
         )
         vertexArray.setVertexAttribPointer(
-            POSITION_COMPONENT_COUNT,
+            VERTEX_POS_COMPONENT_COUNT,
             textureProgram.getTextureCoordinatesAttributeLocation(),
-            TEXTURE_COORDINATES_COMPONENT_COUNT,
-            STRIDE
+            VERTEX_TEXCOORDO_COMPONENT_COUNT,
+            VERTEX_STRIDE
         )
     }
 
-    fun draw() {
+    fun drawEs2() {
         glDrawArrays(GL_TRIANGLE_FAN, 0, 6)
     }
 
-    companion object {
-        private const val POSITION_COMPONENT_COUNT = 2
-        private const val TEXTURE_COORDINATES_COMPONENT_COUNT = 2
 
-        private val STRIDE: Int =
-            (POSITION_COMPONENT_COUNT + TEXTURE_COORDINATES_COMPONENT_COUNT) * Float.SIZE_BYTES
+    ////////////////////////////////////////////////////////////
+    private val vertexData = VertexArrayEs3(vertices, indices)
+    private lateinit var mProgramObject: TextureShaderProgram    // 着色器程序对象
 
-        private val VERTEX_DATA = floatArrayOf(
-            // Triangle Fan
-            // Order of coordinates: X, Y, S, T
-               0f,    0f, 0.5f, 0.5f,
-            -0.5f, -0.8f,   0f, 0.9f,
-             0.5f, -0.8f,   1f, 0.9f,
-             0.5f,  0.8f,   1f, 0.1f,
-            -0.5f,  0.8f,   0f, 0.1f,
-            -0.5f, -0.8f,   0f, 0.9f
+    fun bindDataEs3(textureProgram: TextureShaderProgram) {
+        this.mProgramObject = textureProgram
+        setupVAO()
+    }
+
+    private fun setupVAO() {
+        //Generate VAO ID
+        glGenVertexArrays(1, vertexData.mVAOId)
+
+        // Bind the VAO and then set up the vertex attributes
+        glBindVertexArray(vertexData.mVAOId.get(0))
+
+        // 链接顶点属性，告诉OpenGL该如何解析顶点数据
+        // 顶点目前有两个属性：第一个是位置属性
+        glBindBuffer(GL_ARRAY_BUFFER, vertexData.mVBOIds.get(0))
+        glVertexAttribPointer(
+            VERTEX_POS_INDEX,
+            VERTEX_POS_COMPONENT_COUNT,
+            GL_FLOAT,
+            false,
+            VERTEX_STRIDE,
+            VERTEX_POS_OFFSET
         )
+        // 顶点目前有两个属性：第二个是颜色属性
+        glVertexAttribPointer(
+            VERTEX_TEXCOORDO_INDEX,
+            VERTEX_TEXCOORDO_COMPONENT_COUNT,
+            GL_FLOAT,
+            false,
+            VERTEX_STRIDE,
+            (VERTEX_TEX_COORDO_OFFSET * Float.SIZE_BYTES)
+        )
+
+        // 启用顶点数组
+        glEnableVertexAttribArray(VERTEX_POS_INDEX)
+        glEnableVertexAttribArray(VERTEX_TEXCOORDO_INDEX)
+
+        if (vertexData.withElement) {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexData.mVBOIds.get(1))
+        }
+
+        // Reset to the default VAO
+        glBindVertexArray(0)
+    }
+
+    fun drawEs3() {
+        // Bind the VAO and then draw with VAO settings
+        glBindVertexArray(vertexData.mVAOId.get(0))
+
+        // 图元装配，绘制三角形
+        glDrawElements(GL_TRIANGLES, 15, GL_UNSIGNED_SHORT, 0)
+
+        // Reset to the default VAO
+        glBindVertexArray(0)
+    }
+
+    ////////////////////////////////////////////////////////////
+    // 顶点数据集，及其属性
+    companion object {
+
+        // 假定每个顶点有4个顶点属性一位置、一个纹理坐标(以后会增加法线和两个纹理坐标)
+
+        // 球桌的顶点属性
+        // Order of coordinates: X, Y, S, T
+        private val vertices = floatArrayOf(
+            0f, 0f, 0.5f, 0.5f,         // 0 middle
+            -0.5f, -0.8f, 0.0f, 0.9f,   // 1 bottom left
+            0.5f, -0.8f, 1.0f, 0.9f,    // 2 bottom right
+            0.5f, 0.8f, 1.0f, 0.1f,     // 3 top right
+            -0.5f, 0.8f, 0.0f, 0.1f,    // 4 top left
+            -0.5f, -0.8f, 0.0f, 0.9f    // 5 bottom left
+        )
+
+        // 球桌的顶点索引
+        var indices = shortArrayOf(
+            0, 1, 2,
+            0, 2, 3,
+            0, 3, 4,
+            0, 4, 5
+        )
+
+        // 顶点坐标的每个属性的Index
+        internal const val VERTEX_POS_INDEX = 0
+        internal const val VERTEX_TEXCOORDO_INDEX = 1
+//        internal const val VERTEX_COLOR_INDEX = 1
+//        internal const val VERTEX_NORMAL_INDEX = 1
+//        internal const val VERTEX_TEXCOORDO_INDEX = 2
+//        internal const val VERTEX_TEXCOORD1_INDEX = 3
+
+        // 顶点坐标的每个属性的Size
+        internal const val VERTEX_POS_COMPONENT_COUNT = 2          // x,y
+        internal const val VERTEX_TEXCOORDO_COMPONENT_COUNT = 2    // s,t
+//        internal const val VERTEX_COLOR_COMPONENT_COUNT = 3      // r,g,b
+//        internal const val VERTEX_NORMAL_COMPONENT_COUNT = 3     // x,y,z
+//        internal const val VERTEX_TEXCOORD1_COMPONENT_COUNT = 2  // s,t
+
+        // the following 4 defines are used to determine the locations
+        // of various attributes if vertex data are stored as an array
+        //of structures
+        internal const val VERTEX_POS_OFFSET = 0
+        internal const val VERTEX_TEX_COORDO_OFFSET = VERTEX_POS_COMPONENT_COUNT
+//        internal const val VERTEX_COLOR_OFFSET = VERTEX_POS_SIZE
+//        internal const val VERTEX_NORMAL_OFFSET = 3
+//        internal const val VERTEX_TEX_COORD1_OFFSET = 8
+
+        internal const val VERTEX_ATTRIBUTE_SIZE =
+            VERTEX_POS_COMPONENT_COUNT + VERTEX_TEXCOORDO_COMPONENT_COUNT
+
+        // 顶点的数量
+        internal val VERTEX_COUNT = vertices.size / VERTEX_ATTRIBUTE_SIZE
+
+        // 连续的顶点属性组之间的间隔
+        internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
+
     }
 }

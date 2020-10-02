@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
-class VertexArray(vertexData: FloatArray) {
+class VertexArrayEs2(vertexData: FloatArray) {
 
     private val floatBuffer: FloatBuffer = ByteBuffer
         .allocateDirect(vertexData.size * Float.SIZE_BYTES)
@@ -31,5 +31,5 @@ class VertexArray(vertexData: FloatArray) {
         glEnableVertexAttribArray(attributeLocation)
         floatBuffer.position(0)
     }
-
 }
+

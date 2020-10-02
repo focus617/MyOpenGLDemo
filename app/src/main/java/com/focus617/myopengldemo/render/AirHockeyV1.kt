@@ -189,7 +189,7 @@ class AirHockeyV1(context: Context) : DrawingObject() {
         internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
 
 
-        // 球桌矩形的顶点索引
+        // 球桌的顶点索引
         var indices = shortArrayOf(
             0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5,
             6, 7, 8, 9

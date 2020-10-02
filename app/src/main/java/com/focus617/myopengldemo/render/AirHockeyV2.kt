@@ -2,7 +2,6 @@ package com.focus617.myopengldemo.render
 
 import android.content.Context
 import android.opengl.GLES31.*
-import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.objects.airhockey.Mallet
@@ -18,7 +17,7 @@ import javax.microedition.khronos.opengles.GL10
 /**
  * 拆分类之后（第7章），按照ES 2.0实现
  */
-class AirHockeyRendererV2(override val context: Context) : XGLRenderer(context) {
+class AirHockeyRendererEs2(override val context: Context) : XGLRenderer(context) {
 
     private val projectionMatrix = FloatArray(16)
     private val modelMatrix = FloatArray(16)
@@ -72,8 +71,8 @@ class AirHockeyRendererV2(override val context: Context) : XGLRenderer(context) 
         // Draw the table.
         textureProgram.useProgram()
         textureProgram.setUniforms(projectionMatrix, texture)
-        table.bindData(textureProgram)
-        table.draw()
+        table.bindDataEs2(textureProgram)
+        table.drawEs2()
 
         // Draw the mallets.
         colorProgram.useProgram()

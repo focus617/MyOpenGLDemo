@@ -1,11 +1,11 @@
 package com.focus617.myopengldemo.objects.airhockey
 
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.data.VertexArray
+import com.focus617.myopengldemo.data.VertexArrayEs2
 import com.focus617.myopengldemo.programs.ColorShaderProgram
 
 class Mallet {
-    private val vertexArray: VertexArray = VertexArray(VERTEX_DATA)
+    private val vertexArray: VertexArrayEs2 = VertexArrayEs2(VERTEX_DATA)
 
     fun bindData(colorProgram: ColorShaderProgram) {
         vertexArray.setVertexAttribPointer(

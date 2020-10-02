@@ -12,11 +12,11 @@ import javax.microedition.khronos.opengles.GL10
 
 open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
-    private val mMVPMatrix = FloatArray(16)
+    protected val mMVPMatrix = FloatArray(16)
 
-    private val mProjectionMatrix = FloatArray(16)
+    protected val mProjectionMatrix = FloatArray(16)
 
-    private val mViewMatrix = FloatArray(16)
+    protected val mViewMatrix = FloatArray(16)
 
 
     private var mTriangle: Triangle? = null
@@ -25,10 +25,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private var mAirHockey: AirHockeyV1? = null
 
     // 处理旋转
-    private fun setupRotation() {
-//        val time = SystemClock.uptimeMillis() % 4000L
-//        val angle = 0.090f * time.toInt()
-
+    protected open fun setupRotation() {
         // 进行旋转变换
         Matrix.rotateM(mViewMatrix, 0, getAngle(), 1.0f, 0f, 0f)
     }
@@ -38,14 +35,18 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
     }
 
-    override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
+    override fun onSurfaceChanged(glUnused: GL10, width: Int, height: Int) {
+
         // 设置渲染的OpenGL场景（视口）的位置和大小
         Timber.d("width = $width, height = $height")
+
+        // Set the OpenGL viewport to fill the entire surface.
         glViewport(0, 0, width, height)
 
         // 计算透视投影矩阵 (Project Matrix)，而后将应用于onDrawFrame（）方法中的对象坐标
         val aspect: Float = width.toFloat() / height.toFloat()
         Matrix.frustumM(mProjectionMatrix, 0, -aspect, aspect, -1f, 1f, 3f, 7f)
+
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -61,6 +62,10 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         // 视图转换：计算模型视图投影矩阵MVPMatrix，该矩阵可以将模型空间的坐标转换为归一化设备空间坐标
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
 
+        onDrawShape()
+    }
+
+    protected open fun onDrawShape() {
         when (shape) {
             Shape.Triangle -> {
                 // 绘制三角形
