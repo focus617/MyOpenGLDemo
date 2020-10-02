@@ -1,6 +1,7 @@
 package com.focus617.myopengldemo.render
 
 import android.opengl.GLES31.*
+import com.focus617.myopengldemo.util.ShaderHelper
 import timber.log.Timber
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
@@ -48,7 +49,7 @@ class Cube : DrawingObject() {
     }
 
     private fun setupProgram() {
-        mProgramObject = XBGLRenderer.buildProgram(vertexShaderCode, fragmentShaderCode)
+        mProgramObject = ShaderHelper.buildProgram(vertexShaderCode, fragmentShaderCode)
     }
 
     private fun setupVBO() {

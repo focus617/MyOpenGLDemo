@@ -130,64 +130,6 @@ class XBGLRenderer(val context: Context) : GLSurfaceView.Renderer {
             AirHockey
         }
 
-        // Create the program object
-        fun buildProgram(vertexShaderCode: String, fragmentShaderCode: String):Int{
-            // 顶点着色器
-            val vertexShader = loadShader(GL_VERTEX_SHADER, vertexShaderCode)
-
-            // 片元着色器
-            val fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentShaderCode)
-
-            // 把着色器链接为一个着色器程序对象
-            var mProgramObject = glCreateProgram()
-            glAttachShader(mProgramObject, vertexShader)
-            glAttachShader(mProgramObject, fragmentShader)
-            glLinkProgram(mProgramObject)
-
-            val success: IntBuffer = IntBuffer.allocate(1)
-            glGetProgramiv(mProgramObject, GL_LINK_STATUS, success)
-            if (success.get(0) == 0) {
-                Timber.e(glGetProgramInfoLog(mProgramObject))
-                glDeleteProgram(mProgramObject)
-                mProgramObject = 0
-            } else {
-                Timber.d("GLProgram $mProgramObject is ready.")
-            }
-
-            // 销毁不再需要的着色器对象
-            glDeleteShader(vertexShader)
-            glDeleteShader(fragmentShader)
-            // 释放着色器编译器使用的资源
-            glReleaseShaderCompiler()
-
-            return mProgramObject
-        }
-
-        /**
-         * 创建着色器：Create a shader object, load the shader source, and compile the shader
-         * @Parameter [type]顶点着色器类型（GLES31.GL_VERTEX_SHADER）或片段着色器类型（GLES31.GL_FRAGMENT_SHADER）
-         */
-        private fun loadShader(type: Int, shaderCode: String): Int {
-
-            // 创建一个着色器对象
-            var shader = glCreateShader(type)
-            if (shader == 0) return 0
-
-            // 将源代码加载到着色器并进行编译
-            glShaderSource(shader, shaderCode)
-            glCompileShader(shader)
-
-            // 检查编译状态
-            val success: IntBuffer = IntBuffer.allocate(1)
-            glGetShaderiv(shader, GL_COMPILE_STATUS, success)
-            if (success.get(0) == 0) {
-                Timber.e(glGetShaderInfoLog(shader))
-                glDeleteShader(shader)
-                shader = 0
-            }
-
-            return shader
-        }
     }
 
 }

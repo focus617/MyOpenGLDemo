@@ -8,7 +8,7 @@ object ShaderHelper {
     /**
      * Loads and compiles a vertex shader, returning the OpenGL object ID.
      */
-    fun compileVertexShader(shaderCode: String): Int {
+    private fun compileVertexShader(shaderCode: String): Int {
         Timber.d("compileVertexShader()")
         return compileShader(GL_VERTEX_SHADER, shaderCode)
     }
@@ -16,7 +16,7 @@ object ShaderHelper {
     /**
      * Loads and compiles a fragment shader, returning the OpenGL object ID.
      */
-    fun compileFragmentShader(shaderCode: String): Int {
+    private fun compileFragmentShader(shaderCode: String): Int {
         Timber.d("compileFragmentShader()")
         return compileShader(GL_FRAGMENT_SHADER, shaderCode)
     }
@@ -43,10 +43,7 @@ object ShaderHelper {
 
         // Get the compilation status.
         val compileStatus = IntArray(1)
-        glGetShaderiv(
-            shaderObjectId, GL_COMPILE_STATUS,
-            compileStatus, 0
-        )
+        glGetShaderiv(shaderObjectId, GL_COMPILE_STATUS, compileStatus, 0)
 
         // Print the shader info log to the Android log output.
         Timber.v(
@@ -71,7 +68,7 @@ object ShaderHelper {
      * Links a vertex shader and a fragment shader together into an OpenGL
      * program. Returns the OpenGL program object ID, or 0 if linking failed.
      */
-    fun linkProgram(vertexShaderId: Int, fragmentShaderId: Int): Int {
+    private fun linkProgram(vertexShaderId: Int, fragmentShaderId: Int): Int {
 
         Timber.d("linkProgram()")
 
@@ -93,10 +90,8 @@ object ShaderHelper {
 
         // Get the link status.
         val linkStatus = IntArray(1)
-        glGetProgramiv(
-            programObjectId, GL_LINK_STATUS,
-            linkStatus, 0
-        )
+        glGetProgramiv(programObjectId, GL_LINK_STATUS, linkStatus, 0)
+
         // Print the program info log to the Android log output.
         Timber.v(
             ("Results of linking program:\n"
@@ -119,7 +114,7 @@ object ShaderHelper {
      * Validates an OpenGL program. Should only be called when developing the
      * application.
      */
-    fun validateProgram(programObjectId: Int): Boolean {
+    private fun validateProgram(programObjectId: Int): Boolean {
         glValidateProgram(programObjectId)
         val validateStatus = IntArray(1)
         glGetProgramiv(
@@ -138,20 +133,28 @@ object ShaderHelper {
      * program, returning the program ID.
      */
     fun buildProgram(
-        vertexShaderSource: String?,
-        fragmentShaderSource: String?
+        vertexShaderSource: String,
+        fragmentShaderSource: String
     ): Int {
 
         Timber.d("buildProgram()")
+
         val program: Int
 
         // Compile the shaders.
-        val vertexShader = compileVertexShader(vertexShaderSource!!)
-        val fragmentShader = compileFragmentShader(fragmentShaderSource!!)
+        val vertexShader = compileVertexShader(vertexShaderSource)
+        val fragmentShader = compileFragmentShader(fragmentShaderSource)
 
         // Link them into a shader program.
         program = linkProgram(vertexShader, fragmentShader)
         validateProgram(program)
+
+        // 销毁不再需要的着色器对象
+        glDeleteShader(vertexShader)
+        glDeleteShader(fragmentShader)
+
+        // 释放着色器编译器使用的资源
+        glReleaseShaderCompiler()
 
         return program
     }

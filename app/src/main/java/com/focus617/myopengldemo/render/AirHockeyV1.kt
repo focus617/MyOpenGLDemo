@@ -3,6 +3,7 @@ package com.focus617.myopengldemo.render
 import android.content.Context
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
+import com.focus617.myopengldemo.util.ShaderHelper
 import com.focus617.myopengldemo.util.TextResourceReader
 import timber.log.Timber
 import java.nio.FloatBuffer
@@ -35,7 +36,7 @@ class AirHockeyV1(context: Context) : DrawingObject() {
             .readTextFileFromResource(context, R.raw.simple_fragment_shader)
         Timber.d("Load Fragment Shader Code:\n$fragmentShaderCode\n")
 
-        mProgramObject = XBGLRenderer.buildProgram(vertexShaderCode, fragmentShaderCode)
+        mProgramObject = ShaderHelper.buildProgram(vertexShaderCode, fragmentShaderCode)
     }
 
     private fun setupVBO() {
