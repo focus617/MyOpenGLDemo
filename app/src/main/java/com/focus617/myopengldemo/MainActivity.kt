@@ -7,8 +7,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.focus617.myopengldemo.render.AirHockeyRenderer
-import com.focus617.myopengldemo.render.XGLRenderer
+import com.focus617.myopengldemo.render.AirHockeyRendererV2
+import com.focus617.myopengldemo.render.AirHockeyRendererV3
 import com.focus617.myopengldemo.render.XGLRenderer.Companion.Shape
 
 class MainActivity : AppCompatActivity() {
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
             // 设置渲染器（Renderer）以在GLSurfaceView上绘制
             //mGLSurfaceView.setRenderer(XGLRenderer(this))
-            mGLSurfaceView.setRenderer(AirHockeyRenderer(this))
+            mGLSurfaceView.setRenderer(AirHockeyRendererV3(this))
         }
         setContentView(mGLSurfaceView)
     }

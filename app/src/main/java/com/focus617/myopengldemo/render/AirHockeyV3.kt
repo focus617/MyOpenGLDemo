@@ -16,12 +16,13 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 /**
- * 拆分类之后（第7章），按照ES 2.0实现
+ * 拆分类之后（第7章），准备按照ES 3.0 VBO, VAO和 Element改进的实现
  */
-class AirHockeyRendererV2(override val context: Context) : XGLRenderer(context) {
+class AirHockeyRendererV3(override val context: Context) : XGLRenderer(context) {
 
-    private val projectionMatrix = FloatArray(16)
-    private val modelMatrix = FloatArray(16)
+    private val mMVPMatrix = FloatArray(16)
+    private val mProjectionMatrix = FloatArray(16)
+    private val mViewMatrix = FloatArray(16)
 
     private lateinit var table: Table
     private lateinit var mallet: Mallet
@@ -29,6 +30,12 @@ class AirHockeyRendererV2(override val context: Context) : XGLRenderer(context) 
     private lateinit var textureProgram: TextureShaderProgram
     private lateinit var colorProgram: ColorShaderProgram
     private var texture = 0
+
+    // 处理旋转
+    private fun setupRotation() {
+        // 进行旋转变换
+        Matrix.rotateM(mViewMatrix, 0, getAngle(), 1.0f, 0f, 0f)
+    }
 
     override fun onSurfaceCreated(glUnused: GL10, config: EGLConfig) {
         // 设置重绘背景框架颜色
@@ -53,31 +60,32 @@ class AirHockeyRendererV2(override val context: Context) : XGLRenderer(context) 
 
         // 计算透视投影矩阵 (Project Matrix)，而后将应用于onDrawFrame（）方法中的对象坐标
         val aspect: Float = width.toFloat() / height.toFloat()
-        MatrixHelper.perspectiveM(projectionMatrix, 45f, aspect,1f, 10f)
+        Matrix.frustumM(mProjectionMatrix, 0, -aspect, aspect, -1f, 1f, 3f, 7f)
 
-        Matrix.setIdentityM(modelMatrix, 0)
-
-        Matrix.translateM(modelMatrix, 0, 0f, 0f, -2.8f)
-        Matrix.rotateM(modelMatrix, 0, -60f, 1f, 0f, 0f)
-
-        val temp = FloatArray(16)
-        Matrix.multiplyMM(temp, 0, projectionMatrix, 0, modelMatrix, 0)
-        System.arraycopy(temp, 0, projectionMatrix, 0, temp.size)
     }
 
     override fun onDrawFrame(glUnused: GL10) {
         // Clear the rendering surface.
         glClear(GL_COLOR_BUFFER_BIT)
 
+        // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
+        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3.5f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
+
+        // 处理旋转
+        setupRotation()
+
+        // 视图转换：计算模型视图投影矩阵MVPMatrix，该矩阵可以将模型空间的坐标转换为归一化设备空间坐标
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
+
         // Draw the table.
         textureProgram.useProgram()
-        textureProgram.setUniforms(projectionMatrix, texture)
+        textureProgram.setUniforms(mMVPMatrix, texture)
         table.bindData(textureProgram)
         table.draw()
 
         // Draw the mallets.
         colorProgram.useProgram()
-        colorProgram.setUniforms(projectionMatrix)
+        colorProgram.setUniforms(mMVPMatrix)
         mallet.bindData(colorProgram)
         mallet.draw()
     }

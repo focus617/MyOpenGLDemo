@@ -35,7 +35,7 @@ class Mallet {
         private val VERTEX_DATA = floatArrayOf(
             // Order of coordinates: X, Y, R, G, B
             0f, -0.4f, 0f, 0f, 1f,
-            0f, 0.4f, 1f, 0f, 0f
+            0f,  0.4f, 1f, 0f, 0f
         )
     }
 

@@ -9,6 +9,9 @@ import java.nio.FloatBuffer
 import java.nio.IntBuffer
 import java.nio.ShortBuffer
 
+/**
+ * 没有拆分类之前（第6章），按照ES 3.0 VBO, VAO和 Element改进的实现
+ */
 class AirHockeyV1(context: Context) : DrawingObject() {
 
     private var mProgramObject: Int = 0    // 着色器程序对象
