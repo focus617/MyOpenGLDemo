@@ -18,7 +18,7 @@ class VertexArrayEs3(vertexData: FloatArray, indexData: ShortArray?=null) {
         // mVBOIds[l] - used to store element indices
         // allocate only on the first draw
         GLES31.glGenBuffers(2, mVBOIds)
-        Timber.d("Create VBO, ID: $mVBOIds")
+        Timber.d("init(): Create VBO, ID: $mVBOIds")
 
         setupVertices(vertexData)
         if(indexData!=null){
@@ -28,6 +28,8 @@ class VertexArrayEs3(vertexData: FloatArray, indexData: ShortArray?=null) {
     }
 
     private fun setupVertices(vertices: FloatArray) {
+
+        Timber.d("setupVertices()")
 
         GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, mVBOIds.get(0))
         // 把定义的顶点数据复制到缓存中
@@ -41,6 +43,9 @@ class VertexArrayEs3(vertexData: FloatArray, indexData: ShortArray?=null) {
     }
 
     private fun setupElements(indices: ShortArray) {
+
+        Timber.d("setupElements()")
+
         // bind buffer object for element indices
         GLES31.glBindBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(1))
         GLES31.glBufferData(

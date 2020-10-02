@@ -77,7 +77,7 @@ class AirHockeyRendererEs2(override val context: Context) : XGLRenderer(context)
         // Draw the mallets.
         colorProgram.useProgram()
         colorProgram.setUniforms(projectionMatrix)
-        mallet.bindData(colorProgram)
-        mallet.draw()
+        mallet.bindDataEs2(colorProgram)
+        mallet.drawEs2()
     }
 }

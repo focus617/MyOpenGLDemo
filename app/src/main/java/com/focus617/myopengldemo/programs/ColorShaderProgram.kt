@@ -7,9 +7,8 @@ import com.focus617.myopengldemo.programs.ShaderProgramConstants.A_COLOR
 import com.focus617.myopengldemo.programs.ShaderProgramConstants.A_POSITION
 import com.focus617.myopengldemo.programs.ShaderProgramConstants.U_MATRIX
 
-class ColorShaderProgram(context: Context?) :
-    ShaderProgram(
-        context!!,
+class ColorShaderProgram(context: Context) : ShaderProgram(
+        context,
         R.raw.simple_vertex_shader,
         R.raw.simple_fragment_shader
     ) {
@@ -22,7 +21,7 @@ class ColorShaderProgram(context: Context?) :
 
     fun getColorAttributeLocation() = glGetAttribLocation(program, A_COLOR)
 
-    fun setUniforms(matrix: FloatArray?) {
+    fun setUniforms(matrix: FloatArray) {
         // Pass the matrix into the shader program.
         glUniformMatrix4fv(uMatrixLocation, 1, false, matrix, 0)
     }

@@ -7,6 +7,7 @@ import com.focus617.myopengldemo.programs.TextureShaderProgram
 import com.focus617.myopengldemo.render.DrawingObject
 
 class Table : DrawingObject() {
+
     // TODO: clean below ES2 implementation
     private val vertexArray = VertexArrayEs2(vertices)
 
@@ -32,10 +33,10 @@ class Table : DrawingObject() {
 
     ////////////////////////////////////////////////////////////
     private val vertexData = VertexArrayEs3(vertices, indices)
-    private lateinit var mProgramObject: TextureShaderProgram    // 着色器程序对象
+//    private lateinit var mProgramObject: TextureShaderProgram    // 着色器程序对象
 
     fun bindDataEs3(textureProgram: TextureShaderProgram) {
-        this.mProgramObject = textureProgram
+//        this.mProgramObject = textureProgram
         setupVAO()
     }
 
@@ -57,7 +58,7 @@ class Table : DrawingObject() {
             VERTEX_STRIDE,
             VERTEX_POS_OFFSET
         )
-        // 顶点目前有两个属性：第二个是颜色属性
+        // 顶点目前有两个属性：第二个是纹理坐标
         glVertexAttribPointer(
             VERTEX_TEXCOORDO_INDEX,
             VERTEX_TEXCOORDO_COMPONENT_COUNT,
