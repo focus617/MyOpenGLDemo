@@ -5,19 +5,18 @@ import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import timber.log.Timber
-import java.nio.IntBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 
 open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
-    protected val mMVPMatrix = FloatArray(16)
-
+    protected val mModelMatrix = FloatArray(16)
+    protected val mViewMatrix = FloatArray(16)
     protected val mProjectionMatrix = FloatArray(16)
 
-    protected val mViewMatrix = FloatArray(16)
-
+    protected val mViewProjectionMatrix = FloatArray(16)
+    protected val mMVPMatrix = FloatArray(16)
 
     private var mTriangle: Triangle? = null
     private var mSquare: Square? = null
@@ -47,25 +46,38 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         val aspect: Float = width.toFloat() / height.toFloat()
         Matrix.frustumM(mProjectionMatrix, 0, -aspect, aspect, -1f, 1f, 3f, 7f)
 
+        // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
+        Matrix.setLookAtM(mViewMatrix, 0, 0f, 2.0f, 3.0f,
+            0f, 0f, 0f, 0f, 1.0f, 0.0f)
+
     }
 
     override fun onDrawFrame(unused: GL10) {
         // 首先清理屏幕，重绘背景颜色
         glClear(GL_COLOR_BUFFER_BIT)
 
-        // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, 0f, 0f, -3.5f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
-
         // 处理旋转
         setupRotation()
 
-        // 视图转换：计算模型视图投影矩阵MVPMatrix，该矩阵可以将模型空间的坐标转换为归一化设备空间坐标
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
+        // 视图转换：Multiply the view and projection matrices together
+        Matrix.multiplyMM(mViewProjectionMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
+
+        // 放置物体
+        positionObjectInScene(0f,0f,0f)
 
         onDrawShape()
     }
 
-    protected open fun onDrawShape() {
+    fun positionObjectInScene(x: Float, y: Float, z: Float) {
+        Matrix.setIdentityM(mModelMatrix, 0)
+
+        Matrix.translateM(mModelMatrix, 0, x, y, z)
+
+        // 视图转换：计算模型视图投影矩阵MVPMatrix，该矩阵可以将模型空间的坐标转换为归一化设备空间坐标
+        Matrix.multiplyMM(mMVPMatrix, 0, mViewProjectionMatrix, 0, mModelMatrix, 0)
+    }
+
+    private fun onDrawShape() {
         when (shape) {
             Shape.Triangle -> {
                 // 绘制三角形
