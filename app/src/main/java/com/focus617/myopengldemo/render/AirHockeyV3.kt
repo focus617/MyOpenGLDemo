@@ -50,7 +50,7 @@ open class AirHockeyRendererEs3(override val context: Context) : XGLRenderer(con
             0f, 0f, 0f, 0f, 1.0f, 0.0f)
 
         // 进行旋转变换
-        //Matrix.rotateM(mViewMatrix, 0, getAngle(), 1.0f, 0f, 0f)
+        Matrix.rotateM(mViewMatrix, 0, getAngle(), 0f, 1.0f, 0f)
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -58,7 +58,7 @@ open class AirHockeyRendererEs3(override val context: Context) : XGLRenderer(con
         glClear(GL_COLOR_BUFFER_BIT)
 
         setupRotation()
-        
+
         // 视图转换：Multiply the view and projection matrices together
         Matrix.multiplyMM(mViewProjectionMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
 
