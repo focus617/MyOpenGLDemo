@@ -17,7 +17,7 @@ import javax.microedition.khronos.opengles.GL10
 /**
  * 拆分类之后（第7章），按照ES 3.0 VBO, VAO和 Element改进的实现
  */
-class AirHockeyRendererEs3(override val context: Context) : XGLRenderer(context) {
+open class AirHockeyRendererEs3(override val context: Context) : XGLRenderer(context) {
 
     private lateinit var table: Table
     private lateinit var mallet: Mallet
@@ -40,14 +40,25 @@ class AirHockeyRendererEs3(override val context: Context) : XGLRenderer(context)
 
         texture = TextureHelper.loadTexture(context, R.drawable.air_hockey_surface)
 
-        table.bindDataEs3(textureProgram)
-        mallet.bindDataEs3(colorProgram)
+    }
+
+    // 处理旋转
+    override fun setupRotation() {
+
+        // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
+        Matrix.setLookAtM(mViewMatrix, 0, 0f, 2.5f, 3.0f,
+            0f, 0f, 0f, 0f, 1.0f, 0.0f)
+
+        // 进行旋转变换
+        //Matrix.rotateM(mViewMatrix, 0, getAngle(), 1.0f, 0f, 0f)
     }
 
     override fun onDrawFrame(unused: GL10) {
         // 首先清理屏幕，重绘背景颜色
         glClear(GL_COLOR_BUFFER_BIT)
 
+        setupRotation()
+        
         // 视图转换：Multiply the view and projection matrices together
         Matrix.multiplyMM(mViewProjectionMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
 
@@ -55,15 +66,17 @@ class AirHockeyRendererEs3(override val context: Context) : XGLRenderer(context)
         positionTableInScene()
         textureProgram.useProgram()
         textureProgram.setUniforms(mMVPMatrix, texture)
+        table.bindDataEs3(textureProgram)
         table.drawEs3()
 
         // Draw the mallets.
-        positionObjectInScene(0f, mallet.height / 2f, -0.4f)
+        positionObjectInScene(0f, mallet.height / 2f, -0.5f)
         colorProgram.useProgram()
         colorProgram.setUniforms(mMVPMatrix, 1f, 0f, 0f)
+        mallet.bindDataEs3(colorProgram)
         mallet.drawEs3()
 
-        positionObjectInScene(0f, mallet.height / 2f, 0.4f)
+        positionObjectInScene(0f, mallet.height / 2f, 0.5f)
         colorProgram.setUniforms(mMVPMatrix, 0f, 0f, 1f)
         // Note that we don't have to define the object data twice -- we just
         // draw the same mallet again but in a different position and with a
@@ -76,8 +89,8 @@ class AirHockeyRendererEs3(override val context: Context) : XGLRenderer(context)
         // Draw the puck.
         positionObjectInScene(0f, puck.height / 2f, 0f)
         colorProgram.setUniforms(mMVPMatrix, 0.8f, 0.8f, 1f)
-        puck.bindData(colorProgram)
-        puck.draw()
+        puck.bindDataEs3(colorProgram)
+        puck.drawEs3()
     }
 
     private fun positionTableInScene() {

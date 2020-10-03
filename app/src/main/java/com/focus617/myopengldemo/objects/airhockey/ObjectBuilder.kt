@@ -1,9 +1,7 @@
 package com.focus617.myopengldemo.objects.airhockey
 
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.util.Geometry.Point
-import com.focus617.myopengldemo.util.Geometry.Circle
-import com.focus617.myopengldemo.util.Geometry.Cylinder
+import com.focus617.myopengldemo.util.Geometry.*
 
 class ObjectBuilder private constructor(sizeInVertices: Int) {
 
@@ -89,7 +87,10 @@ class ObjectBuilder private constructor(sizeInVertices: Int) {
         /**
          * 生成一个冰球
          */
-        fun createPuck(puck: Cylinder, numPoints: Int): GeneratedData {
+        fun createPuck(
+            puck: Cylinder,
+            numPoints: Int
+        ): GeneratedData {
 
             val size =
                 (sizeOfCircleInVertices(numPoints) + sizeOfOpenCylinderInVertices(numPoints))

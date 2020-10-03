@@ -44,8 +44,9 @@ class Table : DrawingObject() {
         glBindVertexArray(vertexData.mVAOId.get(0))
 
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
-        // 顶点目前有两个属性：第一个是位置属性
         glBindBuffer(GL_ARRAY_BUFFER, vertexData.mVBOIds.get(0))
+
+        // 顶点目前有两个属性：第一个是位置属性
         glVertexAttribPointer(
             VERTEX_POS_INDEX,
             VERTEX_POS_COMPONENT_COUNT,
@@ -54,7 +55,7 @@ class Table : DrawingObject() {
             VERTEX_STRIDE,
             VERTEX_POS_OFFSET
         )
-        // 顶点目前有两个属性：第二个是纹理坐标
+        // 顶点的第二个属性是纹理坐标
         glVertexAttribPointer(
             VERTEX_TEXCOORDO_INDEX,
             VERTEX_TEXCOORDO_COMPONENT_COUNT,

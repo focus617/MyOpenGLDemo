@@ -8,7 +8,9 @@ import com.focus617.myopengldemo.objects.airhockey.ObjectBuilder.Companion.Gener
 import com.focus617.myopengldemo.programs.ColorShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Point
 
-
+/**
+ * 木槌
+ */
 class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
 
     private val generatedData: GeneratedData = ObjectBuilder.createMallet(
@@ -31,12 +33,6 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
             VERTEX_POS_COMPONENT_COUNT,
             VERTEX_STRIDE
         )
-//        vertexArray.setVertexAttribPointer(
-//            VERTEX_POS_COMPONENT_COUNT,
-//            colorProgram.getColorAttributeLocation(),
-//            VERTEX_COLOR_COMPONENT_COUNT,
-//            VERTEX_STRIDE
-//        )
     }
 
     fun drawEs2() {
@@ -52,7 +48,7 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
         glBindBuffer(GL_ARRAY_BUFFER, vertexData.mVBOIds.get(0))
 
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
-        // 顶点目前有两个属性：第一个是位置属性
+        // 顶点目前有一个属性：位置坐标 (x,y,z)
         glVertexAttribPointer(
             VERTEX_POS_INDEX,
             VERTEX_POS_COMPONENT_COUNT,
@@ -61,19 +57,9 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
             VERTEX_STRIDE,
             VERTEX_POS_OFFSET
         )
-        // 顶点目前有两个属性：第二个是颜色属性
-//        glVertexAttribPointer(
-//            VERTEX_COLOR_INDEX,
-//            VERTEX_COLOR_COMPONENT_COUNT,
-//            GL_FLOAT,
-//            false,
-//            VERTEX_STRIDE,
-//            (VERTEX_COLOR_OFFSET * Float.SIZE_BYTES)
-//        )
 
         // 启用顶点数组
         glEnableVertexAttribArray(VERTEX_POS_INDEX)
-//        glEnableVertexAttribArray(VERTEX_COLOR_INDEX)
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
@@ -104,29 +90,28 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
 
         // 顶点坐标的每个属性的Index
         internal const val VERTEX_POS_INDEX = 0
-        internal const val VERTEX_COLOR_INDEX = 1
+//        internal const val VERTEX_COLOR_INDEX = 1
 //        internal const val VERTEX_NORMAL_INDEX = 1
 //        internal const val VERTEX_TEXCOORDO_INDEX = 2
 //        internal const val VERTEX_TEXCOORD1_INDEX = 3
 
         // 顶点坐标的每个属性的Size
         internal const val VERTEX_POS_COMPONENT_COUNT = 3          // x,y,z
-        internal const val VERTEX_COLOR_COMPONENT_COUNT = 3        // r,g,b
+//        internal const val VERTEX_COLOR_COMPONENT_COUNT = 3      // r,g,b
 //        internal const val VERTEX_NORMAL_COMPONENT_COUNT = 3     // x,y,z
 //        internal const val VERTEX_TEXCOORDO_COMPONENT_COUNT = 2  // s,t
 //        internal const val VERTEX_TEXCOORD1_COMPONENT_COUNT = 2  // s,t
 
         // the following 4 defines are used to determine the locations
         // of various attributes if vertex data are stored as an array
-        //of structures
+        // of structures
         internal const val VERTEX_POS_OFFSET = 0
-        internal const val VERTEX_COLOR_OFFSET = VERTEX_POS_COMPONENT_COUNT
+//        internal const val VERTEX_COLOR_OFFSET = VERTEX_POS_COMPONENT_COUNT
 //        internal const val VERTEX_NORMAL_OFFSET = 3
 //        internal const val VERTEX_TEX_COORDO_OFFSET = VERTEX_POS_COMPONENT_COUNT
 //        internal const val VERTEX_TEX_COORD1_OFFSET = 8
 
-        internal const val VERTEX_ATTRIBUTE_SIZE =
-            VERTEX_POS_COMPONENT_COUNT + VERTEX_COLOR_COMPONENT_COUNT
+        internal const val VERTEX_ATTRIBUTE_SIZE =  VERTEX_POS_COMPONENT_COUNT
 
         // 顶点的数量
 //        internal val VERTEX_COUNT = vertices.size / VERTEX_ATTRIBUTE_SIZE

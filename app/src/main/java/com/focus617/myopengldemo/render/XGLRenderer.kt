@@ -25,6 +25,11 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     // 处理旋转
     protected open fun setupRotation() {
+
+        // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
+        Matrix.setLookAtM(mViewMatrix, 0, 0f, 2.5f, 3.0f,
+            0f, 0f, 0f, 0f, 1.0f, 0.0f)
+
         // 进行旋转变换
         Matrix.rotateM(mViewMatrix, 0, getAngle(), 1.0f, 0f, 0f)
     }
@@ -45,10 +50,6 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         // 计算透视投影矩阵 (Project Matrix)，而后将应用于onDrawFrame（）方法中的对象坐标
         val aspect: Float = width.toFloat() / height.toFloat()
         Matrix.frustumM(mProjectionMatrix, 0, -aspect, aspect, -1f, 1f, 3f, 7f)
-
-        // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, 0f, 2.0f, 3.0f,
-            0f, 0f, 0f, 0f, 1.0f, 0.0f)
 
     }
 
