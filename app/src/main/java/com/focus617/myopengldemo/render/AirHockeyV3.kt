@@ -42,6 +42,15 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
 
     private var texture = 0
 
+    /*
+     * 通过触摸事件获取要求视图矩阵旋转的角度
+     */
+    private val TOUCH_SCALE_FACTOR = 180.0f / 360
+
+    // 记录上个事件时的坐标
+    private var mPreviousX = 0f
+    private var mPreviousY = 0f
+
     private var malletPressed = false
     private lateinit var blueMalletPosition: Point
     private lateinit var previousBlueMalletPosition: Point
@@ -92,19 +101,18 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
             0f, 0f, 0f, 0f, 1.0f, 0.0f
         )
 
-        //setupRotation()
-
-        // 视图转换：Multiply the view and projection matrices together
-        Matrix.multiplyMM(mViewProjectionMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
-        // Create an inverted matrix for touch picking.
-        Matrix.invertM(invertedViewProjectionMatrix, 0, mViewProjectionMatrix, 0)
-
     }
 
 
     override fun onDrawFrame(unused: GL10) {
         // 首先清理屏幕，重绘背景颜色
         glClear(GL_COLOR_BUFFER_BIT)
+
+        // 视图转换：Multiply the view and projection matrices together
+        Matrix.multiplyMM(mViewProjectionMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
+        // Create an inverted matrix for touch picking.
+        Matrix.invertM(invertedViewProjectionMatrix, 0, mViewProjectionMatrix, 0)
+
 
         // Draw the table.
         positionTableInScene()
@@ -253,6 +261,27 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
                     previousBlueMalletPosition, blueMalletPosition
                 )
             }
+        } else {
+            // MotionEvent报告触摸屏和其他输入控件的输入详细信息。
+            // 在这种情况下，这里只对触摸位置发生变化的事件感兴趣。
+            var dx = normalizedX - mPreviousX
+            var dy = normalizedY - mPreviousY
+
+            // reverse direction of rotation above the mid-line
+            if (normalizedY < 0) {
+                dx *= -1
+            }
+
+            // reverse direction of rotation to left of the mid-line
+            if (normalizedX < 0) {
+                dy *= -1
+            }
+            setAngle(getAngle()-((dx + dy) * TOUCH_SCALE_FACTOR))
+
+            setupRotation()
+
+            mPreviousX = normalizedX
+            mPreviousY = normalizedY
         }
     }
 
@@ -322,12 +351,6 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
     // 处理旋转
     private fun setupRotation() {
 
-        // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
-        Matrix.setLookAtM(
-            mViewMatrix, 0, 0f, 2.5f, 3.0f,
-            0f, 0f, 0f, 0f, 1.0f, 0.0f
-        )
-
         // 进行旋转变换
         Matrix.rotateM(mViewMatrix, 0, getAngle(), 0f, 1.0f, 0f)
     }
@@ -336,6 +359,7 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
     fun setupShape(shape: Shape) {
         this.shape = shape
     }
+
     companion object {
         enum class Shape {
             Unknown,
