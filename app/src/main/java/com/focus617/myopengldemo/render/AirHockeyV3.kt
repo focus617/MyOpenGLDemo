@@ -10,10 +10,13 @@ import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.objects.airhockey.Mallet
 import com.focus617.myopengldemo.objects.airhockey.Puck
 import com.focus617.myopengldemo.objects.airhockey.Table
-import com.focus617.myopengldemo.programs.ColorShaderProgram
-import com.focus617.myopengldemo.programs.TextureShaderProgram
+import com.focus617.myopengldemo.programs.airhockey.ColorShaderProgram
+import com.focus617.myopengldemo.programs.airhockey.TextureShaderProgram
 import com.focus617.myopengldemo.util.Geometry
-import com.focus617.myopengldemo.util.Geometry.*
+import com.focus617.myopengldemo.util.Geometry.Point
+import com.focus617.myopengldemo.util.Geometry.Ray
+import com.focus617.myopengldemo.util.Geometry.Sphere
+import com.focus617.myopengldemo.util.Geometry.Plane
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.util.TextureHelper
 import timber.log.Timber
@@ -25,13 +28,13 @@ import javax.microedition.khronos.opengles.GL10
  */
 class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
 
-    protected val mModelMatrix = FloatArray(16)
-    protected val mViewMatrix = FloatArray(16)
-    protected val mProjectionMatrix = FloatArray(16)
+    private val mModelMatrix = FloatArray(16)
+    private val mViewMatrix = FloatArray(16)
+    private val mProjectionMatrix = FloatArray(16)
 
-    protected val mViewProjectionMatrix = FloatArray(16)
-    protected val invertedViewProjectionMatrix = FloatArray(16)
-    protected val mMVPMatrix = FloatArray(16)
+    private val mViewProjectionMatrix = FloatArray(16)
+    private val invertedViewProjectionMatrix = FloatArray(16)
+    private val mMVPMatrix = FloatArray(16)
 
     private lateinit var table: Table
     private lateinit var mallet: Mallet
@@ -113,7 +116,6 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
         // Create an inverted matrix for touch picking.
         Matrix.invertM(invertedViewProjectionMatrix, 0, mViewProjectionMatrix, 0)
 
-
         // Draw the table.
         positionTableInScene()
         textureProgram.useProgram()
@@ -142,6 +144,17 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
         // different color.
         mallet.drawEs3()
 
+        calculateObjectPosition()
+
+        // Draw the puck.
+        positionObjectInScene(puckPosition.x, puckPosition.y, puckPosition.z)
+        colorProgram.setUniforms(mMVPMatrix, 0.8f, 0.8f, 1f)
+        puck.bindDataEs3(colorProgram)
+        puck.drawEs3()
+
+    }
+
+    private fun calculateObjectPosition() {
         // Translate the puck by its vector
         puckPosition = puckPosition.translate(puckVector)
 
@@ -168,12 +181,6 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
 
         // Friction factor
         puckVector = puckVector.scale(0.99f)
-
-        // Draw the puck.
-        positionObjectInScene(puckPosition.x, puckPosition.y, puckPosition.z)
-        colorProgram.setUniforms(mMVPMatrix, 0.8f, 0.8f, 1f)
-        puck.bindDataEs3(colorProgram)
-        puck.drawEs3()
     }
 
     private fun positionObjectInScene(x: Float, y: Float, z: Float) {
@@ -286,7 +293,7 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun clamp(value: Float, min: Float, max: Float): Float {
-        return Math.min(max, Math.max(value, min))
+        return kotlin.math.min(max, kotlin.math.max(value, min))
     }
 
     private fun convertNormalized2DPointToRay(
@@ -340,11 +347,11 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
     @Volatile
     var mAngle = 0f
 
-    fun getAngle(): Float {
+    private fun getAngle(): Float {
         return mAngle
     }
 
-    fun setAngle(angle: Float) {
+    private fun setAngle(angle: Float) {
         mAngle = angle
     }
 

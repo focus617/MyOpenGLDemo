@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
-class VertexArrayEs2(vertexData: FloatArray) {
+class VertexArrayES2(vertexData: FloatArray) {
 
     private val floatBuffer: FloatBuffer = ByteBuffer
         .allocateDirect(vertexData.size * Float.SIZE_BYTES)
@@ -29,6 +29,16 @@ class VertexArrayEs2(vertexData: FloatArray) {
             floatBuffer
         )
         glEnableVertexAttribArray(attributeLocation)
+        floatBuffer.position(0)
+    }
+
+    /**
+     * Updates the float buffer with the specified vertex data, assuming that
+     * the vertex data and the float buffer are the same size.
+     */
+    fun updateBuffer(vertexData: FloatArray, start: Int, count: Int) {
+        floatBuffer.position(start)
+        floatBuffer.put(vertexData, start, count)
         floatBuffer.position(0)
     }
 }

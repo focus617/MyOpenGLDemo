@@ -147,7 +147,8 @@ object ShaderHelper {
 
         // Link them into a shader program.
         program = linkProgram(vertexShader, fragmentShader)
-        validateProgram(program)
+        if(validateProgram(program))
+            Timber.d("buildProgram(): Program=$program")
 
         // 销毁不再需要的着色器对象
         glDeleteShader(vertexShader)

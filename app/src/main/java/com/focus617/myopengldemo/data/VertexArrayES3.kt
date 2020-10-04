@@ -6,7 +6,7 @@ import java.nio.FloatBuffer
 import java.nio.IntBuffer
 import java.nio.ShortBuffer
 
-class VertexArrayEs3(vertexData: FloatArray, indexData: ShortArray?=null) {
+class VertexArrayES3(vertexData: FloatArray, indexData: ShortArray?=null) {
 
     var mVAOId: IntBuffer = IntBuffer.allocate(1)   // 顶点数组对象
     var mVBOIds: IntBuffer = IntBuffer.allocate(2)  // 顶点缓存对象

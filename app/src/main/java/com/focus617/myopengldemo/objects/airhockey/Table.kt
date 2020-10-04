@@ -1,15 +1,15 @@
 package com.focus617.myopengldemo.objects.airhockey
 
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.data.VertexArrayEs2
-import com.focus617.myopengldemo.data.VertexArrayEs3
-import com.focus617.myopengldemo.programs.TextureShaderProgram
+import com.focus617.myopengldemo.data.VertexArrayES2
+import com.focus617.myopengldemo.data.VertexArrayES3
+import com.focus617.myopengldemo.programs.airhockey.TextureShaderProgram
 import com.focus617.myopengldemo.render.DrawingObject
 
 class Table : DrawingObject() {
 
     // TODO: clean below ES2 implementation
-    private val vertexArray = VertexArrayEs2(vertices)
+    private val vertexArray = VertexArrayES2(vertices)
 
     fun bindDataEs2(textureProgram: TextureShaderProgram) {
         vertexArray.setVertexAttribPointer(
@@ -32,7 +32,7 @@ class Table : DrawingObject() {
 
 
     ////////////////////////////////////////////////////////////
-    private val vertexData = VertexArrayEs3(vertices, indices)
+    private val vertexData = VertexArrayES3(vertices, indices)
 //    private lateinit var mProgramObject: TextureShaderProgram    // 着色器程序对象
 
     fun bindDataEs3(textureProgram: TextureShaderProgram) {

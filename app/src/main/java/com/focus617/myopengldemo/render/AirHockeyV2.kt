@@ -6,8 +6,8 @@ import android.opengl.Matrix
 import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.objects.airhockey.Mallet
 import com.focus617.myopengldemo.objects.airhockey.Table
-import com.focus617.myopengldemo.programs.ColorShaderProgram
-import com.focus617.myopengldemo.programs.TextureShaderProgram
+import com.focus617.myopengldemo.programs.airhockey.ColorShaderProgram
+import com.focus617.myopengldemo.programs.airhockey.TextureShaderProgram
 import com.focus617.myopengldemo.util.MatrixHelper
 import com.focus617.myopengldemo.util.TextureHelper
 import timber.log.Timber

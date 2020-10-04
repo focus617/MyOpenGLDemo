@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.focus617.myopengldemo.render.AirHockeyRendererEs3
+import com.focus617.myopengldemo.render.ParticlesRenderer
 
 class MainActivity : AppCompatActivity() {
 
@@ -67,7 +68,6 @@ class MainActivity : AppCompatActivity() {
         return supportsEs3
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -80,15 +80,22 @@ class MainActivity : AppCompatActivity() {
         // Request an OpenGL ES 3.0 compatible context.
         mGLSurfaceView.setEGLContextClientVersion(3)
 
-        setAirHockeyAsRenderer()
+        //setAirHockeyAsRenderer()
+        setParticlesAsRenderer()
 
         setContentView(mGLSurfaceView)
+    }
+
+    private fun setParticlesAsRenderer(){
+        // 设置渲染器（Renderer）以在GLSurfaceView上绘制
+        val mRenderer = ParticlesRenderer(this)
+        mGLSurfaceView.setRenderer(mRenderer)
+        hasSetRenderer = true
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setAirHockeyAsRenderer() {
         // 设置渲染器（Renderer）以在GLSurfaceView上绘制
-        //mGLSurfaceView.setRenderer(XGLRenderer(this))
         val airHockeyRenderer = AirHockeyRendererEs3(this)
         mGLSurfaceView.setRenderer(airHockeyRenderer)
         hasSetRenderer = true
@@ -173,7 +180,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         enum class Renderer {
-            Unknown,
             Triangle,
             Square,
             Cube,
