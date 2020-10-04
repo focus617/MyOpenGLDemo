@@ -1,14 +1,16 @@
 package com.focus617.myopengldemo
 
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.focus617.myopengldemo.render.AirHockeyRendererEs3
-import com.focus617.myopengldemo.render.XGLRenderer.Companion.Shape
+import com.focus617.myopengldemo.render.AirHockeyRendererEs3.Companion.Shape
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     // Check if the system supports OpenGL ES 3.0.
     private var supportsEs3 = false
-    private fun isES3Supported(){
+    private fun isES3Supported(): Boolean {
 
         val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
         val configurationInfo = activityManager.deviceConfigurationInfo
@@ -42,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                 || Build.MODEL.contains("Emulator")
                 || Build.MODEL.contains("Android SDK built for x86"))))
 
-        if(!supportsEs3) {
+        if (!supportsEs3) {
             /*
                  * This is where you could create an OpenGL ES 1.x compatible
                  * renderer if you wanted to support both ES 1 and ES 2/3. Since
@@ -61,24 +63,56 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG
             ).show()
         }
+        return supportsEs3
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+
         // 创建一个GLSurfaceView实例,并将其设置为此Activity的ContentView。
         mGLSurfaceView = XGLSurfaceView(this)
 
-        isES3Supported()
-        if (supportsEs3) {
-            // Request an OpenGL ES 3.0 compatible context.
-            mGLSurfaceView.setEGLContextClientVersion(3)
+        if (!isES3Supported()) return
 
-            // 设置渲染器（Renderer）以在GLSurfaceView上绘制
-            //mGLSurfaceView.setRenderer(XGLRenderer(this))
-            mGLSurfaceView.setRenderer(AirHockeyRendererEs3(this))
+        // Request an OpenGL ES 3.0 compatible context.
+        mGLSurfaceView.setEGLContextClientVersion(3)
+
+        // 设置渲染器（Renderer）以在GLSurfaceView上绘制
+        //mGLSurfaceView.setRenderer(XGLRenderer(this))
+        val airHockeyRenderer = AirHockeyRendererEs3(this)
+        mGLSurfaceView.setRenderer(airHockeyRenderer)
+
+        mGLSurfaceView.setOnTouchListener { v, event ->
+            if (event != null) {
+                // Convert touch coordinates into normalized device
+                // coordinates, keeping in mind that Android's Y
+                // coordinates are inverted.
+                val normalizedX =  (event.x / v.width.toFloat()) * 2 - 1
+                val normalizedY = -((event.y / v.height.toFloat()) * 2 - 1)
+
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        mGLSurfaceView.queueEvent {
+                            airHockeyRenderer.handleTouchPress(normalizedX, normalizedY)
+                        }
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        mGLSurfaceView.queueEvent {
+                            airHockeyRenderer.handleTouchDrag(normalizedX, normalizedY)
+                        }
+                    }
+                }
+                true
+            } else {
+                false
+            }
         }
+
         setContentView(mGLSurfaceView)
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -94,13 +128,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu items for use in the action bar
-        val inflater = menuInflater;
-        inflater.inflate(R.menu.main_activity_actions, menu);
+        val inflater = menuInflater
+        inflater.inflate(R.menu.main_activity_actions, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
+        return when (item.itemId) {
             R.id.action_triangle -> {
                 Toast.makeText(this, "Triangle", Toast.LENGTH_SHORT).show()
                 mGLSurfaceView.setupShape(Shape.Triangle)

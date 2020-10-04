@@ -65,6 +65,7 @@ class Geometry {
             )
         }
 
+        // 相交测试
         fun intersects(sphere: Sphere, ray: Ray): Boolean {
             return Geometry.distanceBetween(sphere.center, ray) < sphere.radius
         }
@@ -73,8 +74,8 @@ class Geometry {
         // Note that this formula treats Ray as if it extended infinitely past
         // either point.
         fun distanceBetween(point: Point, ray: Ray): Float {
-            val p1ToPoint: Vector = Geometry.vectorBetween(ray.point, point)
-            val p2ToPoint: Vector = Geometry.vectorBetween(ray.point.translate(ray.vector), point)
+            val p1ToPoint: Vector = vectorBetween(ray.point, point)
+            val p2ToPoint: Vector = vectorBetween(ray.point.translate(ray.vector), point)
 
             // The length of the cross product gives the area of an imaginary
             // parallelogram having the two vectors as sides. A parallelogram can be
@@ -94,9 +95,11 @@ class Geometry {
         // This also treats rays as if they were infinite. It will return a
         // point full of NaNs if there is no intersection point.
         fun intersectionPoint(ray: Ray, plane: Geometry.Plane): Point {
-            val rayToPlaneVector: Vector = Geometry.vectorBetween(ray.point, plane.point)
+            val rayToPlaneVector: Vector = vectorBetween(ray.point, plane.point)
+
             val scaleFactor = (rayToPlaneVector.dotProduct(plane.normal)
                     / ray.vector.dotProduct(plane.normal))
+
             return ray.point.translate(ray.vector.scale(scaleFactor))
         }
 
