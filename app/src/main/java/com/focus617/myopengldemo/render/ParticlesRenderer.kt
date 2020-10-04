@@ -39,8 +39,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
 
         // Enable additive blending
-//        glEnable(GL_BLEND)
-//        glBlendFunc(GL_ONE, GL_ONE)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_ONE, GL_ONE)
 
         particleProgram = ParticleShaderProgram(context)
         particleSystem = ParticleSystem(10000)
