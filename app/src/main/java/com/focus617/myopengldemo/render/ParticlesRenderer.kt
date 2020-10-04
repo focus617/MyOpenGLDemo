@@ -6,6 +6,7 @@ import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import com.focus617.myopengldemo.R
+import com.focus617.myopengldemo.objects.particles.ParticleFireworksExplosion
 import com.focus617.myopengldemo.objects.particles.ParticleShooter
 import com.focus617.myopengldemo.objects.particles.ParticleSystem
 import com.focus617.myopengldemo.programs.particles.ParticleShaderProgram
@@ -16,6 +17,7 @@ import com.focus617.myopengldemo.util.TextureHelper
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.properties.Delegates
+import kotlin.random.Random
 
 class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
@@ -25,15 +27,18 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
     private val viewProjectionMatrix = FloatArray(16)
     private val mMVPMatrix = FloatArray(16)
-    /*
+
     // Maximum saturation and value.
-    private final float[] hsv = {0f, 1f, 1f};*/
+    private val hsv = floatArrayOf(0f, 1f, 1f)
 
     private lateinit var particleProgram: ParticleShaderProgram
     private lateinit var particleSystem: ParticleSystem
     private lateinit var redParticleShooter: ParticleShooter
     private lateinit var greenParticleShooter: ParticleShooter
     private lateinit var blueParticleShooter: ParticleShooter
+    private lateinit var particleFireworksExplosion: ParticleFireworksExplosion
+
+    private var random = Random
 
     private var globalStartTime by Delegates.notNull<Long>()
 
@@ -79,11 +84,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
             speedVariance
         )
 
-        /*
-        particleFireworksExplosion = new ParticleFireworksExplosion();
+        particleFireworksExplosion = ParticleFireworksExplosion()
 
-        random = new Random();
-        */
         texture = TextureHelper.loadTexture(context, R.drawable.particle_texture)
     }
 
@@ -136,8 +138,23 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         greenParticleShooter.addParticles(particleSystem, currentTime, 5)
         blueParticleShooter.addParticles(particleSystem, currentTime, 5)
 
-        particleProgram.useProgram()
 
+        if (random.nextFloat() < 0.02f) {
+            hsv[0] = random.nextInt(360).toFloat()
+
+            particleFireworksExplosion.addExplosion(
+                particleSystem,
+                Point(
+                    -1f + random.nextFloat() * 2f,
+                    3f + random.nextFloat() / 2f,
+                    -1f + random.nextFloat() * 2f
+                ),
+                Color.HSVToColor(hsv),
+                globalStartTime
+            )
+        }
+
+        particleProgram.useProgram()
         particleProgram.setUniforms(viewProjectionMatrix, currentTime, texture)
         particleSystem.bindDataES2(particleProgram)
         particleSystem.drawES2()
