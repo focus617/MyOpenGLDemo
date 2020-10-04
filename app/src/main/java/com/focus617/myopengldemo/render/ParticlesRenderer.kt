@@ -48,25 +48,31 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
         val particleDirection = Vector(0f, 0.5f, 0f)
 
-//        val angleVarianceInDegrees = 5f
-//        val speedVariance = 1f
+        val angleVarianceInDegrees = 5f
+        val speedVariance = 1f
 
         redParticleShooter = ParticleShooter(
             Point(-1f, 0f, 0f),
             particleDirection,
-            Color.rgb(255, 50, 5)
+            Color.rgb(255, 50, 5),
+            angleVarianceInDegrees,
+            speedVariance
         )
 
         greenParticleShooter = ParticleShooter(
             Point(0f, 0f, 0f),
             particleDirection,
-            Color.rgb(25, 255, 25)
+            Color.rgb(25, 255, 25),
+            angleVarianceInDegrees,
+            speedVariance
         )
 
         blueParticleShooter = ParticleShooter(
             Point(1f, 0f, 0f),
             particleDirection,
-            Color.rgb(5, 50, 255)
+            Color.rgb(5, 50, 255),
+            angleVarianceInDegrees,
+            speedVariance
         )
     }
 
@@ -124,15 +130,6 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         particleProgram.setUniforms(viewProjectionMatrix, currentTime)
         particleSystem.bindDataES2(particleProgram)
         particleSystem.drawES2()
-    }
-
-    private fun positionObjectInScene(x: Float, y: Float, z: Float) {
-        Matrix.setIdentityM(mModelMatrix, 0)
-
-        Matrix.translateM(mModelMatrix, 0, x, y, z)
-
-        // 视图转换：计算模型视图投影矩阵MVPMatrix，该矩阵可以将模型空间的坐标转换为归一化设备空间坐标
-        Matrix.multiplyMM(mMVPMatrix, 0, viewProjectionMatrix, 0, mModelMatrix, 0)
     }
 
 }

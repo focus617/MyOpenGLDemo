@@ -1,6 +1,7 @@
 package com.focus617.myopengldemo.objects.particles
 
 import java.util.*
+import android.opengl.Matrix
 import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 
@@ -11,8 +12,8 @@ class ParticleShooter(
     private val position: Point,
     private val direction: Vector,
     private val color: Int,
-//    private val angleVarianceInDegrees: Float,
-//    private val speedVariance: Float
+    private val angleVarianceInDegrees: Float,
+    private val speedVariance: Float
 ) {
     private val random = Random()
     private val rotationMatrix = FloatArray(16)
@@ -31,7 +32,7 @@ class ParticleShooter(
         count: Int
     ) {
         for (i in 0 until count) {
-/*            Matrix.setRotateEulerM(
+            Matrix.setRotateEulerM(
                 rotationMatrix, 0,
                 (random.nextFloat() - 0.5f) * angleVarianceInDegrees,
                 (random.nextFloat() - 0.5f) * angleVarianceInDegrees,
@@ -47,10 +48,10 @@ class ParticleShooter(
                 resultVector[0] * speedAdjustment,
                 resultVector[1] * speedAdjustment,
                 resultVector[2] * speedAdjustment
-            )*/
+            )
 
-            particleSystem.addParticle(position, color, direction, currentTime);
-            //particleSystem.addParticle(position, color, thisDirection, currentTime)
+            //particleSystem.addParticle(position, color, direction, currentTime);
+            particleSystem.addParticle(position, color, thisDirection, currentTime)
         }
     }
 
