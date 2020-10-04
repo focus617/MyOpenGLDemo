@@ -5,12 +5,14 @@ import android.graphics.Color
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.objects.particles.ParticleShooter
 import com.focus617.myopengldemo.objects.particles.ParticleSystem
 import com.focus617.myopengldemo.programs.particles.ParticleShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.MatrixHelper
+import com.focus617.myopengldemo.util.TextureHelper
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.properties.Delegates
@@ -34,6 +36,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     private lateinit var blueParticleShooter: ParticleShooter
 
     private var globalStartTime by Delegates.notNull<Long>()
+
+    private var texture = 0
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
@@ -74,6 +78,13 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
             angleVarianceInDegrees,
             speedVariance
         )
+
+        /*
+        particleFireworksExplosion = new ParticleFireworksExplosion();
+
+        random = new Random();
+        */
+        texture = TextureHelper.loadTexture(context, R.drawable.particle_texture)
     }
 
 //    override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -127,7 +138,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
         particleProgram.useProgram()
 
-        particleProgram.setUniforms(viewProjectionMatrix, currentTime)
+        particleProgram.setUniforms(viewProjectionMatrix, currentTime, texture)
         particleSystem.bindDataES2(particleProgram)
         particleSystem.drawES2()
     }
