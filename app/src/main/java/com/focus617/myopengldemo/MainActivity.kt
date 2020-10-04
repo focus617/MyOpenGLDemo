@@ -10,7 +10,6 @@ import android.view.MotionEvent
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.focus617.myopengldemo.render.AirHockeyRendererEs3
-import com.focus617.myopengldemo.render.AirHockeyRendererEs3.Companion.Shape
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +17,8 @@ class MainActivity : AppCompatActivity() {
      * Hold a reference to our GLSurfaceViewr
      */
     private lateinit var mGLSurfaceView: XGLSurfaceView
+
+    private var hasSetRenderer: Boolean = false
 
     // Check if the system supports OpenGL ES 3.0.
     private var supportsEs3 = false
@@ -79,17 +80,25 @@ class MainActivity : AppCompatActivity() {
         // Request an OpenGL ES 3.0 compatible context.
         mGLSurfaceView.setEGLContextClientVersion(3)
 
+        setAirHockeyAsRenderer()
+
+        setContentView(mGLSurfaceView)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setAirHockeyAsRenderer() {
         // 设置渲染器（Renderer）以在GLSurfaceView上绘制
         //mGLSurfaceView.setRenderer(XGLRenderer(this))
         val airHockeyRenderer = AirHockeyRendererEs3(this)
         mGLSurfaceView.setRenderer(airHockeyRenderer)
+        hasSetRenderer = true
 
         mGLSurfaceView.setOnTouchListener { v, event ->
             if (event != null) {
                 // Convert touch coordinates into normalized device
                 // coordinates, keeping in mind that Android's Y
                 // coordinates are inverted.
-                val normalizedX =  (event.x / v.width.toFloat()) * 2 - 1
+                val normalizedX = (event.x / v.width.toFloat()) * 2 - 1
                 val normalizedY = -((event.y / v.height.toFloat()) * 2 - 1)
 
                 when (event.action) {
@@ -109,21 +118,19 @@ class MainActivity : AppCompatActivity() {
                 false
             }
         }
-
-        setContentView(mGLSurfaceView)
     }
 
 
     override fun onResume() {
         super.onResume()
         // 恢复渲染线程，如果有必要的话重新创建OpenGL上下文，它和onPause对应
-        if (supportsEs3) mGLSurfaceView.onResume()
+        if (hasSetRenderer) mGLSurfaceView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
         // 暂停渲染线程
-        if (supportsEs3) mGLSurfaceView.onPause()
+        if (hasSetRenderer) mGLSurfaceView.onPause()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -137,25 +144,40 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_triangle -> {
                 Toast.makeText(this, "Triangle", Toast.LENGTH_SHORT).show()
-                mGLSurfaceView.setupShape(Shape.Triangle)
+                setupRenderer(Renderer.Triangle)
                 true
             }
             R.id.action_square -> {
                 Toast.makeText(this, "Square", Toast.LENGTH_SHORT).show()
-                mGLSurfaceView.setupShape(Shape.Square)
+                setupRenderer(Renderer.Square)
                 true
             }
             R.id.action_cube -> {
                 Toast.makeText(this, "Cube", Toast.LENGTH_SHORT).show()
-                mGLSurfaceView.setupShape(Shape.Cube)
+                setupRenderer(Renderer.Cube)
                 true
             }
             R.id.action_air_hockey -> {
                 Toast.makeText(this, "AirHockey", Toast.LENGTH_SHORT).show()
-                mGLSurfaceView.setupShape(Shape.AirHockey)
+                setupRenderer(Renderer.AirHockey)
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private var renderer: Renderer = Renderer.AirHockey
+    private fun setupRenderer(renderer: Renderer) {
+        this.renderer = renderer
+    }
+
+    companion object {
+        enum class Renderer {
+            Unknown,
+            Triangle,
+            Square,
+            Cube,
+            AirHockey
         }
     }
 }

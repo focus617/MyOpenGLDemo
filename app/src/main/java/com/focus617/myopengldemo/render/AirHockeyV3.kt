@@ -355,19 +355,5 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
         Matrix.rotateM(mViewMatrix, 0, getAngle(), 0f, 1.0f, 0f)
     }
 
-    private var shape: Shape = Shape.Unknown
-    fun setupShape(shape: Shape) {
-        this.shape = shape
-    }
-
-    companion object {
-        enum class Shape {
-            Unknown,
-            Triangle,
-            Square,
-            Cube,
-            AirHockey
-        }
-    }
 
 }
