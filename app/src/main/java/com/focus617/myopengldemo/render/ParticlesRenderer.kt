@@ -148,8 +148,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
     private fun drawSkyBox() {
         Matrix.setIdentityM(mViewMatrix, 0)
-//        Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
-//        Matrix.rotateM(mViewMatrix, 0, -xRotation, 0f, 1f, 0f)
+        Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
+        Matrix.rotateM(mViewMatrix, 0, -xRotation, 0f, 1f, 0f)
         Matrix.multiplyMM(
             viewProjectionMatrix, 0,
             mProjectionMatrix, 0,
@@ -170,23 +170,25 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         blueParticleShooter.addParticles(particleSystem, currentTime, 2)
 
 
-//        if (random.nextFloat() < 0.02f) {
-//            hsv[0] = random.nextInt(360).toFloat()
-//
-//            particleFireworksExplosion.addExplosion(
-//                particleSystem,
-//                Point(
-//                    -1f + random.nextFloat() * 2f,
-//                    2.6f + random.nextFloat() / 2f,
-//                    -1f + random.nextFloat() * 2f
-//                ),
-//                Color.HSVToColor(hsv),
-//                globalStartTime
-//            )
-//        }
+        if (random.nextFloat() < 0.02f) {
+            hsv[0] = random.nextInt(360).toFloat()
+
+            particleFireworksExplosion.addExplosion(
+                particleSystem,
+                Point(
+                    -1f + random.nextFloat() * 2f,
+                    2.6f + random.nextFloat() / 2f,
+                    -1f + random.nextFloat() * 2f
+                ),
+                Color.HSVToColor(hsv),
+                globalStartTime
+            )
+        }
 
         Matrix.setIdentityM(mViewMatrix, 0)
-        Matrix.translateM(mViewMatrix, 0, 0f, -1.5f, -5f)
+        Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
+        Matrix.rotateM(mViewMatrix, 0, -xRotation, 0f, 1f, 0f)
+        Matrix.translateM(mViewMatrix, 0, 0f, -1.5f, -3f)
         Matrix.multiplyMM(
             viewProjectionMatrix, 0,
             mProjectionMatrix, 0,
@@ -208,6 +210,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     fun handleTouchDrag(deltaX: Float, deltaY: Float) {
         xRotation += deltaX / 16f
         yRotation += deltaY / 16f
+
         if (yRotation < -90) {
             yRotation = -90f
         } else if (yRotation > 90) {

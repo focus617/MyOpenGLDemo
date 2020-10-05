@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
+import android.view.View
+import android.view.View.OnTouchListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.focus617.myopengldemo.render.AirHockeyRendererEs3
@@ -86,45 +88,85 @@ class MainActivity : AppCompatActivity() {
         setContentView(mGLSurfaceView)
     }
 
-    private fun setParticlesAsRenderer(){
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setParticlesAsRenderer() {
         // 设置渲染器（Renderer）以在GLSurfaceView上绘制
         val mRenderer = ParticlesRenderer(this)
         mGLSurfaceView.setRenderer(mRenderer)
         hasSetRenderer = true
+
+        mGLSurfaceView.setOnTouchListener(object : OnTouchListener {
+            var previousX = 0f
+            var previousY = 0f
+
+            override fun onTouch(v: View, event: MotionEvent): Boolean {
+                return if (event != null) {
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            previousX = event.x
+                            previousY = event.y
+                        }
+                        MotionEvent.ACTION_MOVE -> {
+                            val deltaX = event.x - previousX
+                            val deltaY = event.y - previousY
+                            previousX = event.x
+                            previousY = event.y
+                            mGLSurfaceView.queueEvent(Runnable {
+                                mRenderer.handleTouchDrag(deltaX, deltaY)
+                            })
+                        }
+                    }
+                    true
+                } else {
+                    false
+                }
+            }
+        })
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setAirHockeyAsRenderer() {
         // 设置渲染器（Renderer）以在GLSurfaceView上绘制
-        val airHockeyRenderer = AirHockeyRendererEs3(this)
-        mGLSurfaceView.setRenderer(airHockeyRenderer)
+        val mRenderer = AirHockeyRendererEs3(this)
+        mGLSurfaceView.setRenderer(mRenderer)
         hasSetRenderer = true
 
-        mGLSurfaceView.setOnTouchListener { v, event ->
-            if (event != null) {
-                // Convert touch coordinates into normalized device
-                // coordinates, keeping in mind that Android's Y
-                // coordinates are inverted.
-                val normalizedX = (event.x / v.width.toFloat()) * 2 - 1
-                val normalizedY = -((event.y / v.height.toFloat()) * 2 - 1)
+        mGLSurfaceView.setOnTouchListener(object : OnTouchListener {
+            var previousX = 0f
+            var previousY = 0f
 
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        mGLSurfaceView.queueEvent {
-                            airHockeyRenderer.handleTouchPress(normalizedX, normalizedY)
+            override fun onTouch(v: View, event: MotionEvent): Boolean {
+                return if (event != null) {
+                    // Convert touch coordinates into normalized device
+                    // coordinates, keeping in mind that Android's Y
+                    // coordinates are inverted.
+                    val normalizedX = (event.x / v.width.toFloat()) * 2 - 1
+                    val normalizedY = -((event.y / v.height.toFloat()) * 2 - 1)
+
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            previousX = event.x
+                            previousY = event.y
+                            mGLSurfaceView.queueEvent {
+                                mRenderer.handleTouchPress(normalizedX, normalizedY)
+                            }
+                        }
+                        MotionEvent.ACTION_MOVE -> {
+                            val deltaX = event.x - previousX
+                            val deltaY = event.y - previousY
+                            previousX = event.x
+                            previousY = event.y
+                            mGLSurfaceView.queueEvent {
+                                mRenderer.handleTouchDrag(normalizedX, normalizedY)
+                            }
                         }
                     }
-                    MotionEvent.ACTION_MOVE -> {
-                        mGLSurfaceView.queueEvent {
-                            airHockeyRenderer.handleTouchDrag(normalizedX, normalizedY)
-                        }
-                    }
+                    true
+                } else {
+                    false
                 }
-                true
-            } else {
-                false
             }
-        }
+        })
     }
 
 
@@ -173,7 +215,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private var renderer: Renderer = Renderer.AirHockey
+    private
+    var renderer: Renderer = Renderer.AirHockey
     private fun setupRenderer(renderer: Renderer) {
         this.renderer = renderer
     }
