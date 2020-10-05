@@ -6,10 +6,12 @@ import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import com.focus617.myopengldemo.R
+import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.particles.ParticleFireworksExplosion
 import com.focus617.myopengldemo.objects.particles.ParticleShooter
 import com.focus617.myopengldemo.objects.particles.ParticleSystem
 import com.focus617.myopengldemo.objects.particles.Skybox
+import com.focus617.myopengldemo.programs.other.ShapeShaderProgram
 import com.focus617.myopengldemo.programs.particles.ParticleShaderProgram
 import com.focus617.myopengldemo.programs.particles.SkyboxShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
@@ -27,7 +29,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     private val mViewMatrix = FloatArray(16)
     private val mProjectionMatrix = FloatArray(16)
 
-    private val viewProjectionMatrix = FloatArray(16)
+    private val mViewProjectionMatrix = FloatArray(16)
     private val mMVPMatrix = FloatArray(16)
 
     // Maximum saturation and value.
@@ -40,8 +42,11 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     private lateinit var blueParticleShooter: ParticleShooter
     private lateinit var particleFireworksExplosion: ParticleFireworksExplosion
 
-    private lateinit var skyboxProgram: SkyboxShaderProgram
-    private lateinit var skybox: Skybox
+    private lateinit var cubeProgram: ShapeShaderProgram
+    private lateinit var cube: Cube
+
+    private lateinit var skyBoxProgram: SkyboxShaderProgram
+    private lateinit var skyBox: Skybox
 
     private var random = Random
     private var globalStartTime by Delegates.notNull<Long>()
@@ -55,8 +60,11 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
 
-        skyboxProgram = SkyboxShaderProgram(context)
-        skybox = Skybox()
+        skyBoxProgram = SkyboxShaderProgram(context)
+        skyBox = Skybox()
+
+        cubeProgram = ShapeShaderProgram(context)
+        cube = Cube()
 
         particleProgram = ParticleShaderProgram(context)
         particleSystem = ParticleSystem(10000)
@@ -144,6 +152,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         glClear(GL_COLOR_BUFFER_BIT)
         drawSkyBox()
         drawParticles()
+        drawCube()
     }
 
     private fun drawSkyBox() {
@@ -151,15 +160,42 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
         Matrix.rotateM(mViewMatrix, 0, -xRotation, 0f, 1f, 0f)
         Matrix.multiplyMM(
-            viewProjectionMatrix, 0,
+            mViewProjectionMatrix, 0,
             mProjectionMatrix, 0,
             mViewMatrix, 0
         )
 
-        skyboxProgram.useProgram()
-        skyboxProgram.setUniforms(viewProjectionMatrix, skyboxTexture)
-        skybox.bindDataES3(skyboxProgram)
-        skybox.drawES3()
+        skyBoxProgram.useProgram()
+        skyBoxProgram.setUniforms(mViewProjectionMatrix, skyboxTexture)
+        skyBox.bindDataES3(skyBoxProgram)
+        skyBox.drawES3()
+    }
+
+    private fun drawCube() {
+
+        Matrix.setIdentityM(mViewMatrix, 0)
+        Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
+        Matrix.rotateM(mViewMatrix, 0, -xRotation, 0f, 1f, 0f)
+        Matrix.translateM(mViewMatrix, 0, 0f, -1.5f, -3f)
+        Matrix.multiplyMM(
+            mViewProjectionMatrix, 0,
+            mProjectionMatrix, 0,
+            mViewMatrix, 0
+        )
+        positionObjectInScene(-0.5f, -0.5f, 0.5f)
+        cubeProgram.useProgram()
+        cubeProgram.setUniforms(mMVPMatrix, skyboxTexture)
+        cube.bindDataES3()
+        cube.drawES3()
+    }
+
+    private fun positionObjectInScene(x: Float, y: Float, z: Float) {
+        Matrix.setIdentityM(mModelMatrix, 0)
+
+        Matrix.translateM(mModelMatrix, 0, x, y, z)
+
+        // 视图转换：计算模型视图投影矩阵MVPMatrix，该矩阵可以将模型空间的坐标转换为归一化设备空间坐标
+        Matrix.multiplyMM(mMVPMatrix, 0, mViewProjectionMatrix, 0, mModelMatrix, 0)
     }
 
     private fun drawParticles() {
@@ -190,7 +226,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         Matrix.rotateM(mViewMatrix, 0, -xRotation, 0f, 1f, 0f)
         Matrix.translateM(mViewMatrix, 0, 0f, -1.5f, -3f)
         Matrix.multiplyMM(
-            viewProjectionMatrix, 0,
+            mViewProjectionMatrix, 0,
             mProjectionMatrix, 0,
             mViewMatrix, 0
         )
@@ -200,7 +236,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         glBlendFunc(GL_ONE, GL_ONE)
 
         particleProgram.useProgram()
-        particleProgram.setUniforms(viewProjectionMatrix, currentTime, particleTexture)
+        particleProgram.setUniforms(mViewProjectionMatrix, currentTime, particleTexture)
         particleSystem.bindDataES2(particleProgram)
         particleSystem.drawES2()
 

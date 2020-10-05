@@ -45,12 +45,7 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
 
     private var texture = 0
 
-    /*
-     * 通过触摸事件获取要求视图矩阵旋转的角度
-     */
-    private val TOUCH_SCALE_FACTOR = 180.0f / 360
-
-    // 记录上个事件时的旋转角度
+    // 通过触摸事件获取要求视图矩阵旋转的角度:记录上个事件时的旋转角度
     private var xRotation: Float = 0f
     private var yRotation: Float = 0f
 
@@ -353,8 +348,11 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
         // 进行旋转变换
         //Matrix.rotateM(mViewMatrix, 0, getAngle(), 0f, 1.0f, 0f)
 
-        Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
-        Matrix.rotateM(mViewMatrix, 0, -xRotation, 0f, 1f, 0f)
+        if(xRotation<yRotation)
+            Matrix.rotateM(mViewMatrix, 0, yRotation, 1f, 0f, 0f)
+        else
+            Matrix.rotateM(mViewMatrix, 0, xRotation, 0f, 1f, 0f)
+
         xRotation = 0f
         yRotation = 0f
     }

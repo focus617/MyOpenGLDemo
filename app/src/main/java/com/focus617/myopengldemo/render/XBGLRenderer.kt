@@ -4,9 +4,9 @@ import android.content.Context
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.util.MatrixHelper
 import timber.log.Timber
-import java.nio.IntBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -84,17 +84,12 @@ class XBGLRenderer(val context: Context) : GLSurfaceView.Renderer {
                 if (mSquare == null) mSquare = Square()
                 mSquare!!.draw(mMVPMatrix)
             }
-            Shape.Cube -> {
-                // 绘制正方形
-                if (mCube == null) mCube = Cube()
-                mCube!!.draw(mMVPMatrix)
-            }
             Shape.AirHockey, Shape.Unknown -> {
                 // 绘制正方形
                 if (mAirHockey == null) mAirHockey = AirHockeyV1(context)
                 mAirHockey!!.draw(mMVPMatrix)
             }
-            //Shape.Unknown -> return
+            Shape.Cube, Shape.Unknown -> return
         }
     }
 
