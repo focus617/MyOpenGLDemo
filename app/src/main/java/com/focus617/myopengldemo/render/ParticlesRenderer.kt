@@ -9,7 +9,9 @@ import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.objects.particles.ParticleFireworksExplosion
 import com.focus617.myopengldemo.objects.particles.ParticleShooter
 import com.focus617.myopengldemo.objects.particles.ParticleSystem
+import com.focus617.myopengldemo.objects.particles.Skybox
 import com.focus617.myopengldemo.programs.particles.ParticleShaderProgram
+import com.focus617.myopengldemo.programs.particles.SkyboxShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.MatrixHelper
@@ -38,25 +40,29 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     private lateinit var blueParticleShooter: ParticleShooter
     private lateinit var particleFireworksExplosion: ParticleFireworksExplosion
 
-    private var random = Random
+    private lateinit var skyboxProgram: SkyboxShaderProgram
+    private lateinit var skybox: Skybox
 
+    private var random = Random
     private var globalStartTime by Delegates.notNull<Long>()
 
-    private var texture = 0
+    private var particleTexture = 0
+    private var skyboxTexture = 0
+
+    private var xRotation: Float = 0f
+    private var yRotation: Float = 0f
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
 
-        // Enable additive blending
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_ONE, GL_ONE)
+        skyboxProgram = SkyboxShaderProgram(context)
+        skybox = Skybox()
 
         particleProgram = ParticleShaderProgram(context)
         particleSystem = ParticleSystem(10000)
         globalStartTime = System.nanoTime()
 
         val particleDirection = Vector(0f, 0.5f, 0f)
-
         val angleVarianceInDegrees = 5f
         val speedVariance = 1f
 
@@ -86,7 +92,15 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
         particleFireworksExplosion = ParticleFireworksExplosion()
 
-        texture = TextureHelper.loadTexture(context, R.drawable.particle_texture)
+        particleTexture = TextureHelper.loadTexture(context, R.drawable.particle_texture)
+
+        skyboxTexture = TextureHelper.loadCubeMap(
+            context, intArrayOf(
+                R.drawable.left, R.drawable.right,
+                R.drawable.bottom, R.drawable.top,
+                R.drawable.front, R.drawable.back
+            )
+        )
     }
 
 //    override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -99,18 +113,20 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 //
 //        // 计算透视投影矩阵 (Project Matrix)，而后将应用于onDrawFrame（）方法中的对象坐标
 //        val aspect: Float = width.toFloat() / height.toFloat()
-//        Matrix.frustumM(mProjectionMatrix, 0, -aspect, aspect, -1f, 1f, 3f, 7f)
+//        Matrix.frustumM(mProjectionMatrix, 0, -aspect, aspect,
+//            -1f, 1f, 1f, 10f)
 //
 //        // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
 //        Matrix.setLookAtM(
-//            mViewMatrix, 0, 0f, -2.5f, 5f,
-//            0f, 0f, 0f, 0f, 1.0f, 0.0f
+//            mViewMatrix, 0, 0f, -0.5f, -2.5f,
+//            0f, 0f, 0f, 0f, 1.0f, 1.0f
 //        )
 //
 //        // 视图转换：Multiply the view and projection matrices together
 //        Matrix.multiplyMM(
 //            viewProjectionMatrix, 0,
-//            mProjectionMatrix, 0, mViewMatrix, 0
+//            mProjectionMatrix, 0,
+//            mViewMatrix, 0
 //        )
 //    }
 
@@ -120,44 +136,83 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
             mProjectionMatrix, 45f, width.toFloat()
                     / height.toFloat(), 1f, 10f
         )
-        Matrix.setIdentityM(mViewMatrix, 0)
-        Matrix.translateM(mViewMatrix, 0, 0f, -1.5f, -5f)
-        Matrix.multiplyMM(
-            viewProjectionMatrix, 0, mProjectionMatrix, 0,
-            mViewMatrix, 0
-        )
+
     }
 
     override fun onDrawFrame(gl: GL10?) {
         // 首先清理屏幕，重绘背景颜色
         glClear(GL_COLOR_BUFFER_BIT)
+        drawSkyBox()
+        drawParticles()
+    }
 
+    private fun drawSkyBox() {
+        Matrix.setIdentityM(mViewMatrix, 0)
+//        Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
+//        Matrix.rotateM(mViewMatrix, 0, -xRotation, 0f, 1f, 0f)
+        Matrix.multiplyMM(
+            viewProjectionMatrix, 0,
+            mProjectionMatrix, 0,
+            mViewMatrix, 0
+        )
+
+        skyboxProgram.useProgram()
+        skyboxProgram.setUniforms(viewProjectionMatrix, skyboxTexture)
+        skybox.bindDataES3(skyboxProgram)
+        skybox.drawES3()
+    }
+
+    private fun drawParticles() {
         val currentTime = (System.nanoTime() - globalStartTime) / 1000000000f
 
-        redParticleShooter.addParticles(particleSystem, currentTime, 5)
-        greenParticleShooter.addParticles(particleSystem, currentTime, 5)
-        blueParticleShooter.addParticles(particleSystem, currentTime, 5)
+        redParticleShooter.addParticles(particleSystem, currentTime, 2)
+        greenParticleShooter.addParticles(particleSystem, currentTime, 2)
+        blueParticleShooter.addParticles(particleSystem, currentTime, 2)
 
 
-        if (random.nextFloat() < 0.02f) {
-            hsv[0] = random.nextInt(360).toFloat()
+//        if (random.nextFloat() < 0.02f) {
+//            hsv[0] = random.nextInt(360).toFloat()
+//
+//            particleFireworksExplosion.addExplosion(
+//                particleSystem,
+//                Point(
+//                    -1f + random.nextFloat() * 2f,
+//                    2.6f + random.nextFloat() / 2f,
+//                    -1f + random.nextFloat() * 2f
+//                ),
+//                Color.HSVToColor(hsv),
+//                globalStartTime
+//            )
+//        }
 
-            particleFireworksExplosion.addExplosion(
-                particleSystem,
-                Point(
-                    -1f + random.nextFloat() * 2f,
-                    3f + random.nextFloat() / 2f,
-                    -1f + random.nextFloat() * 2f
-                ),
-                Color.HSVToColor(hsv),
-                globalStartTime
-            )
-        }
+        Matrix.setIdentityM(mViewMatrix, 0)
+        Matrix.translateM(mViewMatrix, 0, 0f, -1.5f, -5f)
+        Matrix.multiplyMM(
+            viewProjectionMatrix, 0,
+            mProjectionMatrix, 0,
+            mViewMatrix, 0
+        )
+
+        // Enable additive blending
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_ONE, GL_ONE)
 
         particleProgram.useProgram()
-        particleProgram.setUniforms(viewProjectionMatrix, currentTime, texture)
+        particleProgram.setUniforms(viewProjectionMatrix, currentTime, particleTexture)
         particleSystem.bindDataES2(particleProgram)
         particleSystem.drawES2()
+
+        glDisable(GL_BLEND)
+    }
+
+    fun handleTouchDrag(deltaX: Float, deltaY: Float) {
+        xRotation += deltaX / 16f
+        yRotation += deltaY / 16f
+        if (yRotation < -90) {
+            yRotation = -90f
+        } else if (yRotation > 90) {
+            yRotation = 90f
+        }
     }
 
 }

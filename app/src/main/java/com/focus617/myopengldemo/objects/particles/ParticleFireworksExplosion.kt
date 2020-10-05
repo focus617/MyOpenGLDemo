@@ -7,8 +7,8 @@ import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import java.util.*
 
 class ParticleFireworksExplosion {
-    private val random = Random()
 
+    private val random = Random()
     private val rotationMatrix = FloatArray(16)
     private val directionVector = floatArrayOf(0f, 0f, 1f, 1f)
     private val resultVector = FloatArray(4)

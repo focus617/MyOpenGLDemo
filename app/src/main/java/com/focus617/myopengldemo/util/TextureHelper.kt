@@ -1,9 +1,11 @@
 package com.focus617.myopengldemo.util
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.opengl.GLES31.*
 import android.opengl.GLUtils
+import android.util.Log
 import timber.log.Timber
 
 object TextureHelper {
@@ -61,6 +63,61 @@ object TextureHelper {
 
         // Unbind from the texture.
         glBindTexture(GL_TEXTURE_2D, 0)
+
         return textureObjectIds[0]
     }
+
+    /**
+     * Loads a cubemap texture from the provided resources and returns the
+     * texture ID. Returns 0 if the load failed.
+     *
+     * @param context
+     * @param cubeResources
+     * An array of resources corresponding to the cube map. Should be
+     * provided in this order: left, right, bottom, top, front, back.
+     * @return
+     */
+    fun loadCubeMap(context: Context, cubeResources: IntArray): Int {
+        val textureObjectIds = IntArray(1)
+        glGenTextures(1, textureObjectIds, 0)
+        if (textureObjectIds[0] == 0) {
+            Timber.w("Could not generate a new OpenGL texture object.")
+            return 0
+        }
+        val options = BitmapFactory.Options()
+        options.inScaled = false
+
+        val cubeBitmaps = arrayOfNulls<Bitmap>(6)
+
+        for (i in 0..5) {
+            cubeBitmaps[i] = BitmapFactory.decodeResource(
+                context.resources,
+                cubeResources[i], options
+            )
+            if (cubeBitmaps[i] == null) {
+                Timber.w( "Resource ID ${cubeResources[i]} could not be decoded.")
+                glDeleteTextures(1, textureObjectIds, 0)
+                return 0
+            }
+        }
+
+        // Linear filtering for minification and magnification
+        glBindTexture(GL_TEXTURE_CUBE_MAP, textureObjectIds[0])
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        GLUtils.texImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, cubeBitmaps[0], 0)
+        GLUtils.texImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, cubeBitmaps[1], 0)
+        GLUtils.texImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, cubeBitmaps[2], 0)
+        GLUtils.texImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, cubeBitmaps[3], 0)
+        GLUtils.texImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, cubeBitmaps[4], 0)
+        GLUtils.texImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, cubeBitmaps[5], 0)
+        glBindTexture(GL_TEXTURE_2D, 0)
+
+        for (bitmap in cubeBitmaps) {
+            bitmap!!.recycle()
+        }
+
+        return textureObjectIds[0]
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.focus617.myopengldemo.objects.airhockey
 
+import android.opengl.GLES31
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.data.VertexArrayES2
 import com.focus617.myopengldemo.data.VertexArrayES3
@@ -33,7 +34,6 @@ class Table : DrawingObject() {
 
     ////////////////////////////////////////////////////////////
     private val vertexData = VertexArrayES3(vertices, indices)
-//    private lateinit var mProgramObject: TextureShaderProgram    // 着色器程序对象
 
     fun bindDataEs3(textureProgram: TextureShaderProgram) {
 
@@ -83,6 +83,8 @@ class Table : DrawingObject() {
 
         // 图元装配，绘制三角形
         glDrawElements(GL_TRIANGLES, 15, GL_UNSIGNED_SHORT, 0)
+
+        glBindBuffer(GLES31.GL_ARRAY_BUFFER, 0)
 
         // Reset to the default VAO
         glBindVertexArray(0)
