@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity() {
                             previousX = event.x
                             previousY = event.y
                             mGLSurfaceView.queueEvent {
-                                mRenderer.handleTouchDrag(normalizedX, normalizedY)
+                                mRenderer.handleTouchDrag(normalizedX, normalizedY, deltaX, deltaY)
                             }
                         }
                     }

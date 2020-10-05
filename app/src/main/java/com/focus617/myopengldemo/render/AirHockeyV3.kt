@@ -50,9 +50,9 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
      */
     private val TOUCH_SCALE_FACTOR = 180.0f / 360
 
-    // 记录上个事件时的坐标
-    private var mPreviousX = 0f
-    private var mPreviousY = 0f
+    // 记录上个事件时的旋转角度
+    private var xRotation: Float = 0f
+    private var yRotation: Float = 0f
 
     private var malletPressed = false
     private lateinit var blueMalletPosition: Point
@@ -106,10 +106,11 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
 
     }
 
-
     override fun onDrawFrame(unused: GL10) {
         // 首先清理屏幕，重绘背景颜色
         glClear(GL_COLOR_BUFFER_BIT)
+
+        setupRotation()
 
         // 视图转换：Multiply the view and projection matrices together
         Matrix.multiplyMM(mViewProjectionMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
@@ -197,6 +198,7 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
         // 90 degrees to lie flat on the XZ plane.
         Matrix.setIdentityM(mModelMatrix, 0)
         Matrix.rotateM(mModelMatrix, 0, -90f, 1f, 0f, 0f)
+
         Matrix.multiplyMM(
             mMVPMatrix, 0, mViewProjectionMatrix,
             0, mModelMatrix, 0
@@ -226,7 +228,7 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
         Timber.d("handleTouchPress(): malletPressed = $malletPressed")
     }
 
-    fun handleTouchDrag(normalizedX: Float, normalizedY: Float) {
+    fun handleTouchDrag(normalizedX: Float, normalizedY: Float, deltaX: Float, deltaY: Float) {
 
         if (malletPressed) {
             Timber.d("handleTouchDrag()")
@@ -271,24 +273,14 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
         } else {
             // MotionEvent报告触摸屏和其他输入控件的输入详细信息。
             // 在这种情况下，这里只对触摸位置发生变化的事件感兴趣。
-            var dx = normalizedX - mPreviousX
-            var dy = normalizedY - mPreviousY
+            xRotation += deltaX / 16f
+            yRotation += deltaY / 16f
 
-            // reverse direction of rotation above the mid-line
-            if (normalizedY < 0) {
-                dx *= -1
+            if (yRotation < -90) {
+                yRotation = -90f
+            } else if (yRotation > 90) {
+                yRotation = 90f
             }
-
-            // reverse direction of rotation to left of the mid-line
-            if (normalizedX < 0) {
-                dy *= -1
-            }
-            setAngle(getAngle()-((dx + dy) * TOUCH_SCALE_FACTOR))
-
-            setupRotation()
-
-            mPreviousX = normalizedX
-            mPreviousY = normalizedY
         }
     }
 
@@ -359,7 +351,12 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
     private fun setupRotation() {
 
         // 进行旋转变换
-        Matrix.rotateM(mViewMatrix, 0, getAngle(), 0f, 1.0f, 0f)
+        //Matrix.rotateM(mViewMatrix, 0, getAngle(), 0f, 1.0f, 0f)
+
+        Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
+        Matrix.rotateM(mViewMatrix, 0, -xRotation, 0f, 1f, 0f)
+        xRotation = 0f
+        yRotation = 0f
     }
 
 
