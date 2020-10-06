@@ -36,8 +36,25 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     private val mViewProjectionMatrix = FloatArray(16)
     private val mModelViewMatrix = FloatArray(16)
 
+    private val tempMatrix = FloatArray(16)
+    private val modelViewMatrix = FloatArray(16)
+    private val it_modelViewMatrix = FloatArray(16)
+
     // Maximum saturation and value.
     private val hsv = floatArrayOf(0f, 1f, 1f)
+
+    private val pointLightPositions = floatArrayOf(
+        -1f, 1f, 0f, 1f,
+        0f, 1f, 0f, 1f,
+        1f, 1f, 0f, 1f
+    )
+
+    private val pointLightColors = floatArrayOf(
+        1.00f, 0.20f, 0.02f,
+        0.02f, 0.25f, 0.02f,
+        0.02f, 0.20f, 1.00f
+    )
+
 
     private lateinit var particleProgram: ParticleShaderProgram
     private lateinit var particleSystem: ParticleSystem
@@ -55,14 +72,15 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     private lateinit var heightmapProgram: HeightmapShaderProgram
     private lateinit var heightmap: Heightmap
 
-    private lateinit var vectorToLight: Vector
+    //private lateinit var vectorToLight: Vector
+    private val vectorToLight = floatArrayOf(0.30f, 0.35f, -0.89f, 0f)
+    private val isNight: Boolean = true
 
     private var random = Random
     private var globalStartTime by Delegates.notNull<Long>()
 
     private var particleTexture = 0
     private var skyboxTexture = 0
-    private val isNight: Boolean = true
 
     private var xRotation: Float = 0f
     private var yRotation: Float = 0f
@@ -133,7 +151,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
                     R.drawable.night_front, R.drawable.night_back
                 )
             )
-            vectorToLight = Vector(0.30f, 0.35f, -0.89f).normalize()
+            //vectorToLight = Vector(0.30f, 0.35f, -0.89f).normalize()
+
         } else {
             Timber.d("onSurfaceCreated(): Enter daytime mode.")
             skyboxTexture = TextureHelper.loadCubeMap(
@@ -144,7 +163,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
                     R.drawable.front, R.drawable.back
                 )
             )
-            vectorToLight = Vector(0.61f, 0.64f, -0.47f).normalize()
+            //vectorToLight = Vector(0.61f, 0.64f, -0.47f).normalize()
         }
     }
 
@@ -208,7 +227,24 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         updateMvpMatrix()
 
         heightmapProgram.useProgram()
+
+        // Put the light positions into eye space.
+        /*
         heightmapProgram.setUniforms(mMVPMatrix, vectorToLight)
+         */
+        val vectorToLightInEyeSpace = FloatArray(4)
+        val pointPositionsInEyeSpace = FloatArray(12)
+        Matrix.multiplyMV(vectorToLightInEyeSpace, 0, mViewMatrix, 0, vectorToLight, 0)
+        Matrix.multiplyMV(pointPositionsInEyeSpace, 0, mViewMatrix, 0, pointLightPositions, 0)
+        Matrix.multiplyMV(pointPositionsInEyeSpace, 4, mViewMatrix, 0, pointLightPositions, 4)
+        Matrix.multiplyMV(pointPositionsInEyeSpace, 8, mViewMatrix, 0, pointLightPositions, 8)
+
+        heightmapProgram.setUniforms(
+            modelViewMatrix, it_modelViewMatrix,
+            mMVPMatrix, vectorToLightInEyeSpace,
+            pointPositionsInEyeSpace, pointLightColors
+        )
+
 
         heightmap.bindDataES3(heightmapProgram)
         heightmap.drawES3()
@@ -296,6 +332,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
     private fun updateMvpMatrix() {
         Matrix.multiplyMM(mModelViewMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
+        Matrix.invertM(tempMatrix, 0, modelViewMatrix, 0)
+        Matrix.transposeM(it_modelViewMatrix, 0, tempMatrix, 0)
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mModelViewMatrix, 0)
     }
 

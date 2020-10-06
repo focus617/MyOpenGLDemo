@@ -12,6 +12,10 @@ object ShaderProgramConstants {
     const val U_TEXTURE_UNIT = "u_TextureUnit"
     const val U_TIME = "u_Time"
     const val U_VECTOR_TO_LIGHT = "u_VectorToLight"
+    const val U_MV_MATRIX = "u_MVMatrix"
+    const val U_IT_MV_MATRIX = "u_IT_MVMatrix"
+    const val U_POINT_LIGHT_POSITIONS = "u_PointLightPositions"
+    const val U_POINT_LIGHT_COLORS = "u_PointLightColors"
 
     // Attribute constants
     const val A_POSITION = "a_Position"
