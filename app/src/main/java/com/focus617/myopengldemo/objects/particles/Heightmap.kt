@@ -148,20 +148,6 @@ class Heightmap(bitmap: Bitmap) {
         return indexData
     }
 
-    fun bindDataES2(heightmapProgram: HeightmapShaderProgram) {
-        vertexBuffer.setVertexAttribPointer(
-            0,
-            heightmapProgram.getPositionAttributeLocation(),
-            POSITION_COMPONENT_COUNT,
-            0
-        )
-    }
-    fun drawES2() {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffer.mVBOIds.get(0))
-        glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
-    }
-
     fun bindDataES3(heightmapProgram: HeightmapShaderProgram) {
         //Generate VAO ID
         glGenVertexArrays(vertexBuffer.mVAOId.capacity(), vertexBuffer.mVAOId)

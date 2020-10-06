@@ -25,7 +25,7 @@ class HeightmapShaderProgram(context: Context) : ShaderProgram(
         vectorToLight: Vector
     ) {
         glUniformMatrix4fv(uMatrixLocation, 1, false, matrix, 0)
-        glUniform3f(uVectorToLightLocation, vectorToLight.x,vectorToLight.y,vectorToLight.z)
+        glUniform3f(uVectorToLightLocation, vectorToLight.x, vectorToLight.y, vectorToLight.z)
     }
 
 }

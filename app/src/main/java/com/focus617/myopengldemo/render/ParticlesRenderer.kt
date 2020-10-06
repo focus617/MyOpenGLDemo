@@ -55,13 +55,14 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     private lateinit var heightmapProgram: HeightmapShaderProgram
     private lateinit var heightmap: Heightmap
 
-    private val vectorToLight = Vector(0.61f, 0.64f, -0.47f).normalize();
+    private lateinit var vectorToLight: Vector
 
     private var random = Random
     private var globalStartTime by Delegates.notNull<Long>()
 
     private var particleTexture = 0
     private var skyboxTexture = 0
+    private val isNight: Boolean = true
 
     private var xRotation: Float = 0f
     private var yRotation: Float = 0f
@@ -122,13 +123,29 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
         particleTexture = TextureHelper.loadTexture(context, R.drawable.particle_texture)
 
-        skyboxTexture = TextureHelper.loadCubeMap(
-            context, intArrayOf(
-                R.drawable.left, R.drawable.right,
-                R.drawable.bottom, R.drawable.top,
-                R.drawable.front, R.drawable.back
+        if (isNight) {
+            Timber.d("onSurfaceCreated(): Enter night mode.")
+            skyboxTexture = TextureHelper.loadCubeMap(
+                context,
+                intArrayOf(
+                    R.drawable.night_left, R.drawable.night_right,
+                    R.drawable.night_bottom, R.drawable.night_top,
+                    R.drawable.night_front, R.drawable.night_back
+                )
             )
-        )
+            vectorToLight = Vector(0.30f, 0.35f, -0.89f).normalize()
+        } else {
+            Timber.d("onSurfaceCreated(): Enter daytime mode.")
+            skyboxTexture = TextureHelper.loadCubeMap(
+                context,
+                intArrayOf(
+                    R.drawable.left, R.drawable.right,
+                    R.drawable.bottom, R.drawable.top,
+                    R.drawable.front, R.drawable.back
+                )
+            )
+            vectorToLight = Vector(0.61f, 0.64f, -0.47f).normalize()
+        }
     }
 
 //    override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -192,6 +209,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
         heightmapProgram.useProgram()
         heightmapProgram.setUniforms(mMVPMatrix, vectorToLight)
+
         heightmap.bindDataES3(heightmapProgram)
         heightmap.drawES3()
     }

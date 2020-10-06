@@ -18,6 +18,7 @@ object ShaderProgramConstants {
     const val A_COLOR = "a_Color"
     const val A_NORMAL = "a_Normal"
     const val A_TEXTURE_COORDINATES = "a_TextureCoordinates"
+    const val IS_NIGHT = "isNight"
 
     const val A_DIRECTION_VECTOR = "a_DirectionVector"
     const val A_PARTICLE_START_TIME = "a_ParticleStartTime"
