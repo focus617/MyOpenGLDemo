@@ -55,6 +55,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     private lateinit var heightmapProgram: HeightmapShaderProgram
     private lateinit var heightmap: Heightmap
 
+    private val vectorToLight = Vector(0.61f, 0.64f, -0.47f).normalize();
+
     private var random = Random
     private var globalStartTime by Delegates.notNull<Long>()
 
@@ -189,7 +191,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         updateMvpMatrix()
 
         heightmapProgram.useProgram()
-        heightmapProgram.setUniforms(mMVPMatrix)
+        heightmapProgram.setUniforms(mMVPMatrix, vectorToLight)
         heightmap.bindDataES3(heightmapProgram)
         heightmap.drawES3()
     }
@@ -210,8 +212,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
     private fun drawCube() {
         Matrix.setIdentityM(mModelMatrix, 0)
-        positionObjectInScene(-3.5f, 0.5f, -1.5f)
-        Matrix.rotateM(mModelMatrix, 0, 45f, 0f, 1f, 0f)
+        positionObjectInScene(-3.5f, 1.8f, 1.5f)
+        Matrix.rotateM(mModelMatrix, 0, 45f, 1f, 0f, 1f)
         updateMvpMatrix()
 
         cubeProgram.useProgram()

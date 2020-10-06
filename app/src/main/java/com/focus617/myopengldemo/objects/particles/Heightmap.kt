@@ -2,11 +2,12 @@ package com.focus617.myopengldemo.objects.particles
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.opengl.GLES31
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.data.VertexBuffer
-import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.programs.particles.HeightmapShaderProgram
+import com.focus617.myopengldemo.util.Geometry
+import com.focus617.myopengldemo.util.Geometry.Point
+import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import timber.log.Timber
 
 class Heightmap(bitmap: Bitmap) {
@@ -46,7 +47,7 @@ class Heightmap(bitmap: Bitmap) {
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
         bitmap.recycle()
 
-        val heightmapVertices = FloatArray(width * height * POSITION_COMPONENT_COUNT)
+        val heightmapVertices = FloatArray(width * height * VERTEX_TOTAL_COMPONENT_COUNT)
         var offset = 0
         for (row in 0 until height) {
             for (col in 0 until width) {
@@ -63,9 +64,46 @@ class Heightmap(bitmap: Bitmap) {
                 heightmapVertices[offset++] = xPosition
                 heightmapVertices[offset++] = yPosition
                 heightmapVertices[offset++] = zPosition
+
+                val top: Point = getPoint(pixels, row - 1, col)
+                val left: Point = getPoint(pixels, row, col - 1)
+                val right: Point = getPoint(pixels, row, col + 1)
+                val bottom: Point = getPoint(pixels, row + 1, col)
+
+                val rightToLeft: Vector = Geometry.vectorBetween(right, left)
+                val topToBottom: Vector = Geometry.vectorBetween(top, bottom)
+                val normal: Vector = rightToLeft.crossProduct(topToBottom).normalize()
+
+                heightmapVertices[offset++] = normal.x
+                heightmapVertices[offset++] = normal.y
+                heightmapVertices[offset++] = normal.z
             }
         }
         return heightmapVertices
+    }
+
+    /**
+     * Returns a point at the expected position given by row and col, but if the
+     * position is out of bounds, then it clamps the position and uses the
+     * clamped position to read the height. For example, calling with row = -1
+     * and col = 5 will set the position as if the point really was at -1 and 5,
+     * but the height will be set to the heightmap height at (0, 5), since (-1,
+     * 5) is out of bounds. This is useful when we're generating normals, and we
+     * need to read the heights of neighbouring points.
+     */
+    private fun getPoint(pixels: IntArray, row: Int, col: Int): Point {
+        var row = row
+        var col = col
+        val x = col.toFloat() / (width - 1).toFloat() - 0.5f
+        val z = row.toFloat() / (height - 1).toFloat() - 0.5f
+        row = clamp(row, 0, width - 1)
+        col = clamp(col, 0, height - 1)
+        val y = Color.red(pixels[row * height + col]).toFloat() / 255.toFloat()
+        return Point(x, y, z)
+    }
+
+    private fun clamp(value: Int, min: Int, max: Int): Int {
+        return kotlin.math.max(min, kotlin.math.min(max, value))
     }
 
     private fun calculateNumElements(): Int {
@@ -136,15 +174,24 @@ class Heightmap(bitmap: Bitmap) {
 
         // 启用顶点数组
         glEnableVertexAttribArray(VERTEX_POS_INDEX)
+        glEnableVertexAttribArray(VERTEX_NORMAL_INDEX)
 
         // 顶点的位置属性
         glVertexAttribPointer(
             VERTEX_POS_INDEX,
-            VERTEX_POS_SIZE,
+            POSITION_COMPONENT_COUNT,
             GL_FLOAT,
             false,
             VERTEX_STRIDE,
             VERTEX_POS_OFFSET
+        )
+        glVertexAttribPointer(
+            VERTEX_NORMAL_INDEX,
+            NORMAL_COMPONENT_COUNT,
+            GL_FLOAT,
+            false,
+            VERTEX_STRIDE,
+            VERTEX_NORMAL_OFFSET
         )
 
         if (vertexBuffer.withElement) {
@@ -168,16 +215,24 @@ class Heightmap(bitmap: Bitmap) {
     }
 
     companion object {
-        private const val POSITION_COMPONENT_COUNT = 3
 
         // 顶点坐标的每个属性的Index
         internal const val VERTEX_POS_INDEX = 0
+        internal const val VERTEX_NORMAL_INDEX = 1
+
         // 顶点坐标的每个属性的Size
-        internal const val VERTEX_POS_SIZE = 3          //x,y,z
+        internal const val POSITION_COMPONENT_COUNT = 3   // x,y,z
+        internal const val NORMAL_COMPONENT_COUNT = 3     // x,y,z
+
         internal const val VERTEX_POS_OFFSET = 0
-        internal const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE
+        internal const val VERTEX_NORMAL_OFFSET = POSITION_COMPONENT_COUNT
+
+        // 每个顶点的属性组的Size
+        internal const val VERTEX_TOTAL_COMPONENT_COUNT =
+            (POSITION_COMPONENT_COUNT + NORMAL_COMPONENT_COUNT)
+
         // 连续的顶点属性组之间的间隔
-        internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
+        internal const val VERTEX_STRIDE = VERTEX_TOTAL_COMPONENT_COUNT * Float.SIZE_BYTES
     }
 
 

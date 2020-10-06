@@ -55,6 +55,8 @@ class Geometry {
                 y * f,
                 z * f
             )
+
+            fun normalize(): Vector = scale(1f / length())
         }
 
         fun vectorBetween(from: Point, to: Point): Vector {
