@@ -1,16 +1,16 @@
 package com.focus617.myopengldemo.objects.particles
 
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.data.VertexArrayES3
+import com.focus617.myopengldemo.data.VertexBuffer
 import com.focus617.myopengldemo.programs.particles.SkyboxShaderProgram
 
 class Skybox {
 
-    private val vertexData = VertexArrayES3(vertices, indices)
+    private val vertexData = VertexBuffer(vertices, indices)
 
     fun bindDataES3(skyboxProgram: SkyboxShaderProgram) {
         //Generate VAO ID
-        glGenVertexArrays(1, vertexData.mVAOId)
+        glGenVertexArrays(vertexData.mVAOId.capacity(), vertexData.mVAOId)
 
         // Bind the VAO and then set up the vertex attributes
         glBindVertexArray(vertexData.mVAOId.get(0))
@@ -41,7 +41,7 @@ class Skybox {
 
     fun drawES3() {
         // Bind the VAO and then draw with VAO settings
-        glBindVertexArray(vertexData.mVAOId.get(0))
+        glBindVertexArray(vertexData.getVaoId())
 
         // 图元装配，绘制三角形
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0)

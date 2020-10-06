@@ -95,7 +95,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
                 if (mAirHockey == null) mAirHockey = AirHockeyV1(context)
                 mAirHockey!!.draw(mMVPMatrix)
             }
-            //Shape.Unknown -> return
+            else -> return
         }
     }
 

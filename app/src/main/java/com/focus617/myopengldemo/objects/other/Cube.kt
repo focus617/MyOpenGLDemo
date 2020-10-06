@@ -1,22 +1,16 @@
 package com.focus617.myopengldemo.objects.other
 
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.data.VertexArrayES3
-import com.focus617.myopengldemo.objects.particles.Skybox
+import com.focus617.myopengldemo.data.VertexBuffer
 import com.focus617.myopengldemo.render.DrawingObject
-import com.focus617.myopengldemo.util.ShaderHelper
-import timber.log.Timber
-import java.nio.FloatBuffer
-import java.nio.IntBuffer
-import java.nio.ShortBuffer
 
 class Cube : DrawingObject() {
 
-    private val vertexData = VertexArrayES3(vertices, indices)
+    private val vertexData = VertexBuffer(vertices, indices)
 
     fun bindDataES3() {
         //Generate VAO ID
-        glGenVertexArrays(1, vertexData.mVAOId)
+        glGenVertexArrays(vertexData.mVAOId.capacity(), vertexData.mVAOId)
 
         // Bind the VAO and then set up the vertex attributes
         glBindVertexArray(vertexData.mVAOId.get(0))
@@ -58,7 +52,7 @@ class Cube : DrawingObject() {
 
     fun drawES3() {
         // Bind the VAO and then draw with VAO settings
-        glBindVertexArray(vertexData.mVAOId.get(0))
+        glBindVertexArray(vertexData.getVaoId())
 
         // 图元装配，绘制三角形
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0)
@@ -76,28 +70,28 @@ class Cube : DrawingObject() {
         // 立方体的顶点属性
         // Order of coordinates: X, Y, Z, R, G, B
         private val vertices = floatArrayOf(
-            -0.25f, 0.25f, 0.25f,     // (0) Top-left near
+            -0.5f, 0.5f, 0.5f,     // (0) Top-left near
             0.3f, 0.4f, 0.5f,
 
-            0.25f, 0.25f, 0.25f,      // (1) Top-right near
+            0.5f, 0.5f, 0.5f,      // (1) Top-right near
             0.3f, 0.4f, 0.5f,
 
-            -0.25f, -0.25f, 0.25f,    // (2) Bottom-left near
+            -0.5f, -0.5f, 0.5f,    // (2) Bottom-left near
             0.3f, 0.4f, 0.5f,
 
-            0.25f, -0.25f, 0.25f,     // (3) Bottom-right near
+            0.5f, -0.5f, 0.5f,     // (3) Bottom-right near
             0.3f, 0.4f, 0.5f,
 
-            -0.25f, 0.25f, -0.25f,    // (4) Top-left far
+            -0.5f, 0.5f, -0.5f,    // (4) Top-left far
             0.6f, 0.5f, 0.4f,
 
-            0.25f, 0.25f, -0.25f,     // (5) Top-right far
+            0.5f, 0.5f, -0.5f,     // (5) Top-right far
             0.6f, 0.5f, 0.4f,
 
-            -0.25f, -0.25f, -0.25f,   // (6) Bottom-left far
+            -0.5f, -0.5f, -0.5f,   // (6) Bottom-left far
             0.6f, 0.5f, 0.4f,
 
-            0.25f, -0.25f, -0.25f,     // (7) Bottom-right far
+            0.5f, -0.5f, -0.5f,     // (7) Bottom-right far
             0.6f, 0.5f, 0.4f
         )
 

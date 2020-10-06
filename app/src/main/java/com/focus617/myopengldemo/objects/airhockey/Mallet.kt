@@ -1,8 +1,8 @@
 package com.focus617.myopengldemo.objects.airhockey
 
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.data.VertexArrayES2
-import com.focus617.myopengldemo.data.VertexArrayES3
+import com.focus617.myopengldemo.data.VertexArray
+import com.focus617.myopengldemo.data.VertexBuffer
 import com.focus617.myopengldemo.objects.airhockey.ObjectBuilder.Companion.DrawCommand
 import com.focus617.myopengldemo.objects.airhockey.ObjectBuilder.Companion.GeneratedData
 import com.focus617.myopengldemo.programs.airhockey.ColorShaderProgram
@@ -19,12 +19,12 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
         height,
         numPointsAroundMallet
     )
-    private val vertexData = VertexArrayES3(generatedData.vertexData)
+    private val vertexData = VertexBuffer(generatedData.vertexData)
     private val drawList: List<DrawCommand> = generatedData.drawList
 
     ////////////////////////////////////////////////////////////
     // TODO: clean below ES2 implementation
-    private val vertexArray: VertexArrayES2 = VertexArrayES2(generatedData.vertexData)
+    private val vertexArray: VertexArray = VertexArray(generatedData.vertexData)
 
     fun bindDataEs2(colorProgram: ColorShaderProgram) {
         vertexArray.setVertexAttribPointer(

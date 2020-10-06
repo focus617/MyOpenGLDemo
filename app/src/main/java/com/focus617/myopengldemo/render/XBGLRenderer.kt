@@ -89,7 +89,7 @@ class XBGLRenderer(val context: Context) : GLSurfaceView.Renderer {
                 if (mAirHockey == null) mAirHockey = AirHockeyV1(context)
                 mAirHockey!!.draw(mMVPMatrix)
             }
-            Shape.Cube, Shape.Unknown -> return
+            else -> return
         }
     }
 

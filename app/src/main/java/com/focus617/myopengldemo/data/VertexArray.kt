@@ -5,7 +5,10 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
-class VertexArrayES2(vertexData: FloatArray) {
+/**
+ * 适用于创建后经常变化的对象
+ */
+class VertexArray(vertexData: FloatArray) {
 
     private val floatBuffer: FloatBuffer = ByteBuffer
         .allocateDirect(vertexData.size * Float.SIZE_BYTES)
