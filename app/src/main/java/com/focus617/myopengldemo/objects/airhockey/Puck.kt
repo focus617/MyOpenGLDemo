@@ -58,7 +58,7 @@ class Puck(val radius: Float, val height: Float, numPointsAroundPuck: Int) {
         )
 
         // 启用顶点数组
-        GLES31.glEnableVertexAttribArray(Mallet.VERTEX_POS_INDEX)
+        GLES31.glEnableVertexAttribArray(VERTEX_POS_INDEX)
 
         GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, 0)
     }

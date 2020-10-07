@@ -31,7 +31,7 @@ class Cube : DrawingObject() {
     }
 
     fun drawES3() {
-        vertexBuffer.drawWithElements(36)
+        vertexBuffer.drawWithElements()
     }
 
     // 顶点数据集，及其属性

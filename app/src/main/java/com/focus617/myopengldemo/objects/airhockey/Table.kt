@@ -55,7 +55,7 @@ class Table : DrawingObject() {
     }
 
     fun drawEs3() {
-        vertexBuffer.drawWithElements(indices.size)
+        vertexBuffer.drawWithElements()
     }
 
     ////////////////////////////////////////////////////////////

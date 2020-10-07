@@ -14,6 +14,7 @@ class VertexBuffer(vertexData: FloatArray, indexData: ShortArray? = null) {
     var mVertexId by Delegates.notNull<Int>()
     var mElementId by Delegates.notNull<Int>()
     var withElement: Boolean = false
+    private var numElements: Int = 0
 
     init {
         // 创建缓存，并绑定缓存类型
@@ -46,6 +47,7 @@ class VertexBuffer(vertexData: FloatArray, indexData: ShortArray? = null) {
         if (indexData != null) {
             setupElements(indexData)
             withElement = true
+            numElements = indexData.size
         }
     }
 
@@ -106,9 +108,7 @@ class VertexBuffer(vertexData: FloatArray, indexData: ShortArray? = null) {
         val dataOffset: Int
     )
 
-    fun bindData(
-        attribProperties: List<AttributeProperty>
-    ) {
+    fun bindData(attribProperties: List<AttributeProperty>) {
         // Bind the VAO and then set up the vertex attributes
         glBindVertexArray(mVaoId)
         // Bind VBO buffer
@@ -135,7 +135,7 @@ class VertexBuffer(vertexData: FloatArray, indexData: ShortArray? = null) {
         glBindVertexArray(0)
     }
 
-    fun drawWithElements(numElements: Int) {
+    fun drawWithElements() {
         // Bind the VAO and then draw with VAO settings
         glBindVertexArray(mVaoId)
 
