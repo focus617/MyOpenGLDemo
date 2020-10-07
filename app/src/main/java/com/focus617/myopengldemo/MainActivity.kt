@@ -86,8 +86,8 @@ class MainActivity : AppCompatActivity() {
         mGLSurfaceView.setEGLContextClientVersion(3)
         mGLSurfaceView.setEGLConfigChooser(MultisampleConfigChooser())
 
-        //setAirHockeyAsRenderer()
-        setParticlesAsRenderer()
+        setAirHockeyAsRenderer()
+        //setParticlesAsRenderer()
 
         setContentView(mGLSurfaceView)
     }
