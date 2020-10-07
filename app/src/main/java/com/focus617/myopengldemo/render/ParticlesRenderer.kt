@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import android.util.Log
 import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.particles.*
@@ -18,6 +19,7 @@ import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.MatrixHelper
 import com.focus617.myopengldemo.util.TextureHelper
+import com.focus617.myopengldemo.util.TextureHelper.FilterMode
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -74,19 +76,41 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
     //private lateinit var vectorToLight: Vector
     private val vectorToLight = floatArrayOf(0.30f, 0.35f, -0.89f, 0f)
-    private val isNight: Boolean = true
 
     private var random = Random
     private var globalStartTime by Delegates.notNull<Long>()
 
     private var particleTexture = 0
     private var skyboxTexture = 0
+    private var grassTexture = 0
+    private var stoneTexture = 0
 
     private var xRotation: Float = 0f
     private var yRotation: Float = 0f
 
+    companion object {
+        internal const val MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF
+        internal const val isNight: Boolean = false
+    }
+
+    private val maxAnisotropy = FloatArray(1)
+    private var supportsAnisotropicFiltering = false
+    fun supportsAnisotropicFiltering(): Boolean {
+        return supportsAnisotropicFiltering
+    }
+
     @SuppressLint("UseCompatLoadingForDrawables")
-    override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
+    override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
+
+        val extensions = glGetString(GL_EXTENSIONS)
+        supportsAnisotropicFiltering = extensions.contains("GL_EXT_texture_filter_anisotropic")
+        Timber.v("Anisotropic filtering supported = $supportsAnisotropicFiltering")
+
+        if (supportsAnisotropicFiltering) {
+            glGetFloatv(MAX_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy, 0)
+            Timber.v("Maximum anisotropy = ${maxAnisotropy[0]}")
+        }
+
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
 
@@ -96,7 +120,6 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         heightmapProgram = HeightmapShaderProgram(context)
         heightmap = Heightmap(
             BitmapFactory.decodeResource(context.resources, R.drawable.heightmap, null)
-            //    context.resources.getDrawable(R.drawable.heightmap) as BitmapDrawable).bitmap
         )
 
         skyBoxProgram = SkyboxShaderProgram(context)
@@ -140,6 +163,21 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         particleFireworksExplosion = ParticleFireworksExplosion()
 
         particleTexture = TextureHelper.loadTexture(context, R.drawable.particle_texture)
+        grassTexture = TextureHelper.loadTexture(context, R.drawable.noisy_grass_public_domain)
+        stoneTexture = TextureHelper.loadTexture(context, R.drawable.stone_public_domain)
+
+        TextureHelper.adjustTextureFilters(
+            grassTexture,
+            FilterMode.TRILINEAR,
+            true,
+            2.0f
+        )
+        TextureHelper.adjustTextureFilters(
+            stoneTexture,
+            FilterMode.TRILINEAR,
+            true,
+            2.0f
+        )
 
         if (isNight) {
             Timber.d("onSurfaceCreated(): Enter night mode.")
@@ -242,7 +280,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         heightmapProgram.setUniforms(
             modelViewMatrix, it_modelViewMatrix,
             mMVPMatrix, vectorToLightInEyeSpace,
-            pointPositionsInEyeSpace, pointLightColors
+            pointPositionsInEyeSpace, pointLightColors,
+            grassTexture, stoneTexture
         )
 
 
@@ -355,5 +394,21 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         // Setup view matrix
         updateViewMatrices()
     }
+
+    fun handleFilterModeChange(filterMode: FilterMode) {
+        TextureHelper.adjustTextureFilters(
+            grassTexture,
+            filterMode,
+            supportsAnisotropicFiltering,
+            maxAnisotropy.get(0)
+        )
+        TextureHelper.adjustTextureFilters(
+            stoneTexture,
+            filterMode,
+            supportsAnisotropicFiltering,
+            maxAnisotropy.get(0)
+        )
+    }
+
 
 }

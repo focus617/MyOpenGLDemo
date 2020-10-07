@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.focus617.myopengldemo.render.AirHockeyRendererEs3
 import com.focus617.myopengldemo.render.ParticlesRenderer
+import com.focus617.myopengldemo.util.TextureHelper.FilterMode
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +23,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mGLSurfaceView: XGLSurfaceView
 
     private var hasSetRenderer: Boolean = false
+    private lateinit var particlesRenderer: ParticlesRenderer
+    private lateinit var airHockeyRenderer: AirHockeyRendererEs3
 
     // Check if the system supports OpenGL ES 3.0.
     private var supportsEs3 = false
@@ -81,6 +84,7 @@ class MainActivity : AppCompatActivity() {
 
         // Request an OpenGL ES 3.0 compatible context.
         mGLSurfaceView.setEGLContextClientVersion(3)
+        mGLSurfaceView.setEGLConfigChooser(MultisampleConfigChooser())
 
         //setAirHockeyAsRenderer()
         setParticlesAsRenderer()
@@ -91,8 +95,8 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     private fun setParticlesAsRenderer() {
         // 设置渲染器（Renderer）以在GLSurfaceView上绘制
-        val mRenderer = ParticlesRenderer(this)
-        mGLSurfaceView.setRenderer(mRenderer)
+        particlesRenderer = ParticlesRenderer(this)
+        mGLSurfaceView.setRenderer(particlesRenderer)
         hasSetRenderer = true
 
         mGLSurfaceView.setOnTouchListener(object : OnTouchListener {
@@ -100,25 +104,23 @@ class MainActivity : AppCompatActivity() {
             var previousY = 0f
 
             override fun onTouch(v: View, event: MotionEvent): Boolean {
-                return if (event != null) {
-                    when (event.action) {
-                        MotionEvent.ACTION_DOWN -> {
-                            previousX = event.x
-                            previousY = event.y
-                        }
-                        MotionEvent.ACTION_MOVE -> {
-                            val deltaX = event.x - previousX
-                            val deltaY = event.y - previousY
-                            previousX = event.x
-                            previousY = event.y
-                            mGLSurfaceView.queueEvent(Runnable {
-                                mRenderer.handleTouchDrag(deltaX, deltaY)
-                            })
-                        }
+                return when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        previousX = event.x
+                        previousY = event.y
+                        true
                     }
-                    true
-                } else {
-                    false
+                    MotionEvent.ACTION_MOVE -> {
+                        val deltaX = event.x - previousX
+                        val deltaY = event.y - previousY
+                        previousX = event.x
+                        previousY = event.y
+                        mGLSurfaceView.queueEvent {
+                            particlesRenderer.handleTouchDrag(deltaX, deltaY)
+                        }
+                        true
+                    }
+                    else -> false
                 }
             }
         })
@@ -127,8 +129,8 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     private fun setAirHockeyAsRenderer() {
         // 设置渲染器（Renderer）以在GLSurfaceView上绘制
-        val mRenderer = AirHockeyRendererEs3(this)
-        mGLSurfaceView.setRenderer(mRenderer)
+        airHockeyRenderer = AirHockeyRendererEs3(this)
+        mGLSurfaceView.setRenderer(airHockeyRenderer)
         hasSetRenderer = true
 
         mGLSurfaceView.setOnTouchListener(object : OnTouchListener {
@@ -136,35 +138,36 @@ class MainActivity : AppCompatActivity() {
             var previousY = 0f
 
             override fun onTouch(v: View, event: MotionEvent): Boolean {
-                return if (event != null) {
-                    // Convert touch coordinates into normalized device
-                    // coordinates, keeping in mind that Android's Y
-                    // coordinates are inverted.
-                    val normalizedX = (event.x / v.width.toFloat()) * 2 - 1
-                    val normalizedY = -((event.y / v.height.toFloat()) * 2 - 1)
+                // Convert touch coordinates into normalized device
+                // coordinates, keeping in mind that Android's Y
+                // coordinates are inverted.
+                val normalizedX = (event.x / v.width.toFloat()) * 2 - 1
+                val normalizedY = -((event.y / v.height.toFloat()) * 2 - 1)
 
-                    when (event.action) {
-                        MotionEvent.ACTION_DOWN -> {
-                            previousX = event.x
-                            previousY = event.y
-                            mGLSurfaceView.queueEvent {
-                                mRenderer.handleTouchPress(normalizedX, normalizedY)
-                            }
-                        }
-                        MotionEvent.ACTION_MOVE -> {
-                            val deltaX = event.x - previousX
-                            val deltaY = event.y - previousY
-                            previousX = event.x
-                            previousY = event.y
-                            mGLSurfaceView.queueEvent {
-                                mRenderer.handleTouchDrag(normalizedX, normalizedY, deltaX, deltaY)
-                            }
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        previousX = event.x
+                        previousY = event.y
+                        mGLSurfaceView.queueEvent {
+                            airHockeyRenderer.handleTouchPress(normalizedX, normalizedY)
                         }
                     }
-                    true
-                } else {
-                    false
+                    MotionEvent.ACTION_MOVE -> {
+                        val deltaX = event.x - previousX
+                        val deltaY = event.y - previousY
+                        previousX = event.x
+                        previousY = event.y
+                        mGLSurfaceView.queueEvent {
+                            airHockeyRenderer.handleTouchDrag(
+                                normalizedX,
+                                normalizedY,
+                                deltaX,
+                                deltaY
+                            )
+                        }
+                    }
                 }
+                return true
             }
         })
     }
@@ -182,6 +185,17 @@ class MainActivity : AppCompatActivity() {
         if (hasSetRenderer) mGLSurfaceView.onPause()
     }
 
+    fun onChooseFilter(filterMode: FilterMode) {
+        if (!particlesRenderer.supportsAnisotropicFiltering()
+            && filterMode === FilterMode.ANISOTROPIC
+        ) {
+            Toast.makeText(this, getString(R.string.noAnisotropicFiltering), Toast.LENGTH_LONG)
+                .show()
+        } else {
+            mGLSurfaceView.queueEvent { particlesRenderer.handleFilterModeChange(filterMode) }
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu items for use in the action bar
         val inflater = menuInflater
@@ -190,43 +204,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_triangle -> {
-                Toast.makeText(this, "Triangle", Toast.LENGTH_SHORT).show()
-                setupRenderer(Renderer.Triangle)
-                true
-            }
-            R.id.action_square -> {
-                Toast.makeText(this, "Square", Toast.LENGTH_SHORT).show()
-                setupRenderer(Renderer.Square)
-                true
-            }
-            R.id.action_cube -> {
-                Toast.makeText(this, "Cube", Toast.LENGTH_SHORT).show()
-                setupRenderer(Renderer.Cube)
-                true
-            }
-            R.id.action_air_hockey -> {
-                Toast.makeText(this, "AirHockey", Toast.LENGTH_SHORT).show()
-                setupRenderer(Renderer.AirHockey)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+        lateinit var filterMode: FilterMode
 
-    private
-    var renderer: Renderer = Renderer.AirHockey
-    private fun setupRenderer(renderer: Renderer) {
-        this.renderer = renderer
-    }
-
-    companion object {
-        enum class Renderer {
-            Triangle,
-            Square,
-            Cube,
-            AirHockey
+        when (item.itemId) {
+            R.id.filterChoices_Nearest_neighbour -> {
+                Toast.makeText(this, "Nearest neighbour", Toast.LENGTH_SHORT).show()
+                filterMode = FilterMode.NEAREST_NEIGHBOUR
+            }
+            R.id.filterChoices_Bilinear -> {
+                Toast.makeText(this, "Bilinear", Toast.LENGTH_SHORT).show()
+                filterMode = FilterMode.BILINEAR
+            }
+            R.id.filterChoices_BilinearMipmapping -> {
+                Toast.makeText(this, "Bilinear mipmapping", Toast.LENGTH_SHORT).show()
+                filterMode = FilterMode.BILINEAR_WITH_MIPMAPS
+            }
+            R.id.filterChoices_TrilinearMipmapping -> {
+                Toast.makeText(this, "Trilinear mipmapping", Toast.LENGTH_SHORT).show()
+                filterMode = FilterMode.TRILINEAR
+            }
+            R.id.filterChoices_AnisotropicMipmapping -> {
+                Toast.makeText(this, "Anisotropic mipmapping", Toast.LENGTH_SHORT).show()
+                filterMode = FilterMode.ANISOTROPIC
+            }
         }
+
+        return true
     }
 }

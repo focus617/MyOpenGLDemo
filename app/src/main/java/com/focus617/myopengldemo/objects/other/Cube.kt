@@ -6,17 +6,17 @@ import com.focus617.myopengldemo.render.DrawingObject
 
 class Cube : DrawingObject() {
 
-    private val vertexData = VertexBuffer(vertices, indices)
+    private val vertexBuffer = VertexBuffer(vertices, indices)
 
     fun bindDataES3() {
         //Generate VAO ID
-        glGenVertexArrays(vertexData.mVAOId.capacity(), vertexData.mVAOId)
+        glGenVertexArrays(vertexBuffer.mVAOId.capacity(), vertexBuffer.mVAOId)
 
         // Bind the VAO and then set up the vertex attributes
-        glBindVertexArray(vertexData.mVAOId.get(0))
+        glBindVertexArray(vertexBuffer.getVaoId())
 
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
-        glBindBuffer(GL_ARRAY_BUFFER, vertexData.mVBOIds.get(0))
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.mVBOIds.get(0))
 
         // 启用顶点数组
         glEnableVertexAttribArray(VERTEX_POS_INDEX)
@@ -42,8 +42,8 @@ class Cube : DrawingObject() {
             VERTEX_COLOR_OFFSET
         )
 
-        if (vertexData.withElement) {
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexData.mVBOIds.get(1))
+        if (vertexBuffer.withElement) {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffer.mVBOIds.get(1))
         }
 
         // Reset to the default VAO
@@ -52,12 +52,14 @@ class Cube : DrawingObject() {
 
     fun drawES3() {
         // Bind the VAO and then draw with VAO settings
-        glBindVertexArray(vertexData.getVaoId())
+        glBindVertexArray(vertexBuffer.getVaoId())
 
         // 图元装配，绘制三角形
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0)
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
+
 
         // Reset to the default VAO
         glBindVertexArray(0)

@@ -10,6 +10,8 @@ object ShaderProgramConstants {
     const val U_MATRIX = "u_MVPMatrix"
     const val U_COLOR = "u_Color"
     const val U_TEXTURE_UNIT = "u_TextureUnit"
+    const val U_TEXTURE_UNIT_1 = "u_TextureUnit1"
+    const val U_TEXTURE_UNIT_2 = "u_TextureUnit2"
     const val U_TIME = "u_Time"
     const val U_VECTOR_TO_LIGHT = "u_VectorToLight"
     const val U_MV_MATRIX = "u_MVMatrix"
@@ -22,8 +24,6 @@ object ShaderProgramConstants {
     const val A_COLOR = "a_Color"
     const val A_NORMAL = "a_Normal"
     const val A_TEXTURE_COORDINATES = "a_TextureCoordinates"
-    const val IS_NIGHT = "isNight"
-
     const val A_DIRECTION_VECTOR = "a_DirectionVector"
     const val A_PARTICLE_START_TIME = "a_ParticleStartTime"
 }

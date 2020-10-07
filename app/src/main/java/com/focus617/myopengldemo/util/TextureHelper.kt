@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.opengl.GLES31.*
 import android.opengl.GLUtils
-import android.util.Log
 import timber.log.Timber
 
 object TextureHelper {
@@ -95,7 +94,7 @@ object TextureHelper {
                 cubeResources[i], options
             )
             if (cubeBitmaps[i] == null) {
-                Timber.w( "Resource ID ${cubeResources[i]} could not be decoded.")
+                Timber.w("Resource ID ${cubeResources[i]} could not be decoded.")
                 glDeleteTextures(1, textureObjectIds, 0)
                 return 0
             }
@@ -120,4 +119,45 @@ object TextureHelper {
         return textureObjectIds[0]
     }
 
+    // 多重纹理(multitexturing)
+    enum class FilterMode {
+        NEAREST_NEIGHBOUR,
+        BILINEAR,
+        BILINEAR_WITH_MIPMAPS,
+        TRILINEAR,
+        ANISOTROPIC
+    }
+
+    private const val TEXTURE_MAX_ANISOTROPY_EXT = 0x84FE
+
+    fun adjustTextureFilters(
+        textureId: Int,
+        filterMode: FilterMode,
+        supportsAnisotropicFiltering: Boolean,
+        maxAnisotropy: Float
+    ) {
+        glBindTexture(GL_TEXTURE_2D, textureId)
+
+        if (supportsAnisotropicFiltering) {
+            if (filterMode == FilterMode.ANISOTROPIC) {
+                glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy)
+            } else {
+                glTexParameterf(GL_TEXTURE_2D, TEXTURE_MAX_ANISOTROPY_EXT, 1.0f)
+            }
+        }
+        if (filterMode == FilterMode.NEAREST_NEIGHBOUR) {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        } else {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+            if (filterMode == FilterMode.BILINEAR) {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+            } else if (filterMode == FilterMode.BILINEAR_WITH_MIPMAPS) {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
+            } else {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
+            }
+        }
+        glBindTexture(GL_TEXTURE_2D, 0)
+    }
 }

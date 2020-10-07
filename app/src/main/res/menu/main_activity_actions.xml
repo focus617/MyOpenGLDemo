@@ -10,23 +10,27 @@
 
     <!-- Menu items always be in the overflow -->
     <item
-        android:id="@+id/action_triangle"
-        android:title="@string/action_triangle"
+        android:id="@+id/filterChoices_Nearest_neighbour"
+        android:title="@string/NearestNeighbour"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_square"
-        android:title="@string/action_square"
+        android:id="@+id/filterChoices_Bilinear"
+        android:title="@string/Bilinear"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_cube"
-        android:title="@string/action_cube"
+        android:id="@+id/filterChoices_BilinearMipmapping"
+        android:title="@string/BilinearMipmapping"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_air_hockey"
-        android:title="@string/action_air_hockey"
+        android:id="@+id/filterChoices_TrilinearMipmapping"
+        android:title="@string/TrilinearMipmapping"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/filterChoices_AnisotropicMipmapping"
+        android:title="@string/AnisotropicMipmapping"
+        app:showAsAction="never" />
 </menu>

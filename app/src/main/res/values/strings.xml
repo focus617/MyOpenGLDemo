@@ -1,7 +1,16 @@
 <resources>
     <string name="app_name">MyOpenGLDemo</string>
-    <string name="action_triangle">Triangle</string>
-    <string name="action_square">Square</string>
-    <string name="action_cube">Cube</string>
-    <string name="action_air_hockey">AirHockey</string>
+
+    <string name="textureFilterChooser">Texture Filters</string>
+    <string name="chooseTextureFilter">Choose Texture Filter</string>
+    <string name="noAnisotropicFiltering">Your GPU does not support anisotropic filtering!</string>
+
+    <string name="NearestNeighbour">Nearest neighbour</string>
+    <string name="Bilinear">Bilinear</string>
+    <string name="BilinearMipmapping">Bilinear mipmapping</string>
+    <string name="TrilinearMipmapping">Trilinear mipmapping</string>
+    <string name="AnisotropicMipmapping">Anisotropic mipmapping</string>
+
+    <string name="enableAa">Enable AA</string>
+    <string name="disableAa">Disable AA</string>
 </resources>

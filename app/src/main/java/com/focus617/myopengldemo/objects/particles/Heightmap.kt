@@ -6,8 +6,8 @@ import android.opengl.GLES31.*
 import com.focus617.myopengldemo.data.VertexBuffer
 import com.focus617.myopengldemo.programs.particles.HeightmapShaderProgram
 import com.focus617.myopengldemo.util.Geometry
-import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
+import com.focus617.myopengldemo.util.Geometry.Point
 import timber.log.Timber
 
 class Heightmap(bitmap: Bitmap) {
@@ -48,6 +48,7 @@ class Heightmap(bitmap: Bitmap) {
         bitmap.recycle()
 
         val heightmapVertices = FloatArray(width * height * VERTEX_TOTAL_COMPONENT_COUNT)
+
         var offset = 0
         for (row in 0 until height) {
             for (col in 0 until width) {
@@ -56,14 +57,21 @@ class Heightmap(bitmap: Bitmap) {
                 // bitmap height mapped to Z, and Y representing the height. We
                 // assume the heightmap is grayscale, and use the value of the
                 // red color to determine the height.
-                val xPosition = (col.toFloat() / (width - 1).toFloat()) - 0.5f
-                val yPosition =
-                    Color.red(pixels[row * height + col]).toFloat() / 255.toFloat()
-                val zPosition = (row.toFloat() / (height - 1).toFloat()) - 0.5f
 
-                heightmapVertices[offset++] = xPosition
-                heightmapVertices[offset++] = yPosition
-                heightmapVertices[offset++] = zPosition
+//                val xPosition = (col.toFloat() / (width - 1).toFloat()) - 0.5f
+//                val yPosition =
+//                    Color.red(pixels[row * height + col]).toFloat() / 255.toFloat()
+//                val zPosition = (row.toFloat() / (height - 1).toFloat()) - 0.5f
+//
+//                heightmapVertices[offset++] = xPosition
+//                heightmapVertices[offset++] = yPosition
+//                heightmapVertices[offset++] = zPosition
+
+                val point = getPoint(pixels, row, col)
+
+                heightmapVertices[offset++] = point.x
+                heightmapVertices[offset++] = point.y
+                heightmapVertices[offset++] = point.z
 
                 val top: Point = getPoint(pixels, row - 1, col)
                 val left: Point = getPoint(pixels, row, col - 1)
@@ -77,6 +85,10 @@ class Heightmap(bitmap: Bitmap) {
                 heightmapVertices[offset++] = normal.x
                 heightmapVertices[offset++] = normal.y
                 heightmapVertices[offset++] = normal.z
+
+                // Texture coordinates
+                heightmapVertices[offset++] = point.x * 50f
+                heightmapVertices[offset++] = point.z * 50f
             }
         }
         return heightmapVertices
@@ -94,11 +106,15 @@ class Heightmap(bitmap: Bitmap) {
     private fun getPoint(pixels: IntArray, row: Int, col: Int): Point {
         var row = row
         var col = col
+
         val x = col.toFloat() / (width - 1).toFloat() - 0.5f
         val z = row.toFloat() / (height - 1).toFloat() - 0.5f
+
         row = clamp(row, 0, width - 1)
         col = clamp(col, 0, height - 1)
+
         val y = Color.red(pixels[row * height + col]).toFloat() / 255.toFloat()
+
         return Point(x, y, z)
     }
 
@@ -140,6 +156,7 @@ class Heightmap(bitmap: Bitmap) {
                 indexData[offset++] = topLeftIndexNum
                 indexData[offset++] = bottomLeftIndexNum
                 indexData[offset++] = topRightIndexNum
+
                 indexData[offset++] = topRightIndexNum
                 indexData[offset++] = bottomLeftIndexNum
                 indexData[offset++] = bottomRightIndexNum
@@ -161,6 +178,7 @@ class Heightmap(bitmap: Bitmap) {
         // 启用顶点数组
         glEnableVertexAttribArray(VERTEX_POS_INDEX)
         glEnableVertexAttribArray(VERTEX_NORMAL_INDEX)
+        glEnableVertexAttribArray(VERTEX_TEXTURE_INDEX)
 
         // 顶点的位置属性
         glVertexAttribPointer(
@@ -179,6 +197,14 @@ class Heightmap(bitmap: Bitmap) {
             VERTEX_STRIDE,
             VERTEX_NORMAL_OFFSET
         )
+        glVertexAttribPointer(
+            VERTEX_TEXTURE_INDEX,
+            TEXTURE_COMPONENT_COUNT,
+            GL_FLOAT,
+            false,
+            VERTEX_STRIDE,
+            VERTEX_TEXTURE_OFFSET
+        )
 
         if (vertexBuffer.withElement) {
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffer.mVBOIds.get(1))
@@ -195,6 +221,7 @@ class Heightmap(bitmap: Bitmap) {
         glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
 
         // Reset to the default VAO
         glBindVertexArray(0)
@@ -205,17 +232,20 @@ class Heightmap(bitmap: Bitmap) {
         // 顶点坐标的每个属性的Index
         internal const val VERTEX_POS_INDEX = 0
         internal const val VERTEX_NORMAL_INDEX = 1
+        internal const val VERTEX_TEXTURE_INDEX = 2
 
         // 顶点坐标的每个属性的Size
         internal const val POSITION_COMPONENT_COUNT = 3   // x,y,z
         internal const val NORMAL_COMPONENT_COUNT = 3     // x,y,z
+        internal const val TEXTURE_COMPONENT_COUNT = 2    // s,t
 
         internal const val VERTEX_POS_OFFSET = 0
         internal const val VERTEX_NORMAL_OFFSET = POSITION_COMPONENT_COUNT
+        internal const val VERTEX_TEXTURE_OFFSET = POSITION_COMPONENT_COUNT + NORMAL_COMPONENT_COUNT
 
         // 每个顶点的属性组的Size
         internal const val VERTEX_TOTAL_COMPONENT_COUNT =
-            (POSITION_COMPONENT_COUNT + NORMAL_COMPONENT_COUNT)
+            (POSITION_COMPONENT_COUNT + NORMAL_COMPONENT_COUNT + TEXTURE_COMPONENT_COUNT)
 
         // 连续的顶点属性组之间的间隔
         internal const val VERTEX_STRIDE = VERTEX_TOTAL_COMPONENT_COUNT * Float.SIZE_BYTES
