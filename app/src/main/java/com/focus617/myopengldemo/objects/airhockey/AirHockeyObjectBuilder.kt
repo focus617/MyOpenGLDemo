@@ -25,7 +25,7 @@ object AirHockeyObjectBuilder {
         builder.appendCircle(puckTop, numPoints)
         builder.appendOpenCylinder(puck, numPoints)
 
-        return builder.build()
+        return builder.buildData()
     }
 
     /**
@@ -73,7 +73,7 @@ object AirHockeyObjectBuilder {
         builder.appendCircle(handleCircle, numPoints)
         builder.appendOpenCylinder(handleCylinder, numPoints)
 
-        return builder.build()
+        return builder.buildData()
     }
 
 }

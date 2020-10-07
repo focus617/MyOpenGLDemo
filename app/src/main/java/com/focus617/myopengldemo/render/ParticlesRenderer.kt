@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
-import android.util.Log
 import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.particles.*
@@ -283,7 +282,6 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
             pointPositionsInEyeSpace, pointLightColors,
             grassTexture, stoneTexture
         )
-
 
         heightmap.bindDataES3(heightmapProgram)
         heightmap.drawES3()

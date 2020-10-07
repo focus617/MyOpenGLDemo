@@ -19,7 +19,7 @@ class Puck(val radius: Float, val height: Float, numPointsAroundPuck: Int) {
             Cylinder(Point(0f, 0f, 0f), radius, height),
             numPointsAroundPuck
         )
-    private val vertexData = VertexBuffer(generatedData.vertexArray)
+    private val vertexBuffer = VertexBuffer(generatedData.vertexArray)
     private val drawList: List<DrawCommand> = generatedData.drawList
 
     ////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ class Puck(val radius: Float, val height: Float, numPointsAroundPuck: Int) {
 
     fun bindDataEs3(colorProgram: ColorShaderProgram) {
 
-        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, vertexData.mVBOIds.get(0))
+        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, vertexBuffer.mVertexId)
 
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
         // 顶点目前有一个属性：位置坐标 (x,y,z)
@@ -65,7 +65,7 @@ class Puck(val radius: Float, val height: Float, numPointsAroundPuck: Int) {
 
     fun drawEs3() {
 
-        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, vertexData.mVBOIds.get(0))
+        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, vertexBuffer.mVertexId)
 
         // 图元装配，绘制冰球
         for (drawCommand in drawList) {

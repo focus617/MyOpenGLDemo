@@ -9,14 +9,12 @@ class Skybox {
     private val vertexBuffer = VertexBuffer(vertices, indices)
 
     fun bindDataES3(skyboxProgram: SkyboxShaderProgram) {
-        //Generate VAO ID
-        glGenVertexArrays(vertexBuffer.mVAOId.capacity(), vertexBuffer.mVAOId)
 
         // Bind the VAO and then set up the vertex attributes
-        glBindVertexArray(vertexBuffer.getVaoId())
+        glBindVertexArray(vertexBuffer.mVaoId)
 
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.mVBOIds.get(0))
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.mVertexId)
 
         // 顶点目前有一个位置属性
         glVertexAttribPointer(
@@ -32,7 +30,7 @@ class Skybox {
         glEnableVertexAttribArray(VERTEX_POS_INDEX)
 
         if (vertexBuffer.withElement) {
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffer.mVBOIds.get(1))
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffer.mElementId)
         }
 
         // Reset to the default VAO
@@ -41,7 +39,7 @@ class Skybox {
 
     fun drawES3() {
         // Bind the VAO and then draw with VAO settings
-        glBindVertexArray(vertexBuffer.getVaoId())
+        glBindVertexArray(vertexBuffer.mVaoId)
 
         // 图元装配，绘制三角形
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0)

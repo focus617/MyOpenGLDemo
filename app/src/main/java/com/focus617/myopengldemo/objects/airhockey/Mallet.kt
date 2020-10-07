@@ -19,7 +19,7 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
         height,
         numPointsAroundMallet
     )
-    private val vertexData = VertexBuffer(generatedData.vertexArray)
+    private val vertexBuffer = VertexBuffer(generatedData.vertexArray)
     private val drawList: List<DrawCommand> = generatedData.drawList
 
     ////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
 
     fun bindDataEs3(colorProgram: ColorShaderProgram) {
 
-        glBindBuffer(GL_ARRAY_BUFFER, vertexData.mVBOIds.get(0))
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.mVertexId)
 
         // 链接顶点属性，告诉OpenGL该如何解析顶点数据
         // 顶点目前有一个属性：位置坐标 (x,y,z)
@@ -66,7 +66,7 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
 
     fun drawEs3() {
 
-        glBindBuffer(GL_ARRAY_BUFFER, vertexData.mVBOIds.get(0))
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.mVertexId)
 
         // 图元装配，绘制木槌
         for (drawCommand in drawList) {

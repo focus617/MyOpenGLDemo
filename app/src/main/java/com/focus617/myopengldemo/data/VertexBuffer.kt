@@ -3,27 +3,44 @@ package com.focus617.myopengldemo.data
 import android.opengl.GLES31.*
 import timber.log.Timber
 import java.nio.*
+import kotlin.properties.Delegates
 
 /**
  * 适用于创建后不再变化的对象
  */
 class VertexBuffer(vertexData: FloatArray, indexData: ShortArray? = null) {
 
-    var mVAOId: IntBuffer = IntBuffer.allocate(1)   // 顶点数组对象
-    var mVBOIds: IntBuffer = IntBuffer.allocate(2)  // 顶点缓存对象
+    var mVaoId by Delegates.notNull<Int>()
+    var mVertexId by Delegates.notNull<Int>()
+    var mElementId by Delegates.notNull<Int>()
     var withElement: Boolean = false
 
     init {
         // 创建缓存，并绑定缓存类型
-        // mVBOIds[O] - used to store vertex attribute data
-        // mVBOIds[l] - used to store element indices
+        var mVAOBuf: IntBuffer = IntBuffer.allocate(1)   // 顶点数组对象
+        var mVBOBuf: IntBuffer = IntBuffer.allocate(2)  // 顶点缓存对象
+
         // allocate only on the first draw
-        glGenBuffers(mVBOIds.capacity(), mVBOIds)
-        for (index in 0 until mVBOIds.capacity()) {
-            if (mVBOIds.get(index) == 0)
+        // Generate VBO ID
+        glGenBuffers(mVBOBuf.capacity(), mVBOBuf)
+        for (index in 0 until mVBOBuf.capacity()) {
+            if (mVBOBuf.get(index) == 0)
                 throw RuntimeException("Could not create a new vertex buffer object.")
         }
-        Timber.d("init(): Create VBO, ID: $mVBOIds")
+        // Generate VAO ID
+        glGenVertexArrays(mVAOBuf.capacity(), mVAOBuf)
+        for (index in 0 until mVAOBuf.capacity()) {
+            if (mVAOBuf.get(index) == 0)
+                throw RuntimeException("Could not create a new vertex array object.")
+        }
+        Timber.d("init(): Create VBO, ID: $mVBOBuf")
+
+        // mVBOIds[O] - used to store vertex attribute data
+        mVertexId = mVBOBuf.get(0)
+        // mVBOIds[l] - used to store element indices
+        mElementId = mVBOBuf.get(1)
+        // mVAOIds[O] - used to store vertex array data
+        mVaoId = mVAOBuf.get(0)
 
         setupVertices(vertexData)
         if (indexData != null) {
@@ -32,13 +49,11 @@ class VertexBuffer(vertexData: FloatArray, indexData: ShortArray? = null) {
         }
     }
 
-    fun getVaoId(): Int = mVAOId.get(0);
-
     private fun setupVertices(vertices: FloatArray) {
 
         Timber.d("setupVertices()")
 
-        glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
+        glBindBuffer(GL_ARRAY_BUFFER, mVertexId)
 
         // Transfer data to native memory.
         val vertexArray: FloatBuffer = ByteBuffer
@@ -63,7 +78,7 @@ class VertexBuffer(vertexData: FloatArray, indexData: ShortArray? = null) {
         Timber.d("setupElements()")
 
         // bind buffer object for element indices
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBOIds.get(1))
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mElementId)
 
         // Transfer data to native memory.
         val indexArray: ShortBuffer = ByteBuffer
@@ -84,19 +99,52 @@ class VertexBuffer(vertexData: FloatArray, indexData: ShortArray? = null) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
+    class AttributeProperty(
+        val componentIndex: Int,
+        val componentCount: Int,
+        val stride: Int,
+        val dataOffset: Int
+    )
 
-    fun setVertexAttribPointer(
-        dataOffset: Int, attributeLocation: Int, componentCount: Int, stride: Int
+    fun bindData(
+        attribProperties: List<AttributeProperty>
     ) {
-        glBindBuffer(GL_ARRAY_BUFFER, mVBOIds.get(0))
-        // This call is slightly different than the glVertexAttribPointer we've
-        // used in the past: the last parameter is set to dataOffset, to tell OpenGL
-        // to begin reading data at this position of the currently bound buffer.
-        glVertexAttribPointer(
-            attributeLocation, componentCount, GL_FLOAT,
-            false, stride, dataOffset
-        )
-        glEnableVertexAttribArray(attributeLocation)
+        // Bind the VAO and then set up the vertex attributes
+        glBindVertexArray(mVaoId)
+        // Bind VBO buffer
+        glBindBuffer(GL_ARRAY_BUFFER, mVertexId)
+
+        for (attrib in attribProperties) {
+            // 设置顶点属性
+            glVertexAttribPointer(
+                attrib.componentIndex,
+                attrib.componentCount,
+                GL_FLOAT,
+                false,
+                attrib.stride,
+                attrib.dataOffset
+            )
+            // 启用顶点属性
+            glEnableVertexAttribArray(attrib.componentIndex)
+        }
+
+        if (withElement) {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mElementId)
+        }
+        // Reset to the default VAO
+        glBindVertexArray(0)
+    }
+
+    fun drawWithElements(numElements: Int) {
+        // Bind the VAO and then draw with VAO settings
+        glBindVertexArray(mVaoId)
+
+        glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
+
+        // Reset to the default VAO
+        glBindVertexArray(0)
+
         glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 }

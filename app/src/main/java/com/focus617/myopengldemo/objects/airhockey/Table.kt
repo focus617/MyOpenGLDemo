@@ -5,7 +5,7 @@ import android.opengl.GLES31.*
 import com.focus617.myopengldemo.data.VertexArray
 import com.focus617.myopengldemo.data.VertexBuffer
 import com.focus617.myopengldemo.programs.airhockey.TextureShaderProgram
-import com.focus617.myopengldemo.render.DrawingObject
+import com.focus617.myopengldemo.data.DrawingObject
 
 class Table : DrawingObject() {
 
@@ -33,61 +33,29 @@ class Table : DrawingObject() {
 
 
     ////////////////////////////////////////////////////////////
-    private val vertexData = VertexBuffer(vertices, indices)
+    private val vertexBuffer = VertexBuffer(vertices, indices)
 
     fun bindDataEs3(textureProgram: TextureShaderProgram) {
-
-        //Generate VAO ID
-        glGenVertexArrays(vertexData.mVAOId.capacity(), vertexData.mVAOId)
-
-        // Bind the VAO and then set up the vertex attributes
-        glBindVertexArray(vertexData.mVAOId.get(0))
-
-        // 链接顶点属性，告诉OpenGL该如何解析顶点数据
-        glBindBuffer(GL_ARRAY_BUFFER, vertexData.mVBOIds.get(0))
-
-        // 顶点目前有两个属性：第一个是位置属性
-        glVertexAttribPointer(
-            VERTEX_POS_INDEX,
-            VERTEX_POS_COMPONENT_COUNT,
-            GL_FLOAT,
-            false,
-            VERTEX_STRIDE,
-            VERTEX_POS_OFFSET
+        val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(
+            VertexBuffer.AttributeProperty(
+                VERTEX_POS_INDEX,
+                VERTEX_POS_COMPONENT_COUNT,
+                VERTEX_STRIDE,
+                VERTEX_POS_OFFSET
+            ),
+            VertexBuffer.AttributeProperty(
+                VERTEX_TEXCOORDO_INDEX,
+                VERTEX_TEXCOORDO_COMPONENT_COUNT,
+                VERTEX_STRIDE,
+                // TODO: Check why
+                VERTEX_TEX_COORDO_OFFSET * Float.SIZE_BYTES
+            )
         )
-        // 顶点的第二个属性是纹理坐标
-        glVertexAttribPointer(
-            VERTEX_TEXCOORDO_INDEX,
-            VERTEX_TEXCOORDO_COMPONENT_COUNT,
-            GL_FLOAT,
-            false,
-            VERTEX_STRIDE,
-            (VERTEX_TEX_COORDO_OFFSET * Float.SIZE_BYTES)
-        )
-
-        // 启用顶点数组
-        glEnableVertexAttribArray(VERTEX_POS_INDEX)
-        glEnableVertexAttribArray(VERTEX_TEXCOORDO_INDEX)
-
-        if (vertexData.withElement) {
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexData.mVBOIds.get(1))
-        }
-
-        // Reset to the default VAO
-        glBindVertexArray(0)
+        vertexBuffer.bindData(attribPropertyList)
     }
 
     fun drawEs3() {
-        // Bind the VAO and then draw with VAO settings
-        glBindVertexArray(vertexData.mVAOId.get(0))
-
-        // 图元装配，绘制三角形
-        glDrawElements(GL_TRIANGLES, 15, GL_UNSIGNED_SHORT, 0)
-
-        glBindBuffer(GLES31.GL_ARRAY_BUFFER, 0)
-
-        // Reset to the default VAO
-        glBindVertexArray(0)
+        vertexBuffer.drawWithElements(indices.size)
     }
 
     ////////////////////////////////////////////////////////////

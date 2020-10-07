@@ -7,9 +7,9 @@ import com.focus617.myopengldemo.util.Geometry.Cylinder
 class ObjectBuilder(sizeInVertices: Int) {
 
     private val vertexArray = FloatArray(sizeInVertices * FLOATS_PER_VERTEX)
-    private var offset = 0
-
     private val drawList: MutableList<DrawCommand> = ArrayList()
+
+    private var offset = 0
 
     fun appendCircle(circle: Circle, numPoints: Int) {
         val startVertex = offset / FLOATS_PER_VERTEX
@@ -72,7 +72,7 @@ class ObjectBuilder(sizeInVertices: Int) {
         })
     }
 
-    fun build(): GeneratedData {
+    fun buildData(): GeneratedData {
         return GeneratedData(vertexArray, drawList)
     }
 
@@ -84,6 +84,7 @@ class ObjectBuilder(sizeInVertices: Int) {
         }
 
         class GeneratedData(val vertexArray: FloatArray, val drawList: List<DrawCommand>)
+
         /**
          * 计算圆柱体顶部的顶点数量
          *

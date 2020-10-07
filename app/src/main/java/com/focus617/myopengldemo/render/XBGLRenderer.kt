@@ -5,6 +5,8 @@ import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import com.focus617.myopengldemo.objects.other.Cube
+import com.focus617.myopengldemo.objects.other.Square
+import com.focus617.myopengldemo.objects.other.Triangle
 import com.focus617.myopengldemo.util.MatrixHelper
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig

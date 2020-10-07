@@ -2,8 +2,8 @@ package com.focus617.myopengldemo.objects.particles
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.opengl.GLES31.*
 import com.focus617.myopengldemo.data.VertexBuffer
+import com.focus617.myopengldemo.data.VertexBuffer.AttributeProperty
 import com.focus617.myopengldemo.programs.particles.HeightmapShaderProgram
 import com.focus617.myopengldemo.util.Geometry
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
@@ -30,15 +30,15 @@ class Heightmap(bitmap: Bitmap) {
         val vertices: FloatArray = loadBitmapData(bitmap)
         val indices: ShortArray = createIndexData()
         Timber.d("Build VertexBuffer: vertices(size=${vertices.size})")
-        for(i in 0..11) Timber.d("VertexBuffer $i : ${vertices[i]}")
+        for (i in 0..11) Timber.d("VertexBuffer $i : ${vertices[i]}")
 
         Timber.d("Build VertexBuffer: indices(size=${indices.size})")
-        for(i in 0..11) Timber.d("VertexBuffer $i : ${indices[i]}")
+        for (i in 0..11) Timber.d("VertexBuffer $i : ${indices[i]}")
 
         vertexBuffer = VertexBuffer(vertices, indices)
     }
-    
-    
+
+
     /**
      * Copy the heightmap data into a vertex buffer object.
      */
@@ -166,65 +166,32 @@ class Heightmap(bitmap: Bitmap) {
     }
 
     fun bindDataES3(heightmapProgram: HeightmapShaderProgram) {
-        //Generate VAO ID
-        glGenVertexArrays(vertexBuffer.mVAOId.capacity(), vertexBuffer.mVAOId)
-
-        // Bind the VAO and then set up the vertex attributes
-        glBindVertexArray(vertexBuffer.getVaoId())
-
-        // 链接顶点属性，告诉OpenGL该如何解析顶点数据
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.mVBOIds.get(0))
-
-        // 启用顶点数组
-        glEnableVertexAttribArray(VERTEX_POS_INDEX)
-        glEnableVertexAttribArray(VERTEX_NORMAL_INDEX)
-        glEnableVertexAttribArray(VERTEX_TEXTURE_INDEX)
-
-        // 顶点的位置属性
-        glVertexAttribPointer(
-            VERTEX_POS_INDEX,
-            POSITION_COMPONENT_COUNT,
-            GL_FLOAT,
-            false,
-            VERTEX_STRIDE,
-            VERTEX_POS_OFFSET
+        val attribPropertyList: List<AttributeProperty> = arrayListOf(
+            AttributeProperty(
+                VERTEX_POS_INDEX,
+                POSITION_COMPONENT_COUNT,
+                VERTEX_STRIDE,
+                VERTEX_POS_OFFSET
+            ),
+            AttributeProperty(
+                VERTEX_NORMAL_INDEX,
+                NORMAL_COMPONENT_COUNT,
+                VERTEX_STRIDE,
+                VERTEX_NORMAL_OFFSET
+            ),
+            AttributeProperty(
+                VERTEX_TEXTURE_INDEX,
+                TEXTURE_COMPONENT_COUNT,
+                VERTEX_STRIDE,
+                VERTEX_TEXTURE_OFFSET
+            )
         )
-        glVertexAttribPointer(
-            VERTEX_NORMAL_INDEX,
-            NORMAL_COMPONENT_COUNT,
-            GL_FLOAT,
-            false,
-            VERTEX_STRIDE,
-            VERTEX_NORMAL_OFFSET
-        )
-        glVertexAttribPointer(
-            VERTEX_TEXTURE_INDEX,
-            TEXTURE_COMPONENT_COUNT,
-            GL_FLOAT,
-            false,
-            VERTEX_STRIDE,
-            VERTEX_TEXTURE_OFFSET
-        )
-
-        if (vertexBuffer.withElement) {
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffer.mVBOIds.get(1))
-        }
-
-        // Reset to the default VAO
-        glBindVertexArray(0)
+        vertexBuffer.bindData(attribPropertyList)
     }
 
+
     fun drawES3() {
-        // Bind the VAO and then draw with VAO settings
-        glBindVertexArray(vertexBuffer.getVaoId())
-
-        glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
-
-        // Reset to the default VAO
-        glBindVertexArray(0)
+        vertexBuffer.drawWithElements(numElements)
     }
 
     companion object {
