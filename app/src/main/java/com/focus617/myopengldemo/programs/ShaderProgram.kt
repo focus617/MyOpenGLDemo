@@ -5,29 +5,11 @@ import android.opengl.GLES31.*
 import com.focus617.myopengldemo.util.ShaderHelper
 import com.focus617.myopengldemo.util.TextResourceReader
 
-object ShaderProgramConstants {
-    // Uniform constants
-    const val U_MATRIX = "u_MVPMatrix"
-    const val U_COLOR = "u_Color"
-    const val U_TEXTURE_UNIT = "u_TextureUnit"
-    const val U_TEXTURE_UNIT_1 = "u_TextureUnit1"
-    const val U_TEXTURE_UNIT_2 = "u_TextureUnit2"
-    const val U_TIME = "u_Time"
-    const val U_VECTOR_TO_LIGHT = "u_VectorToLight"
-    const val U_MV_MATRIX = "u_MVMatrix"
-    const val U_IT_MV_MATRIX = "u_IT_MVMatrix"
-    const val U_POINT_LIGHT_POSITIONS = "u_PointLightPositions"
-    const val U_POINT_LIGHT_COLORS = "u_PointLightColors"
-
-    // Attribute constants
-    const val A_POSITION = "a_Position"
-    const val A_COLOR = "a_Color"
-    const val A_NORMAL = "a_Normal"
-    const val A_TEXTURE_COORDINATES = "a_TextureCoordinates"
-    const val A_DIRECTION_VECTOR = "a_DirectionVector"
-    const val A_PARTICLE_START_TIME = "a_ParticleStartTime"
-}
-
+/**
+ * 着色器类 ShaderProgram
+ * 1. 储存了着色器程序的ID [program]
+ * 2. 它的构造器需要顶点着色器和片段着色器源代码的文件路径
+ */
 abstract class ShaderProgram protected constructor(
     context: Context,
     vertexShaderResourceId: Int,
@@ -50,7 +32,10 @@ abstract class ShaderProgram protected constructor(
         glUseProgram(program)
     }
 
-    // uniform工具函数
+    /**
+     * uniform工具函数
+     * 所有的set…函数能够查询一个uniform的位置句柄，并设置它的值。
+     */
     fun setBool( attributeName:String, bool: Boolean )
     {
         val value = if(bool) 1 else 0

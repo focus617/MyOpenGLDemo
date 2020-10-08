@@ -4,14 +4,14 @@ import android.content.Context
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.programs.ShaderProgram
-import com.focus617.myopengldemo.programs.ShaderProgramConstants.U_IT_MV_MATRIX
-import com.focus617.myopengldemo.programs.ShaderProgramConstants.U_MATRIX
-import com.focus617.myopengldemo.programs.ShaderProgramConstants.U_MV_MATRIX
-import com.focus617.myopengldemo.programs.ShaderProgramConstants.U_POINT_LIGHT_COLORS
-import com.focus617.myopengldemo.programs.ShaderProgramConstants.U_POINT_LIGHT_POSITIONS
-import com.focus617.myopengldemo.programs.ShaderProgramConstants.U_TEXTURE_UNIT_1
-import com.focus617.myopengldemo.programs.ShaderProgramConstants.U_TEXTURE_UNIT_2
-import com.focus617.myopengldemo.programs.ShaderProgramConstants.U_VECTOR_TO_LIGHT
+import com.focus617.myopengldemo.programs.ShaderConstants.U_IT_MV_MATRIX
+import com.focus617.myopengldemo.programs.ShaderConstants.U_MATRIX
+import com.focus617.myopengldemo.programs.ShaderConstants.U_MV_MATRIX
+import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_LIGHT_COLORS
+import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_LIGHT_POSITIONS
+import com.focus617.myopengldemo.programs.ShaderConstants.U_TEXTURE_UNIT_1
+import com.focus617.myopengldemo.programs.ShaderConstants.U_TEXTURE_UNIT_2
+import com.focus617.myopengldemo.programs.ShaderConstants.U_VECTOR_TO_LIGHT
 
 class HeightmapShaderProgram(context: Context) : ShaderProgram(
     context,

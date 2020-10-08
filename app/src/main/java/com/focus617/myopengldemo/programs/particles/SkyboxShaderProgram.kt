@@ -4,9 +4,8 @@ import android.content.Context
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.programs.ShaderProgram
-import com.focus617.myopengldemo.programs.ShaderProgramConstants.A_POSITION
-import com.focus617.myopengldemo.programs.ShaderProgramConstants.U_MATRIX
-import com.focus617.myopengldemo.programs.ShaderProgramConstants.U_TEXTURE_UNIT
+import com.focus617.myopengldemo.programs.ShaderConstants.U_MATRIX
+import com.focus617.myopengldemo.programs.ShaderConstants.U_TEXTURE_UNIT
 
 class SkyboxShaderProgram(context: Context) : ShaderProgram(
     context,
