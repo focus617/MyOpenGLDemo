@@ -13,13 +13,11 @@ class SkyboxShaderProgram(context: Context) : ShaderProgram(
     R.raw.skybox_vertex_shader,
     R.raw.skybox_fragment_shader
 ) {
-    private val uMatrixLocation: Int = glGetUniformLocation(program, U_MATRIX)
     private val uTextureUnitLocation: Int = glGetUniformLocation(program, U_TEXTURE_UNIT)
 
-    fun getPositionAttributeLocation(): Int = glGetAttribLocation(program, A_POSITION)
-
     fun setUniforms(matrix: FloatArray, textureId: Int) {
-        glUniformMatrix4fv(uMatrixLocation, 1, false, matrix, 0)
+        setMatrix4fv(U_MATRIX, matrix)
+
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_CUBE_MAP, textureId)
         glUniform1i(uTextureUnitLocation, 0)

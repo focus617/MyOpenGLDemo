@@ -1,7 +1,7 @@
 package com.focus617.myopengldemo.programs
 
 import android.content.Context
-import android.opengl.GLES31.glUseProgram
+import android.opengl.GLES31.*
 import com.focus617.myopengldemo.util.ShaderHelper
 import com.focus617.myopengldemo.util.TextResourceReader
 
@@ -33,6 +33,7 @@ abstract class ShaderProgram protected constructor(
     vertexShaderResourceId: Int,
     fragmentShaderResourceId: Int
 ) {
+
     // Shader program: compile the shaders and link the program.
     protected val program: Int = ShaderHelper.buildProgram(
         TextResourceReader.readTextFileFromResource(
@@ -43,8 +44,44 @@ abstract class ShaderProgram protected constructor(
         )
     )
 
+    // 使用/激活程序
     fun useProgram() {
         // Set the current OpenGL shader program to this program.
         glUseProgram(program)
+    }
+
+    // uniform工具函数
+    fun setBool( attributeName:String, bool: Boolean )
+    {
+        val value = if(bool) 1 else 0
+        glUniform1i(glGetUniformLocation(program, attributeName), value)
+    }
+
+    fun setInt( attributeName:String, value: Int)
+    {
+        glUniform1i(glGetUniformLocation(program, attributeName), value )
+    }
+
+    fun setFloat( attributeName:String, value: Float)
+    {
+        glUniform1f(glGetUniformLocation(program, attributeName), value )
+    }
+
+    fun setVector3fv( attributeName:String, vector: FloatArray, count: Int)
+    {
+        glUniform3fv(glGetUniformLocation(program, attributeName),
+            count,  vector, 0 )
+    }
+
+    fun setVector4fv( attributeName:String, vector: FloatArray, count: Int)
+    {
+        glUniform4fv(glGetUniformLocation(program, attributeName),
+            count, vector, 0 )
+    }
+
+    fun setMatrix4fv( attributeName:String, matrix: FloatArray)
+    {
+        glUniformMatrix4fv(glGetUniformLocation(program, attributeName),
+            1, false, matrix, 0 )
     }
 }

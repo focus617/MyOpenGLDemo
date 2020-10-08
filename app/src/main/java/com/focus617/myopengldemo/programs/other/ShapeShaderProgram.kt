@@ -18,13 +18,13 @@ class ShapeShaderProgram(context: Context) : ShaderProgram(
     R.raw.shape_fragment_shader
 ) {
     // Uniform locations for the shader program.
-    private val uMatrixLocation: Int = glGetUniformLocation(program, U_MATRIX)
     private val uTextureUnitLocation: Int = glGetUniformLocation(program, U_TEXTURE_UNIT)
 
     // Attribute locations for the shader program.
 
     fun setUniforms(matrix: FloatArray, textureId: Int){
-        glUniformMatrix4fv(uMatrixLocation, 1, false, matrix, 0)
+        setMatrix4fv(U_MATRIX, matrix)
+
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_CUBE_MAP, textureId)
         glUniform1i(uTextureUnitLocation, 0)

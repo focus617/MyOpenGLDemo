@@ -4,6 +4,7 @@ import android.content.Context
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.programs.ShaderProgram
+import com.focus617.myopengldemo.programs.ShaderProgramConstants
 import com.focus617.myopengldemo.programs.ShaderProgramConstants.A_POSITION
 import com.focus617.myopengldemo.programs.ShaderProgramConstants.U_COLOR
 import com.focus617.myopengldemo.programs.ShaderProgramConstants.U_MATRIX
@@ -15,19 +16,16 @@ class ColorShaderProgram(context: Context) : ShaderProgram(
 ) {
 
     // Uniform locations for the shader program.
-    private val uMatrixLocation: Int = glGetUniformLocation(program, U_MATRIX)
-    private val uColorLocation = glGetUniformLocation(program, U_COLOR)
 
     // Attribute locations for the shader program.
     fun getPositionAttributeLocation() = glGetAttribLocation(program, A_POSITION)
 
-//    fun getColorAttributeLocation() = glGetAttribLocation(program, A_COLOR)
-
-    fun setUniforms(matrix: FloatArray?, r: Float, g: Float, b: Float) {
+    fun setUniforms(matrix: FloatArray, r: Float, g: Float, b: Float) {
         // Pass the matrix into the shader program.
-        glUniformMatrix4fv(uMatrixLocation, 1, false, matrix, 0)
+        setMatrix4fv(U_MATRIX, matrix)
 
         // Pass the color into the shader program.
-        glUniform4f(uColorLocation, r, g, b, 1f)
+        setVector4fv(U_COLOR, floatArrayOf(r, g, b, 1f),1)
+
     }
 }

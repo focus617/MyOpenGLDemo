@@ -16,7 +16,6 @@ class TextureShaderProgram(context: Context) : ShaderProgram(
 ) {
 
     // Retrieve uniform locations for the shader program.
-    private val uMatrixLocation: Int = glGetUniformLocation(program, U_MATRIX)
     private val uTextureUnitLocation: Int = glGetUniformLocation(program, U_TEXTURE_UNIT)
 
     // Retrieve attribute locations for the shader program.
@@ -27,7 +26,7 @@ class TextureShaderProgram(context: Context) : ShaderProgram(
 
     fun setUniforms(matrix: FloatArray, textureId: Int) {
         // Pass the matrix into the shader program.
-        glUniformMatrix4fv(uMatrixLocation, 1, false, matrix, 0)
+        setMatrix4fv(U_MATRIX, matrix)
 
         // Set the active texture unit to texture unit 0.
         glActiveTexture(GL_TEXTURE0)
