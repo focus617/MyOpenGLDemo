@@ -20,27 +20,27 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
         height,
         numPointsAroundMallet
     )
-    private val vertexBuffer = VertexBuffer(generatedData.vertexArray)
+    private val vertexBuffer = VertexBuffer.build(generatedData.vertexArray)
     private val drawList: List<DrawCommand> = generatedData.drawList
 
     ////////////////////////////////////////////////////////////
     // TODO: clean below ES2 implementation
-    private val vertexArray: VertexArray = VertexArray(generatedData.vertexArray)
-
-    fun bindDataEs2(colorProgram: ColorShaderProgram) {
-        vertexArray.setVertexAttribPointer(
-            0,
-            colorProgram.getPositionAttributeLocation(),
-            VERTEX_POS_COMPONENT_COUNT,
-            VERTEX_STRIDE
-        )
-    }
-
-    fun drawEs2() {
-        for (drawCommand in drawList) {
-            drawCommand.draw()
-        }
-    }
+//    private val vertexArray: VertexArray = VertexArray(generatedData.vertexArray)
+//
+//    fun bindDataEs2(colorProgram: ColorShaderProgram) {
+//        vertexArray.setVertexAttribPointer(
+//            0,
+//            colorProgram.getPositionAttributeLocation(),
+//            VERTEX_POS_COMPONENT_COUNT,
+//            VERTEX_STRIDE
+//        )
+//    }
+//
+//    fun drawEs2() {
+//        for (drawCommand in drawList) {
+//            drawCommand.draw()
+//        }
+//    }
 
     ////////////////////////////////////////////////////////////
 

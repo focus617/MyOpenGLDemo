@@ -35,7 +35,7 @@ class Heightmap(bitmap: Bitmap) {
         Timber.d("Build VertexBuffer: indices(size=${indices.size})")
         for (i in 0..11) Timber.d("VertexBuffer $i : ${indices[i]}")
 
-        vertexBuffer = VertexBuffer(vertices, indices)
+        vertexBuffer = VertexBuffer.build(vertices, indices)
     }
 
 

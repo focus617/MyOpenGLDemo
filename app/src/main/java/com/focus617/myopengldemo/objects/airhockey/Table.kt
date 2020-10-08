@@ -10,30 +10,30 @@ import com.focus617.myopengldemo.data.DrawingObject
 class Table : DrawingObject() {
 
     // TODO: clean below ES2 implementation
-    private val vertexArray = VertexArray(vertices)
-
-    fun bindDataEs2(textureProgram: TextureShaderProgram) {
-        vertexArray.setVertexAttribPointer(
-            0,
-            textureProgram.getPositionAttributeLocation(),
-            VERTEX_POS_COMPONENT_COUNT,
-            VERTEX_STRIDE
-        )
-        vertexArray.setVertexAttribPointer(
-            VERTEX_POS_COMPONENT_COUNT,
-            textureProgram.getTextureCoordinatesAttributeLocation(),
-            VERTEX_TEXCOORDO_COMPONENT_COUNT,
-            VERTEX_STRIDE
-        )
-    }
-
-    fun drawEs2() {
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 6)
-    }
+//    private val vertexArray = VertexArray(vertices)
+//
+//    fun bindDataEs2(textureProgram: TextureShaderProgram) {
+//        vertexArray.setVertexAttribPointer(
+//            0,
+//            textureProgram.getPositionAttributeLocation(),
+//            VERTEX_POS_COMPONENT_COUNT,
+//            VERTEX_STRIDE
+//        )
+//        vertexArray.setVertexAttribPointer(
+//            VERTEX_POS_COMPONENT_COUNT,
+//            textureProgram.getTextureCoordinatesAttributeLocation(),
+//            VERTEX_TEXCOORDO_COMPONENT_COUNT,
+//            VERTEX_STRIDE
+//        )
+//    }
+//
+//    fun drawEs2() {
+//        glDrawArrays(GL_TRIANGLE_FAN, 0, 6)
+//    }
 
 
     ////////////////////////////////////////////////////////////
-    private val vertexBuffer = VertexBuffer(vertices, indices)
+    private val vertexBuffer = VertexBuffer.build(vertices, indices)
 
     fun bindDataEs3(textureProgram: TextureShaderProgram) {
         val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(

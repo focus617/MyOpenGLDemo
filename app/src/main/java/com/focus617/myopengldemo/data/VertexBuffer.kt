@@ -8,7 +8,7 @@ import kotlin.properties.Delegates
 /**
  * 适用于创建后不再变化的对象
  */
-class VertexBuffer(vertexData: FloatArray, indexData: ShortArray? = null) {
+class VertexBuffer private constructor() {
 
     var mVaoId by Delegates.notNull<Int>()
     var mVertexId by Delegates.notNull<Int>()
@@ -42,16 +42,9 @@ class VertexBuffer(vertexData: FloatArray, indexData: ShortArray? = null) {
         mElementId = mVBOBuf.get(1)
         // mVAOIds[O] - used to store vertex array data
         mVaoId = mVAOBuf.get(0)
-
-        setupVertices(vertexData)
-        if (indexData != null) {
-            setupElements(indexData)
-            withElement = true
-            numElements = indexData.size
-        }
     }
 
-    private fun setupVertices(vertices: FloatArray) {
+    fun setupVertices(vertices: FloatArray) {
 
         Timber.d("setupVertices()")
 
@@ -75,7 +68,7 @@ class VertexBuffer(vertexData: FloatArray, indexData: ShortArray? = null) {
         glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 
-    private fun setupElements(indices: ShortArray) {
+    fun setupElements(indices: ShortArray) {
 
         Timber.d("setupElements()")
 
@@ -146,5 +139,24 @@ class VertexBuffer(vertexData: FloatArray, indexData: ShortArray? = null) {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
+    }
+
+    companion object{
+        fun build(vertexData: FloatArray, indexData: ShortArray? = null):VertexBuffer{
+            val vertexBuffer = VertexBuffer()
+
+            vertexBuffer.setupVertices(vertexData)
+            if (indexData != null) {
+                vertexBuffer.setupElements(indexData)
+                vertexBuffer.withElement = true
+                vertexBuffer.numElements = indexData.size
+            }
+            return vertexBuffer
+        }
+
+        fun build(verterArray: VertexArray):VertexBuffer{
+            val vertexBuffer = VertexBuffer()
+            return vertexBuffer
+        }
     }
 }

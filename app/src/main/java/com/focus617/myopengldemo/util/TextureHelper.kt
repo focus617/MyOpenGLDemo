@@ -146,19 +146,6 @@ object TextureHelper {
             }
         }
 
-//        if (filterMode == FilterMode.NEAREST_NEIGHBOUR) {
-//            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-//            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-//        } else {
-//            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-//            if (filterMode == FilterMode.BILINEAR) {
-//                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-//            } else if (filterMode == FilterMode.BILINEAR_WITH_MIPMAPS) {
-//                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
-//            } else {
-//                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
-//            }
-//        }
         when(filterMode){
             FilterMode.NEAREST_NEIGHBOUR -> {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
@@ -181,6 +168,20 @@ object TextureHelper {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
             }
         }
+//        if (filterMode == FilterMode.NEAREST_NEIGHBOUR) {
+//            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+//            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+//        } else {
+//            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+//            if (filterMode == FilterMode.BILINEAR) {
+//                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+//            } else if (filterMode == FilterMode.BILINEAR_WITH_MIPMAPS) {
+//                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)
+//            } else {
+//                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
+//            }
+//        }
+
 
         glBindTexture(GL_TEXTURE_2D, 0)
     }

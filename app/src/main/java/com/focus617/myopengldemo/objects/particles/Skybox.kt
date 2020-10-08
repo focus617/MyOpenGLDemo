@@ -6,7 +6,7 @@ import com.focus617.myopengldemo.programs.particles.SkyboxShaderProgram
 
 class Skybox {
 
-    private val vertexBuffer = VertexBuffer(vertices, indices)
+    private val vertexBuffer = VertexBuffer.build(vertices, indices)
 
     fun bindDataES3(skyboxProgram: SkyboxShaderProgram) {
         val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(

@@ -7,7 +7,7 @@ import com.focus617.myopengldemo.data.DrawingObject
 
 class Cube : DrawingObject() {
 
-    private val vertexBuffer = VertexBuffer(vertices, indices)
+    private val vertexBuffer = VertexBuffer.build(vertices, indices)
 
     fun bindDataES3() {
         val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(
