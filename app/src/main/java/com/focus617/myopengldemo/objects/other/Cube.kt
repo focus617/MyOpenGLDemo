@@ -102,7 +102,7 @@ class Cube : DrawingObject() {
 
         // 顶点坐标的每个属性的Size
         internal const val VERTEX_POS_SIZE = 3          //x,y,and z
-        internal const val VERTEX_COLOR_SIZE = 3       //x,y,and z
+        internal const val VERTEX_COLOR_SIZE = 3        //x,y,and z
 //        internal const val VERTEX_TEXCOORDO_SIZE = 2    //s and t
 //        internal const val VERTEX_TEXCOORD1_SIZE = 2    //s and t
 
@@ -110,9 +110,9 @@ class Cube : DrawingObject() {
         // of various attributes if vertex data are stored as an array
         //of structures
         internal const val VERTEX_POS_OFFSET = 0
-        internal const val VERTEX_COLOR_OFFSET = VERTEX_POS_SIZE
-//        internal const val VERTEX_TEX_COORDO_OFFSET = 6
-//        internal const val VERTEX_TEX_COORD1_OFFSET = 8
+        internal const val VERTEX_COLOR_OFFSET = VERTEX_POS_SIZE * Float.SIZE_BYTES
+//        internal const val VERTEX_TEX_COORDO_OFFSET =
+//        internal const val VERTEX_TEX_COORD1_OFFSET =
 
         internal const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE + VERTEX_COLOR_SIZE
 

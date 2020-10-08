@@ -1,5 +1,6 @@
 package com.focus617.myopengldemo.objects.airhockey
 
+import android.opengl.GLES31
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.data.VertexArray
 import com.focus617.myopengldemo.data.VertexBuffer
@@ -44,37 +45,30 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
     ////////////////////////////////////////////////////////////
 
     fun bindDataEs3(colorProgram: ColorShaderProgram) {
-
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.mVertexId)
-
-        // 链接顶点属性，告诉OpenGL该如何解析顶点数据
-        // 顶点目前有一个属性：位置坐标 (x,y,z)
-        glVertexAttribPointer(
-            VERTEX_POS_INDEX,
-            VERTEX_POS_COMPONENT_COUNT,
-            GL_FLOAT,
-            false,
-            VERTEX_STRIDE,
-            VERTEX_POS_OFFSET
+        val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(
+            VertexBuffer.AttributeProperty(
+                VERTEX_POS_INDEX,
+                VERTEX_POS_COMPONENT_COUNT,
+                VERTEX_STRIDE,
+                VERTEX_POS_OFFSET
+            )
         )
-
-        // 启用顶点数组
-        glEnableVertexAttribArray(VERTEX_POS_INDEX)
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        vertexBuffer.bindData(attribPropertyList)
     }
 
     fun drawEs3() {
+        // Bind the VAO and then draw with VAO settings
+        glBindVertexArray(vertexBuffer.mVaoId)
 
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.mVertexId)
-
-        // 图元装配，绘制木槌
+        // 图元装配，绘制冰球
         for (drawCommand in drawList) {
             drawCommand.draw()
         }
+        // Reset to the default VAO
+        glBindVertexArray(0)
 
-        // 禁用顶点数组
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GLES31.GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GLES31.GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
     companion object {
@@ -106,10 +100,10 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
         // of various attributes if vertex data are stored as an array
         // of structures
         internal const val VERTEX_POS_OFFSET = 0
-//        internal const val VERTEX_COLOR_OFFSET = VERTEX_POS_COMPONENT_COUNT
-//        internal const val VERTEX_NORMAL_OFFSET = 3
-//        internal const val VERTEX_TEX_COORDO_OFFSET = VERTEX_POS_COMPONENT_COUNT
-//        internal const val VERTEX_TEX_COORD1_OFFSET = 8
+//        internal const val VERTEX_COLOR_OFFSET = VERTEX_POS_COMPONENT_COUNT * Float.SIZE_BYTES
+//        internal const val VERTEX_NORMAL_OFFSET =
+//        internal const val VERTEX_TEX_COORDO_OFFSET =
+//        internal const val VERTEX_TEX_COORD1_OFFSET =
 
         internal const val VERTEX_ATTRIBUTE_SIZE =  VERTEX_POS_COMPONENT_COUNT
 

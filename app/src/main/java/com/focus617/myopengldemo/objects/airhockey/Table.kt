@@ -47,8 +47,7 @@ class Table : DrawingObject() {
                 VERTEX_TEXCOORDO_INDEX,
                 VERTEX_TEXCOORDO_COMPONENT_COUNT,
                 VERTEX_STRIDE,
-                // TODO: Check why
-                VERTEX_TEX_COORDO_OFFSET * Float.SIZE_BYTES
+                VERTEX_TEX_COORDO_OFFSET
             )
         )
         vertexBuffer.bindData(attribPropertyList)
@@ -102,10 +101,12 @@ class Table : DrawingObject() {
         // of various attributes if vertex data are stored as an array
         //of structures
         internal const val VERTEX_POS_OFFSET = 0
-        internal const val VERTEX_TEX_COORDO_OFFSET = VERTEX_POS_COMPONENT_COUNT
-//        internal const val VERTEX_COLOR_OFFSET = VERTEX_POS_SIZE
-//        internal const val VERTEX_NORMAL_OFFSET = 3
-//        internal const val VERTEX_TEX_COORD1_OFFSET = 8
+        internal const val VERTEX_TEX_COORDO_OFFSET =
+            VERTEX_POS_COMPONENT_COUNT * Float.SIZE_BYTES
+
+//        internal const val VERTEX_COLOR_OFFSET =
+//        internal const val VERTEX_NORMAL_OFFSET =
+//        internal const val VERTEX_TEX_COORD1_OFFSET =
 
         internal const val VERTEX_ATTRIBUTE_SIZE =
             VERTEX_POS_COMPONENT_COUNT + VERTEX_TEXCOORDO_COMPONENT_COUNT

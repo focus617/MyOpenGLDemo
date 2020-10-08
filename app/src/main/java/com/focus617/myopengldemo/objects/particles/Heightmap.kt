@@ -207,8 +207,9 @@ class Heightmap(bitmap: Bitmap) {
         internal const val TEXTURE_COMPONENT_COUNT = 2    // s,t
 
         internal const val VERTEX_POS_OFFSET = 0
-        internal const val VERTEX_NORMAL_OFFSET = POSITION_COMPONENT_COUNT
-        internal const val VERTEX_TEXTURE_OFFSET = POSITION_COMPONENT_COUNT + NORMAL_COMPONENT_COUNT
+        internal const val VERTEX_NORMAL_OFFSET = POSITION_COMPONENT_COUNT * Float.SIZE_BYTES
+        internal const val VERTEX_TEXTURE_OFFSET =
+            (POSITION_COMPONENT_COUNT + NORMAL_COMPONENT_COUNT) * Float.SIZE_BYTES
 
         // 每个顶点的属性组的Size
         internal const val VERTEX_TOTAL_COMPONENT_COUNT =
