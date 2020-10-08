@@ -1,6 +1,5 @@
 package com.focus617.myopengldemo.objects.particles
 
-import android.opengl.GLES31.*
 import com.focus617.myopengldemo.data.VertexBuffer
 import com.focus617.myopengldemo.programs.particles.SkyboxShaderProgram
 
@@ -22,7 +21,7 @@ class Skybox {
     }
 
     fun drawES3() {
-        vertexBuffer.drawWithElements()
+        vertexBuffer.draw()
     }
     
     companion object {

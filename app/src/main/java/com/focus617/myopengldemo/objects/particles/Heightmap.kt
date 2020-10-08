@@ -191,7 +191,7 @@ class Heightmap(bitmap: Bitmap) {
 
 
     fun drawES3() {
-        vertexBuffer.drawWithElements()
+        vertexBuffer.draw()
     }
 
     companion object {

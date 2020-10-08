@@ -1,39 +1,27 @@
 package com.focus617.myopengldemo.data
 
-import android.opengl.GLES31.*
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
+import java.nio.ShortBuffer
 
 /**
- * 适用于创建后经常变化的对象
+ * 适用于创建后经常变化的顶点对象
  */
-class VertexArray(vertexData: FloatArray) {
+class VertexArray(vertices: FloatArray) {
 
     private val floatBuffer: FloatBuffer = ByteBuffer
-        .allocateDirect(vertexData.size * Float.SIZE_BYTES)
+        .allocateDirect(vertices.size * Float.SIZE_BYTES)
         .order(ByteOrder.nativeOrder())
         .asFloatBuffer()
-        .put(vertexData)
+        .put(vertices)
 
-    fun setVertexAttribPointer(
-        dataOffset: Int,
-        attributeLocation: Int,
-        componentCount: Int,
-        stride: Int
-    ) {
-        floatBuffer.position(dataOffset)
-        glVertexAttribPointer(
-            attributeLocation,
-            componentCount,
-            GL_FLOAT,
-            false,
-            stride,
-            floatBuffer
-        )
-        glEnableVertexAttribArray(attributeLocation)
-        floatBuffer.position(0)
-    }
+    fun getFloatBuffer() = floatBuffer
+
+    fun position(pos: Int) = floatBuffer.position(pos)
+    
+    fun capacity() = floatBuffer.capacity()
+    
 
     /**
      * Updates the float buffer with the specified vertex data, assuming that
@@ -46,3 +34,30 @@ class VertexArray(vertexData: FloatArray) {
     }
 }
 
+/**
+ * 适用于创建后经常变化的顶点索引对象
+ */
+class ElementArray(indices: ShortArray) {
+
+    private val shortBuffer: ShortBuffer = ByteBuffer
+        .allocateDirect(indices.size * Short.SIZE_BYTES)
+        .order(ByteOrder.nativeOrder())
+        .asShortBuffer()
+        .put(indices)
+
+    fun getShortBuffer() = shortBuffer
+
+    fun position(pos: Int) = shortBuffer.position(pos)
+
+    fun capacity() = shortBuffer.capacity()
+
+    /**
+     * Updates the float buffer with the specified vertex data, assuming that
+     * the vertex data and the float buffer are the same size.
+     */
+    fun updateBuffer(indices: ShortArray, start: Int, count: Int) {
+        shortBuffer.position(start)
+        shortBuffer.put(indices, start, count)
+        shortBuffer.position(0)
+    }
+}

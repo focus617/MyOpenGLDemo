@@ -333,8 +333,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
         particleProgram.useProgram()
         particleProgram.setUniforms(mMVPMatrix, currentTime, particleTexture)
-        particleSystem.bindDataES2(particleProgram)
-        particleSystem.drawES2()
+        particleSystem.bindDataES3(particleProgram)
+        particleSystem.drawES3()
 
         glDisable(GL_BLEND)
         glDepthMask(true)

@@ -1,6 +1,5 @@
 package com.focus617.myopengldemo.objects.other
 
-import android.opengl.GLES31.*
 import com.focus617.myopengldemo.data.VertexBuffer
 import com.focus617.myopengldemo.data.VertexBuffer.AttributeProperty
 import com.focus617.myopengldemo.data.DrawingObject
@@ -31,7 +30,7 @@ class Cube : DrawingObject() {
     }
 
     fun drawES3() {
-        vertexBuffer.drawWithElements()
+        vertexBuffer.draw()
     }
 
     // 顶点数据集，及其属性
@@ -101,8 +100,8 @@ class Cube : DrawingObject() {
 //        internal const val VERTEX_TEXCOORD1_INDEX = 3
 
         // 顶点坐标的每个属性的Size
-        internal const val VERTEX_POS_SIZE = 3          //x,y,and z
-        internal const val VERTEX_COLOR_SIZE = 3        //x,y,and z
+        internal const val VERTEX_POS_SIZE = 3            //x,y,z
+        internal const val VERTEX_COLOR_SIZE = 3          //r,g,b
 //        internal const val VERTEX_TEXCOORDO_SIZE = 2    //s and t
 //        internal const val VERTEX_TEXCOORD1_SIZE = 2    //s and t
 

@@ -1,25 +1,33 @@
 package com.focus617.myopengldemo.data
 
+import android.opengl.GLES31
 import android.opengl.GLES31.*
 import timber.log.Timber
 import java.nio.*
 import kotlin.properties.Delegates
 
 /**
- * 适用于创建后不再变化的对象
+ * 本对象负责将顶点属性和索引加载到GPU，并执行显示操作
  */
 class VertexBuffer private constructor() {
-
+    // OpenGL对象的句柄
     var mVaoId by Delegates.notNull<Int>()
     var mVertexId by Delegates.notNull<Int>()
     var mElementId by Delegates.notNull<Int>()
-    var withElement: Boolean = false
-    private var numElements: Int = 0
+
+    var withElement: Boolean = false    // 本对象是否包含索引对象
+    private var numVertices: Int = 0    // 顶点的数目
+    private var numElements: Int = 0    // 索引的数目
+
+    // 包含内存中的Buffer对象，用以动态更新顶点和索引数据（updateBuffer()）
+    // 调用setupVertices和setupElements重新写入GPU
+    private lateinit var mVertexArray: VertexArray
+    private lateinit var mElementArray: ElementArray
 
     init {
         // 创建缓存，并绑定缓存类型
         var mVAOBuf: IntBuffer = IntBuffer.allocate(1)   // 顶点数组对象
-        var mVBOBuf: IntBuffer = IntBuffer.allocate(2)  // 顶点缓存对象
+        var mVBOBuf: IntBuffer = IntBuffer.allocate(2)   // 顶点缓存对象
 
         // allocate only on the first draw
         // Generate VBO ID
@@ -44,51 +52,48 @@ class VertexBuffer private constructor() {
         mVaoId = mVAOBuf.get(0)
     }
 
-    fun setupVertices(vertices: FloatArray) {
+    fun setupVertices() {
 
         Timber.d("setupVertices()")
 
         glBindBuffer(GL_ARRAY_BUFFER, mVertexId)
 
-        // Transfer data to native memory.
-        val vertexArray: FloatBuffer = ByteBuffer
-            .allocateDirect(vertices.size * Float.SIZE_BYTES)
-            .order(ByteOrder.nativeOrder())
-            .asFloatBuffer()
-            .put(vertices)
-        vertexArray.position(0)
+        // Reset to origin offset
+        mVertexArray.position(0)
 
         // Transfer data from native memory to the GPU buffer.
         glBufferData(
             GL_ARRAY_BUFFER,
-            vertexArray.capacity() * Float.SIZE_BYTES,
-            vertexArray,
+            mVertexArray.capacity() * Float.SIZE_BYTES,
+            mVertexArray.getFloatBuffer(),
             GL_STATIC_DRAW
         )
         glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 
-    fun setupElements(indices: ShortArray) {
+    fun updateVertices(vertexArray: VertexArray, numVertex: Int) {
 
+        Timber.d("updateVertices()")
+
+        mVertexArray = vertexArray
+        setupVertices()
+        numVertices = numVertex
+    }
+
+    fun setupElements() {
         Timber.d("setupElements()")
 
         // bind buffer object for element indices
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mElementId)
 
-        // Transfer data to native memory.
-        val indexArray: ShortBuffer = ByteBuffer
-            .allocateDirect(indices.size * Short.SIZE_BYTES)
-            .order(ByteOrder.nativeOrder())
-            .asShortBuffer()
-            .put(indices)
-        indexArray.position(0)
+        // Reset to origin offset
+        mElementArray.position(0)
 
         // Transfer data from native memory to the GPU buffer.
-
         glBufferData(
             GL_ELEMENT_ARRAY_BUFFER,
-            indexArray.capacity() * Short.SIZE_BYTES,
-            indexArray,
+            mElementArray.capacity() * Short.SIZE_BYTES,
+            mElementArray.getShortBuffer(),
             GL_STATIC_DRAW
         )
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
@@ -128,11 +133,15 @@ class VertexBuffer private constructor() {
         glBindVertexArray(0)
     }
 
-    fun drawWithElements() {
+    fun draw() {
         // Bind the VAO and then draw with VAO settings
         glBindVertexArray(mVaoId)
 
-        glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
+        if (withElement) {
+            glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
+        } else{
+            glDrawArrays(GL_POINTS, 0, numVertices)
+        }
 
         // Reset to the default VAO
         glBindVertexArray(0)
@@ -141,21 +150,34 @@ class VertexBuffer private constructor() {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
-    companion object{
-        fun build(vertexData: FloatArray, indexData: ShortArray? = null):VertexBuffer{
+    companion object {
+
+        fun build(vertices: FloatArray, indices: ShortArray? = null): VertexBuffer {
             val vertexBuffer = VertexBuffer()
 
-            vertexBuffer.setupVertices(vertexData)
-            if (indexData != null) {
-                vertexBuffer.setupElements(indexData)
+            // Transfer data to native memory.
+            vertexBuffer.mVertexArray = VertexArray(vertices)
+            vertexBuffer.setupVertices()
+            vertexBuffer.numVertices = vertices.size
+
+            if (indices != null) {
+                // Transfer data to native memory.
+                vertexBuffer.mElementArray = ElementArray(indices)
+                vertexBuffer.setupElements()
                 vertexBuffer.withElement = true
-                vertexBuffer.numElements = indexData.size
+                vertexBuffer.numElements = indices.size
             }
             return vertexBuffer
         }
 
-        fun build(verterArray: VertexArray):VertexBuffer{
+        fun build(vertexArray: VertexArray, numVertex: Int): VertexBuffer {
+            Timber.d("buildVertices")
+
             val vertexBuffer = VertexBuffer()
+            vertexBuffer.mVertexArray = vertexArray
+            vertexBuffer.setupVertices()
+            vertexBuffer.numVertices = numVertex
+
             return vertexBuffer
         }
     }

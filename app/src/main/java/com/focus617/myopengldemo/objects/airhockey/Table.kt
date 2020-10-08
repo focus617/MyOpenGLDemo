@@ -1,8 +1,5 @@
 package com.focus617.myopengldemo.objects.airhockey
 
-import android.opengl.GLES31
-import android.opengl.GLES31.*
-import com.focus617.myopengldemo.data.VertexArray
 import com.focus617.myopengldemo.data.VertexBuffer
 import com.focus617.myopengldemo.programs.airhockey.TextureShaderProgram
 import com.focus617.myopengldemo.data.DrawingObject
@@ -54,7 +51,7 @@ class Table : DrawingObject() {
     }
 
     fun drawEs3() {
-        vertexBuffer.drawWithElements()
+        vertexBuffer.draw()
     }
 
     ////////////////////////////////////////////////////////////

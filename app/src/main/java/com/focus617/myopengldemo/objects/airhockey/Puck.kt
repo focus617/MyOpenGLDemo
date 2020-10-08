@@ -22,25 +22,7 @@ class Puck(val radius: Float, val height: Float, numPointsAroundPuck: Int) {
     private val vertexBuffer = VertexBuffer.build(generatedData.vertexArray)
     private val drawList: List<DrawCommand> = generatedData.drawList
 
-    ////////////////////////////////////////////////////////////
-    // TODO: clean below ES2 implementation
-//    private val vertexArray: VertexArray = VertexArray(generatedData.vertexArray)
-//
-//    fun bindDataEs2(colorProgram: ColorShaderProgram) {
-//        vertexArray.setVertexAttribPointer(
-//            0,
-//            colorProgram.getPositionAttributeLocation(),
-//            VERTEX_POS_COMPONENT_COUNT, 0
-//        )
-//    }
-//
-//    fun drawEs2() {
-//        for (drawCommand in drawList) {
-//            drawCommand.draw()
-//        }
-//    }
 
-    ////////////////////////////////////////////////////////////
 
     fun bindDataEs3(colorProgram: ColorShaderProgram) {
 
@@ -93,5 +75,22 @@ class Puck(val radius: Float, val height: Float, numPointsAroundPuck: Int) {
         internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
     }
 
+    ////////////////////////////////////////////////////////////
+    // TODO: clean below ES2 implementation
+//    private val vertexArray: VertexArray = VertexArray(generatedData.vertexArray)
+//
+//    fun bindDataEs2(colorProgram: ColorShaderProgram) {
+//        vertexArray.setVertexAttribPointer(
+//            0,
+//            colorProgram.getPositionAttributeLocation(),
+//            VERTEX_POS_COMPONENT_COUNT, 0
+//        )
+//    }
+//
+//    fun drawEs2() {
+//        for (drawCommand in drawList) {
+//            drawCommand.draw()
+//        }
+//    }
 
 }
