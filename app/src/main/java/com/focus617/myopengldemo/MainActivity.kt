@@ -185,16 +185,6 @@ class MainActivity : AppCompatActivity() {
         if (hasSetRenderer) mGLSurfaceView.onPause()
     }
 
-    fun onChooseFilter(filterMode: FilterMode) {
-        if (!particlesRenderer.supportsAnisotropicFiltering()
-            && filterMode === FilterMode.ANISOTROPIC
-        ) {
-            Toast.makeText(this, getString(R.string.noAnisotropicFiltering), Toast.LENGTH_LONG)
-                .show()
-        } else {
-            mGLSurfaceView.queueEvent { particlesRenderer.handleFilterModeChange(filterMode) }
-        }
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Inflate the menu items for use in the action bar
@@ -231,5 +221,16 @@ class MainActivity : AppCompatActivity() {
         onChooseFilter(filterMode)
 
         return true
+    }
+
+    private fun onChooseFilter(filterMode: FilterMode) {
+        if (!particlesRenderer.supportsAnisotropicFiltering()
+            && filterMode === FilterMode.ANISOTROPIC
+        ) {
+            Toast.makeText(this, getString(R.string.noAnisotropicFiltering), Toast.LENGTH_LONG)
+                .show()
+        } else {
+            mGLSurfaceView.queueEvent { particlesRenderer.handleFilterModeChange(filterMode) }
+        }
     }
 }

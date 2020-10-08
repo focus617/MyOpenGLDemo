@@ -9,46 +9,20 @@ class Skybox {
     private val vertexBuffer = VertexBuffer(vertices, indices)
 
     fun bindDataES3(skyboxProgram: SkyboxShaderProgram) {
-
-        // Bind the VAO and then set up the vertex attributes
-        glBindVertexArray(vertexBuffer.mVaoId)
-
-        // 链接顶点属性，告诉OpenGL该如何解析顶点数据
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.mVertexId)
-
-        // 顶点目前有一个位置属性
-        glVertexAttribPointer(
-            VERTEX_POS_INDEX,
-            VERTEX_POS_COMPONENT_COUNT,
-            GL_FLOAT,
-            false,
-            VERTEX_STRIDE,
-            VERTEX_POS_OFFSET
+        val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(
+            // 链接顶点属性，告诉OpenGL该如何解析顶点数据
+            VertexBuffer.AttributeProperty(
+                VERTEX_POS_INDEX,
+                VERTEX_POS_COMPONENT_COUNT,
+                VERTEX_STRIDE,
+                VERTEX_POS_OFFSET
+            )
         )
-
-        // 启用顶点数组
-        glEnableVertexAttribArray(VERTEX_POS_INDEX)
-
-        if (vertexBuffer.withElement) {
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexBuffer.mElementId)
-        }
-
-        // Reset to the default VAO
-        glBindVertexArray(0)
+        vertexBuffer.bindData(attribPropertyList)
     }
 
     fun drawES3() {
-        // Bind the VAO and then draw with VAO settings
-        glBindVertexArray(vertexBuffer.mVaoId)
-
-        // 图元装配，绘制三角形
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0)
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
-
-        // Reset to the default VAO
-        glBindVertexArray(0)
+        vertexBuffer.drawWithElements()
     }
     
     companion object {
@@ -113,10 +87,10 @@ class Skybox {
         // of various attributes if vertex data are stored as an array
         //of structures
         internal const val VERTEX_POS_OFFSET = 0
-//        internal const val VERTEX_TEX_COORDO_OFFSET = VERTEX_POS_COMPONENT_COUNT
-//        internal const val VERTEX_COLOR_OFFSET = VERTEX_POS_SIZE
-//        internal const val VERTEX_NORMAL_OFFSET = 3
-//        internal const val VERTEX_TEX_COORD1_OFFSET = 8
+//        internal const val VERTEX_TEX_COORDO_OFFSET = VERTEX_POS_COMPONENT_COUNT * Float.SIZE_BYTES
+//        internal const val VERTEX_COLOR_OFFSET =
+//        internal const val VERTEX_NORMAL_OFFSET =
+//        internal const val VERTEX_TEX_COORD1_OFFSET =
 
         internal const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_COMPONENT_COUNT
 
