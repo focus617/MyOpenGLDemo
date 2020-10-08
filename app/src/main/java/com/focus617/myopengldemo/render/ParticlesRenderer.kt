@@ -165,19 +165,6 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         grassTexture = TextureHelper.loadTexture(context, R.drawable.noisy_grass_public_domain)
         stoneTexture = TextureHelper.loadTexture(context, R.drawable.stone_public_domain)
 
-        TextureHelper.adjustTextureFilters(
-            grassTexture,
-            FilterMode.TRILINEAR,
-            true,
-            2.0f
-        )
-        TextureHelper.adjustTextureFilters(
-            stoneTexture,
-            FilterMode.TRILINEAR,
-            true,
-            2.0f
-        )
-
         if (isNight) {
             Timber.d("onSurfaceCreated(): Enter night mode.")
             skyboxTexture = TextureHelper.loadCubeMap(
@@ -398,13 +385,13 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
             grassTexture,
             filterMode,
             supportsAnisotropicFiltering,
-            maxAnisotropy.get(0)
+            maxAnisotropy[0]
         )
         TextureHelper.adjustTextureFilters(
             stoneTexture,
             filterMode,
             supportsAnisotropicFiltering,
-            maxAnisotropy.get(0)
+            maxAnisotropy[0]
         )
     }
 

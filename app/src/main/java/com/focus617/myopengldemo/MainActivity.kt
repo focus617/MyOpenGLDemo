@@ -228,6 +228,7 @@ class MainActivity : AppCompatActivity() {
                 filterMode = FilterMode.ANISOTROPIC
             }
         }
+        onChooseFilter(filterMode)
 
         return true
     }
