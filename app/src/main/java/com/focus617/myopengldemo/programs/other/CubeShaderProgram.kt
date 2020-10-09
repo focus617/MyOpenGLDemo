@@ -1,15 +1,15 @@
 package com.focus617.myopengldemo.programs.other
 
 import android.content.Context
-import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
-import com.focus617.myopengldemo.programs.ShaderConstants.LIGHT_COLOR
-import com.focus617.myopengldemo.programs.ShaderConstants.OBJECT_COLOR
 import com.focus617.myopengldemo.programs.ShaderProgram
+import com.focus617.myopengldemo.programs.ShaderConstants.LIGHT_COLOR
+import com.focus617.myopengldemo.programs.ShaderConstants.LIGHT_POSITION
+import com.focus617.myopengldemo.programs.ShaderConstants.OBJECT_COLOR
 import com.focus617.myopengldemo.programs.ShaderConstants.U_MODEL_MATRIX
 import com.focus617.myopengldemo.programs.ShaderConstants.U_PROJECT_MATRIX
-import com.focus617.myopengldemo.programs.ShaderConstants.U_TEXTURE_UNIT
 import com.focus617.myopengldemo.programs.ShaderConstants.U_VIEW_MATRIX
+import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 
 class CubeShaderProgram(context: Context) : ShaderProgram(
     context,
@@ -22,7 +22,8 @@ class CubeShaderProgram(context: Context) : ShaderProgram(
     fun setUniforms(
         modelMatrix: FloatArray,
         viewMatrix: FloatArray,
-        projectionMatrix: FloatArray
+        projectionMatrix: FloatArray,
+        lightPosition: Vector
     ){
         setMatrix4fv(U_MODEL_MATRIX, modelMatrix)
         setMatrix4fv(U_VIEW_MATRIX, viewMatrix)
@@ -30,6 +31,7 @@ class CubeShaderProgram(context: Context) : ShaderProgram(
 
         setVector3fv(OBJECT_COLOR, ObjectColor, 1)
         setVector3fv(LIGHT_COLOR, LightColor, 1)
+        setVector3fv(LIGHT_POSITION, lightPosition, 1)
 
     }
 }

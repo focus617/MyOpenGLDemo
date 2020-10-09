@@ -153,6 +153,7 @@ class VertexBuffer private constructor() {
     companion object {
 
         fun build(vertices: FloatArray, indices: ShortArray? = null): VertexBuffer {
+            Timber.d("buildVertices: vertices size=${vertices.size}")
             val vertexBuffer = VertexBuffer()
 
             // Transfer data to native memory.
@@ -161,17 +162,20 @@ class VertexBuffer private constructor() {
             vertexBuffer.numVertices = vertices.size
 
             if (indices != null) {
+                Timber.d("buildVertices: indices size=${indices.size}")
                 // Transfer data to native memory.
                 vertexBuffer.mElementArray = ElementArray(indices)
                 vertexBuffer.setupElements()
                 vertexBuffer.withElement = true
                 vertexBuffer.numElements = indices.size
             }
+            else Timber.d("buildVertices: without indices")
+
             return vertexBuffer
         }
 
         fun build(vertexArray: VertexArray, numVertex: Int): VertexBuffer {
-            Timber.d("buildVertices")
+            Timber.d("buildVertices: with vertexArray, numVertex=$numVertex")
 
             val vertexBuffer = VertexBuffer()
             vertexBuffer.mVertexArray = vertexArray

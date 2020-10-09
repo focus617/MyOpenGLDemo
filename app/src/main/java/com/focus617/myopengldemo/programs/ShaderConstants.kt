@@ -20,6 +20,7 @@ object ShaderConstants {
 
     const val OBJECT_COLOR = "objectColor"
     const val LIGHT_COLOR = "lightColor"
+    const val LIGHT_POSITION = "lightPosition"
 
     // Attribute constants
     const val A_POSITION = "a_Position"

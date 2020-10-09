@@ -2,6 +2,7 @@ package com.focus617.myopengldemo.programs
 
 import android.content.Context
 import android.opengl.GLES31.*
+import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.util.ShaderHelper
 import com.focus617.myopengldemo.util.TextResourceReader
 
@@ -56,6 +57,11 @@ abstract class ShaderProgram protected constructor(
     {
         glUniform3fv(glGetUniformLocation(program, attributeName),
             count,  vector, 0 )
+    }
+
+    fun setVector3fv( attributeName:String, vector: Vector, count: Int)
+    {
+        setVector3fv( attributeName, floatArrayOf(vector.x, vector.y, vector.z), count)
     }
 
     fun setVector4fv( attributeName:String, vector: FloatArray, count: Int)
