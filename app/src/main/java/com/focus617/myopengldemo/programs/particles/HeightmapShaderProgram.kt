@@ -18,9 +18,6 @@ class HeightmapShaderProgram(context: Context) : ShaderProgram(
     R.raw.heightmap_vertex_shader,
     R.raw.heightmap_fragment_shader
 ) {
-    // Uniform locations for the shader program.
-    private var uTextureUnitLocation1 = glGetUniformLocation(program, U_TEXTURE_UNIT_1)
-    private var uTextureUnitLocation2 = glGetUniformLocation(program, U_TEXTURE_UNIT_2)
 
     fun setUniforms(
         mvMatrix: FloatArray,
@@ -42,11 +39,11 @@ class HeightmapShaderProgram(context: Context) : ShaderProgram(
 
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, grassTextureId)
-        glUniform1i(uTextureUnitLocation1,0) // The 0 means "GL_TEXTURE0", or the first texture unit.
+        setTexture(U_TEXTURE_UNIT_1,0)// The 0 means "GL_TEXTURE0", or the first texture unit.
 
         glActiveTexture(GL_TEXTURE1)
         glBindTexture(GL_TEXTURE_2D, stoneTextureId)
-        glUniform1i(uTextureUnitLocation2,1) // The 1 means "GL_TEXTURE1", or the second texture unit.
+        setTexture(U_TEXTURE_UNIT_2,1)// The 1 means "GL_TEXTURE1", or the second texture unit.
     }
 
 }

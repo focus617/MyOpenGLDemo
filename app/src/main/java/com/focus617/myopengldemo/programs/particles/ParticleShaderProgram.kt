@@ -17,20 +17,6 @@ class ParticleShaderProgram(context: Context) : ShaderProgram(
     R.raw.particle_vertex_shader,
     R.raw.particle_fragment_shader
 ) {
-    // Uniform locations for the shader program.
-
-    // Attribute locations for the shader program.
-    fun getPositionAttributeLocation(): Int = glGetAttribLocation(program, A_POSITION)
-    fun getColorAttributeLocation(): Int = glGetAttribLocation(program, A_COLOR)
-    fun getDirectionVectorAttributeLocation(): Int = glGetAttribLocation(program, A_DIRECTION_VECTOR)
-    fun getParticleStartTimeAttributeLocation(): Int = glGetAttribLocation(program, A_PARTICLE_START_TIME)
-
-    private val uTextureUnitLocation: Int = glGetUniformLocation(program, U_TEXTURE_UNIT)
-
-    fun setUniforms(matrix: FloatArray, elapsedTime: Float){
-        setMatrix4fv(U_MATRIX, matrix)
-        setFloat(U_TIME, elapsedTime)
-    }
 
     fun setUniforms(matrix: FloatArray, elapsedTime: Float, textureId: Int) {
         setMatrix4fv(U_MATRIX, matrix)
@@ -38,7 +24,7 @@ class ParticleShaderProgram(context: Context) : ShaderProgram(
 
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, textureId)
-        glUniform1i(uTextureUnitLocation, 0)
+        setTexture(U_TEXTURE_UNIT,0)
     }
 
 }

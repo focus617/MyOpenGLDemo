@@ -71,13 +71,13 @@ class AirHockeyRendererEs2(override val context: Context) : XGLRenderer(context)
         // Draw the table.
         textureProgram.useProgram()
         textureProgram.setUniforms(projectionMatrix, texture)
-        table.bindDataEs3(textureProgram)
-        table.drawEs3()
+        table.bindData()
+        table.draw()
 
         // Draw the mallets.
         colorProgram.useProgram()
         colorProgram.setUniforms(projectionMatrix, 1f, 0f, 0f)
-        mallet.bindDataEs3(colorProgram)
-        mallet.drawEs3()
+        mallet.bindData()
+        mallet.draw()
     }
 }

@@ -8,7 +8,7 @@ class Cube : DrawingObject() {
 
     private val vertexBuffer = VertexBuffer.build(vertices, indices)
 
-    fun bindDataES3() {
+    override fun bindData() {
         val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(
             // 顶点的位置属性
             AttributeProperty(
@@ -29,7 +29,7 @@ class Cube : DrawingObject() {
         vertexBuffer.bindData(attribPropertyList)
     }
 
-    fun drawES3() {
+    override fun draw() {
         vertexBuffer.draw()
     }
 

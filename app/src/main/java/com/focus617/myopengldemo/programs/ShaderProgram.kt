@@ -69,4 +69,9 @@ abstract class ShaderProgram protected constructor(
         glUniformMatrix4fv(glGetUniformLocation(program, attributeName),
             1, false, matrix, 0 )
     }
+
+    fun setTexture( attributeName:String, value: Int)
+    {
+        glUniform1i(glGetUniformLocation(program, attributeName), value )
+    }
 }

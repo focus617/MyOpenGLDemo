@@ -1,6 +1,7 @@
 package com.focus617.myopengldemo.objects.airhockey
 
 import android.opengl.GLES31.*
+import com.focus617.myopengldemo.data.DrawingObject
 import com.focus617.myopengldemo.data.VertexArray
 import com.focus617.myopengldemo.data.VertexBuffer
 import com.focus617.myopengldemo.util.Geometry.Point
@@ -13,7 +14,7 @@ import com.focus617.myopengldemo.programs.airhockey.ColorShaderProgram
 /**
  * 冰球
  */
-class Puck(val radius: Float, val height: Float, numPointsAroundPuck: Int) {
+class Puck(val radius: Float, val height: Float, numPointsAroundPuck: Int): DrawingObject() {
 
     private val generatedData: GeneratedData = AirHockeyObjectBuilder.createPuck(
             Cylinder(Point(0f, 0f, 0f), radius, height),
@@ -22,9 +23,7 @@ class Puck(val radius: Float, val height: Float, numPointsAroundPuck: Int) {
     private val vertexBuffer = VertexBuffer.build(generatedData.vertexArray)
     private val drawList: List<DrawCommand> = generatedData.drawList
 
-
-
-    fun bindDataEs3(colorProgram: ColorShaderProgram) {
+    override fun bindData() {
 
         val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(
             VertexBuffer.AttributeProperty(
@@ -37,7 +36,7 @@ class Puck(val radius: Float, val height: Float, numPointsAroundPuck: Int) {
         vertexBuffer.bindData(attribPropertyList)
     }
 
-    fun drawEs3() {
+    override fun draw() {
         // Bind the VAO and then draw with VAO settings
         glBindVertexArray(vertexBuffer.mVaoId)
 

@@ -15,15 +15,6 @@ class TextureShaderProgram(context: Context) : ShaderProgram(
     R.raw.texture_fragment_shader
 ) {
 
-    // Retrieve uniform locations for the shader program.
-    private val uTextureUnitLocation: Int = glGetUniformLocation(program, U_TEXTURE_UNIT)
-
-    // Retrieve attribute locations for the shader program.
-    fun getPositionAttributeLocation(): Int = glGetAttribLocation(program, A_POSITION)
-
-    fun getTextureCoordinatesAttributeLocation(): Int =
-        glGetAttribLocation(program, A_TEXTURE_COORDINATES)
-
     fun setUniforms(matrix: FloatArray, textureId: Int) {
         // Pass the matrix into the shader program.
         setMatrix4fv(U_MATRIX, matrix)
@@ -36,7 +27,7 @@ class TextureShaderProgram(context: Context) : ShaderProgram(
 
         // Tell the texture uniform sampler to use this texture in the shader by
         // telling it to read from texture unit 0.
-        glUniform1i(uTextureUnitLocation, 0)
+        setTexture(U_TEXTURE_UNIT,0)
     }
 
 }

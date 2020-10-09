@@ -2,6 +2,7 @@ package com.focus617.myopengldemo.objects.airhockey
 
 import android.opengl.GLES31
 import android.opengl.GLES31.*
+import com.focus617.myopengldemo.data.DrawingObject
 import com.focus617.myopengldemo.data.VertexArray
 import com.focus617.myopengldemo.data.VertexBuffer
 import com.focus617.myopengldemo.data.ObjectBuilder.Companion.DrawCommand
@@ -12,7 +13,7 @@ import com.focus617.myopengldemo.util.Geometry.Point
 /**
  * 木槌
  */
-class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
+class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int): DrawingObject() {
 
     private val generatedData: GeneratedData = AirHockeyObjectBuilder.createMallet(
         Point(0f, 0f, 0f),
@@ -23,28 +24,7 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
     private val vertexBuffer = VertexBuffer.build(generatedData.vertexArray)
     private val drawList: List<DrawCommand> = generatedData.drawList
 
-    ////////////////////////////////////////////////////////////
-    // TODO: clean below ES2 implementation
-//    private val vertexArray: VertexArray = VertexArray(generatedData.vertexArray)
-//
-//    fun bindDataEs2(colorProgram: ColorShaderProgram) {
-//        vertexArray.setVertexAttribPointer(
-//            0,
-//            colorProgram.getPositionAttributeLocation(),
-//            VERTEX_POS_COMPONENT_COUNT,
-//            VERTEX_STRIDE
-//        )
-//    }
-//
-//    fun drawEs2() {
-//        for (drawCommand in drawList) {
-//            drawCommand.draw()
-//        }
-//    }
-
-    ////////////////////////////////////////////////////////////
-
-    fun bindDataEs3(colorProgram: ColorShaderProgram) {
+    override fun bindData() {
         val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(
             VertexBuffer.AttributeProperty(
                 VERTEX_POS_INDEX,
@@ -56,7 +36,7 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int) {
         vertexBuffer.bindData(attribPropertyList)
     }
 
-    fun drawEs3() {
+    override fun draw() {
         // Bind the VAO and then draw with VAO settings
         glBindVertexArray(vertexBuffer.mVaoId)
 

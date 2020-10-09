@@ -296,8 +296,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
         cubeProgram.useProgram()
         cubeProgram.setUniforms(mMVPMatrix, skyboxTexture)
-        cube.bindDataES3()
-        cube.drawES3()
+        cube.bindData()
+        cube.draw()
     }
 
     private fun drawParticles() {

@@ -116,15 +116,15 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
         positionTableInScene()
         textureProgram.useProgram()
         textureProgram.setUniforms(mMVPMatrix, texture)
-        table.bindDataEs3(textureProgram)
-        table.drawEs3()
+        table.bindData()
+        table.draw()
 
         // Draw the mallets.
         positionObjectInScene(0f, mallet.height / 2f, -0.5f)
         colorProgram.useProgram()
         colorProgram.setUniforms(mMVPMatrix, 1f, 0f, 0f)
-        mallet.bindDataEs3(colorProgram)
-        mallet.drawEs3()
+        mallet.bindData()
+        mallet.draw()
 
         positionObjectInScene(
             blueMalletPosition.x,
@@ -138,15 +138,15 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
         // Note that we don't have to define the object data twice -- we just
         // draw the same mallet again but in a different position and with a
         // different color.
-        mallet.drawEs3()
+        mallet.draw()
 
         calculateObjectPosition()
 
         // Draw the puck.
         positionObjectInScene(puckPosition.x, puckPosition.y, puckPosition.z)
         colorProgram.setUniforms(mMVPMatrix, 0.8f, 0.8f, 1f)
-        puck.bindDataEs3(colorProgram)
-        puck.drawEs3()
+        puck.bindData()
+        puck.draw()
 
     }
 

@@ -7,7 +7,7 @@ import java.nio.*
 import kotlin.properties.Delegates
 
 /**
- * 本对象负责将顶点属性和索引加载到GPU，并执行显示操作
+ * 本对象负责将顶点属性和索引加载到 GPU，并执行显示操作
  */
 class VertexBuffer private constructor() {
     // OpenGL对象的句柄
