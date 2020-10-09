@@ -50,9 +50,11 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         // 计算透视投影矩阵 (Project Matrix)，而后将应用于onDrawFrame（）方法中的对象坐标
         val aspect: Float = width.toFloat() / height.toFloat()
-        Matrix.frustumM(mProjectionMatrix, 0,
+        Matrix.frustumM(
+            mProjectionMatrix, 0,
             -aspect, aspect, -1f, 1f,
-            2f, 10f)
+            2f, 10f
+        )
 
         // Build view matrix
         updateViewMatrices()
@@ -75,14 +77,20 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private var yRotation: Float = 0f
 
     private fun updateViewMatrices() {
-        Matrix.setIdentityM(mViewMatrix, 0)
-        Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
-        Matrix.rotateM(mViewMatrix, 0, -xRotation, 0f, 1f, 0f)
+        // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
+        Matrix.setLookAtM(mViewMatrix, 0,
+            0f, 0f, -3f,
+            0f, 0f, 0f,
+            0f, 1.0f, 0.0f)
 
-        // translate camera to view matrix
-        Matrix.translateM(mViewMatrix, 0, 0f, 0f, -3f)
+//        Matrix.setIdentityM(mViewMatrix, 0)
+//        Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
+//        Matrix.rotateM(mViewMatrix, 0, -xRotation, 0f, 1f, 0f)
+//
+//        // translate camera to view matrix
+//        Matrix.translateM(mViewMatrix, 0, 0f, 0f, -3f)
     }
-    
+
 
     private var shape: Shape = Shape.Cube
     fun setupShape(shape: Shape) {
@@ -125,14 +133,16 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         mCubeProgram.useProgram()
         mCubeProgram.setUniforms(
-            mModelMatrix, mViewMatrix, mProjectionMatrix, skyboxTexture)
+            mModelMatrix, mViewMatrix, mProjectionMatrix, skyboxTexture
+        )
         mCube!!.bindData()
         mCube!!.draw()
     }
 
     private fun positionObjectInScene(x: Float, y: Float, z: Float) {
         Matrix.setIdentityM(mModelMatrix, 0)
-        Matrix.rotateM(mModelMatrix, 0, 45f, 1f, 0f, 0f)
+        Matrix.rotateM(mModelMatrix, 0, -yRotation, 1f, 0f, 0f)
+        Matrix.rotateM(mModelMatrix, 0, -xRotation, 0f, 1f, 0f)
         Matrix.translateM(mModelMatrix, 0, x, y, z)
     }
 
