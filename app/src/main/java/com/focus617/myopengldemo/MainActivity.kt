@@ -14,7 +14,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.focus617.myopengldemo.render.AirHockeyRendererEs3
 import com.focus617.myopengldemo.render.ParticlesRenderer
 import com.focus617.myopengldemo.render.XGLRenderer
+import com.focus617.myopengldemo.util.Geometry
 import com.focus617.myopengldemo.util.TextureHelper.FilterMode
+import timber.log.Timber
+import kotlin.math.pow
+import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     private var particlesRenderer: ParticlesRenderer? = null
     private var airHockeyRenderer: AirHockeyRendererEs3? = null
-    private var xglRenderer: XGLRenderer? = null
+    private var xGlRenderer: XGLRenderer? = null
 
     // Check if the system supports OpenGL ES 3.0.
     private var supportsEs3 = false
@@ -97,32 +101,62 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun setXGLRenderer(){
-        xglRenderer = XGLRenderer(this)
-        mGLSurfaceView.setRenderer(xglRenderer)
+    private fun setXGLRenderer() {
+        xGlRenderer = XGLRenderer(this)
+        mGLSurfaceView.setRenderer(xGlRenderer)
         hasSetRenderer = true
 
         mGLSurfaceView.setOnTouchListener(object : OnTouchListener {
             var previousX = 0f
             var previousY = 0f
 
+            var isZooming = false
+            var distanceStart by Delegates.notNull<Float>()
+
             override fun onTouch(v: View, event: MotionEvent): Boolean {
+                val normalizedX = toOpenGLCoord(v, event.getX(), true);
+                val normalizedY = toOpenGLCoord(v, event.getY(), false);
+
                 return when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         previousX = event.x
                         previousY = event.y
                         true
                     }
+
+                    MotionEvent.ACTION_POINTER_DOWN -> {
+                        isZooming = true
+                        val x1 = toOpenGLCoord(v, event.getX(1), true)
+                        val y1 = toOpenGLCoord(v, event.getY(1), false)
+                        distanceStart = computeDistance(normalizedX, normalizedY, x1, y1)
+                        true
+                    }
+
                     MotionEvent.ACTION_MOVE -> {
-                        val deltaX = event.x - previousX
-                        val deltaY = event.y - previousY
-                        previousX = event.x
-                        previousY = event.y
-                        mGLSurfaceView.queueEvent {
-                            xglRenderer?.handleTouchDrag(deltaX, deltaY)
+                        if (isZooming) {
+                            val x2 = toOpenGLCoord(v, event.getX(1), true)
+                            val y2 = toOpenGLCoord(v, event.getY(1), false)
+                            var distance = computeDistance(normalizedX, normalizedY, x2, y2)
+                            var scale = distance / distanceStart
+                            Timber.d("onTouch(): scale=$scale")
+                            distanceStart = distance
+                        } else {
+                            val deltaX = event.x - previousX
+                            val deltaY = event.y - previousY
+                            previousX = event.x
+                            previousY = event.y
+                            mGLSurfaceView.queueEvent {
+                                xGlRenderer?.handleTouchDrag(deltaX, deltaY)
+                            }
                         }
                         true
                     }
+
+                    MotionEvent.ACTION_POINTER_UP -> {
+                        isZooming = false
+                        true
+                    }
+
                     else -> false
                 }
             }
@@ -209,6 +243,25 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    /**
+     * 屏幕坐标系点转OpenGL坐标系
+     * Convert touch coordinates into normalized device coordinates,
+     * keeping in mind that Android's Y coordinates are inverted.
+     */
+    private fun toOpenGLCoord(v: View, value: Float, isWidth: Boolean): Float {
+        return if (isWidth) {
+            (value / v.width.toFloat()) * 2 - 1
+        } else {
+            -((value / v.height.toFloat()) * 2 - 1)
+        }
+    }
+
+    /**
+     * 计算两个点之间的距离
+     */
+    private fun computeDistance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+        return kotlin.math.sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
+    }
 
     override fun onResume() {
         super.onResume()
@@ -261,7 +314,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onChooseFilter(filterMode: FilterMode) {
-        if(particlesRenderer==null) return
+        if (particlesRenderer == null) return
         if (!particlesRenderer!!.supportsAnisotropicFiltering()
             && filterMode === FilterMode.ANISOTROPIC
         ) {
@@ -271,4 +324,7 @@ class MainActivity : AppCompatActivity() {
             mGLSurfaceView.queueEvent { particlesRenderer!!.handleFilterModeChange(filterMode) }
         }
     }
+
+
+
 }

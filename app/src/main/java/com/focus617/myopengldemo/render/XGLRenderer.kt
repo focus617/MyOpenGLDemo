@@ -9,6 +9,7 @@ import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.other.Square
 import com.focus617.myopengldemo.objects.other.Triangle
 import com.focus617.myopengldemo.programs.other.ShapeShaderProgram
+import com.focus617.myopengldemo.util.MatrixHelper
 import com.focus617.myopengldemo.util.TextureHelper
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
@@ -50,14 +51,13 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         // 计算透视投影矩阵 (Project Matrix)，而后将应用于onDrawFrame（）方法中的对象坐标
         val aspect: Float = width.toFloat() / height.toFloat()
-        Matrix.frustumM(
-            mProjectionMatrix, 0,
-            -aspect, aspect, -1f, 1f,
-            2f, 10f
-        )
+//        Matrix.frustumM(
+//            mProjectionMatrix, 0,
+//            -aspect, aspect, -1f, 1f,
+//            2f, 50f
+//        )
+        MatrixHelper.perspectiveM(mProjectionMatrix, 45f, aspect, 0.1f, 100f)
 
-        // Build view matrix
-        updateViewMatrices()
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -113,6 +113,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
                 if (mCube == null) {
                     mCubeProgram = ShapeShaderProgram(context)
                     mCube = Cube()
+                    mCube!!.bindData()
                     skyboxTexture = TextureHelper.loadCubeMap(
                         context,
                         intArrayOf(
@@ -129,13 +130,19 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawCube() {
-        positionObjectInScene(0f, 0f, 0f)
 
         mCubeProgram.useProgram()
+
+        positionObjectInScene(0f, 0f, 1f)
         mCubeProgram.setUniforms(
             mModelMatrix, mViewMatrix, mProjectionMatrix, skyboxTexture
         )
-        mCube!!.bindData()
+        mCube!!.draw()
+
+        positionObjectInScene(2.0f, 2.0f, 10f)
+        mCubeProgram.setUniforms(
+            mModelMatrix, mViewMatrix, mProjectionMatrix, skyboxTexture
+        )
         mCube!!.draw()
     }
 
@@ -166,6 +173,6 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         }
 
         // Setup view matrix
-        updateViewMatrices()
+        //updateViewMatrices()
     }
 }
