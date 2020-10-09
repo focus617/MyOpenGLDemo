@@ -2,7 +2,7 @@ package com.focus617.myopengldemo.programs
 
 object ShaderConstants {
     // Uniform constants
-    const val U_MATRIX = "u_MVPMatrix"
+    const val U_MVP_MATRIX = "u_MVPMatrix"
     const val U_COLOR = "u_Color"
     const val U_TEXTURE_UNIT = "u_TextureUnit"
     const val U_TEXTURE_UNIT_1 = "u_TextureUnit1"
@@ -13,6 +13,10 @@ object ShaderConstants {
     const val U_IT_MV_MATRIX = "u_IT_MVMatrix"
     const val U_POINT_LIGHT_POSITIONS = "u_PointLightPositions"
     const val U_POINT_LIGHT_COLORS = "u_PointLightColors"
+
+    const val U_MODEL_MATRIX = "u_ModelMatrix"
+    const val U_VIEW_MATRIX = "u_ViewMatrix"
+    const val U_PROJECT_MATRIX = "u_ProjectionMatrix"
 
     // Attribute constants
     const val A_POSITION = "a_Position"

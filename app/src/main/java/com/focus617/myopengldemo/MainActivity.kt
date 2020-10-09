@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.focus617.myopengldemo.render.AirHockeyRendererEs3
 import com.focus617.myopengldemo.render.ParticlesRenderer
+import com.focus617.myopengldemo.render.XGLRenderer
 import com.focus617.myopengldemo.util.TextureHelper.FilterMode
 
 class MainActivity : AppCompatActivity() {
@@ -23,8 +24,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mGLSurfaceView: XGLSurfaceView
 
     private var hasSetRenderer: Boolean = false
-    private lateinit var particlesRenderer: ParticlesRenderer
-    private lateinit var airHockeyRenderer: AirHockeyRendererEs3
+
+    private var particlesRenderer: ParticlesRenderer? = null
+    private var airHockeyRenderer: AirHockeyRendererEs3? = null
+    private var xglRenderer: XGLRenderer? = null
 
     // Check if the system supports OpenGL ES 3.0.
     private var supportsEs3 = false
@@ -86,10 +89,44 @@ class MainActivity : AppCompatActivity() {
         mGLSurfaceView.setEGLContextClientVersion(3)
         mGLSurfaceView.setEGLConfigChooser(MultisampleConfigChooser())
 
+        setXGLRenderer()
         //setAirHockeyAsRenderer()
-        setParticlesAsRenderer()
+        //setParticlesAsRenderer()
 
         setContentView(mGLSurfaceView)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setXGLRenderer(){
+        xglRenderer = XGLRenderer(this)
+        mGLSurfaceView.setRenderer(xglRenderer)
+        hasSetRenderer = true
+
+        mGLSurfaceView.setOnTouchListener(object : OnTouchListener {
+            var previousX = 0f
+            var previousY = 0f
+
+            override fun onTouch(v: View, event: MotionEvent): Boolean {
+                return when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        previousX = event.x
+                        previousY = event.y
+                        true
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        val deltaX = event.x - previousX
+                        val deltaY = event.y - previousY
+                        previousX = event.x
+                        previousY = event.y
+                        mGLSurfaceView.queueEvent {
+                            xglRenderer?.handleTouchDrag(deltaX, deltaY)
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            }
+        })
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -116,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                         previousX = event.x
                         previousY = event.y
                         mGLSurfaceView.queueEvent {
-                            particlesRenderer.handleTouchDrag(deltaX, deltaY)
+                            particlesRenderer?.handleTouchDrag(deltaX, deltaY)
                         }
                         true
                     }
@@ -149,7 +186,7 @@ class MainActivity : AppCompatActivity() {
                         previousX = event.x
                         previousY = event.y
                         mGLSurfaceView.queueEvent {
-                            airHockeyRenderer.handleTouchPress(normalizedX, normalizedY)
+                            airHockeyRenderer?.handleTouchPress(normalizedX, normalizedY)
                         }
                     }
                     MotionEvent.ACTION_MOVE -> {
@@ -158,7 +195,7 @@ class MainActivity : AppCompatActivity() {
                         previousX = event.x
                         previousY = event.y
                         mGLSurfaceView.queueEvent {
-                            airHockeyRenderer.handleTouchDrag(
+                            airHockeyRenderer?.handleTouchDrag(
                                 normalizedX,
                                 normalizedY,
                                 deltaX,
@@ -224,13 +261,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onChooseFilter(filterMode: FilterMode) {
-        if (!particlesRenderer.supportsAnisotropicFiltering()
+        if(particlesRenderer==null) return
+        if (!particlesRenderer!!.supportsAnisotropicFiltering()
             && filterMode === FilterMode.ANISOTROPIC
         ) {
             Toast.makeText(this, getString(R.string.noAnisotropicFiltering), Toast.LENGTH_LONG)
                 .show()
         } else {
-            mGLSurfaceView.queueEvent { particlesRenderer.handleFilterModeChange(filterMode) }
+            mGLSurfaceView.queueEvent { particlesRenderer!!.handleFilterModeChange(filterMode) }
         }
     }
 }

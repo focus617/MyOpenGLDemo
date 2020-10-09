@@ -4,9 +4,7 @@ import android.content.Context
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.programs.ShaderProgram
-import com.focus617.myopengldemo.programs.ShaderConstants.A_POSITION
-import com.focus617.myopengldemo.programs.ShaderConstants.A_TEXTURE_COORDINATES
-import com.focus617.myopengldemo.programs.ShaderConstants.U_MATRIX
+import com.focus617.myopengldemo.programs.ShaderConstants.U_MVP_MATRIX
 import com.focus617.myopengldemo.programs.ShaderConstants.U_TEXTURE_UNIT
 
 class TextureShaderProgram(context: Context) : ShaderProgram(
@@ -17,7 +15,7 @@ class TextureShaderProgram(context: Context) : ShaderProgram(
 
     fun setUniforms(matrix: FloatArray, textureId: Int) {
         // Pass the matrix into the shader program.
-        setMatrix4fv(U_MATRIX, matrix)
+        setMatrix4fv(U_MVP_MATRIX, matrix)
 
         // Set the active texture unit to texture unit 0.
         glActiveTexture(GL_TEXTURE0)

@@ -6,7 +6,7 @@ import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.programs.ShaderProgram
 import com.focus617.myopengldemo.programs.ShaderConstants.A_POSITION
 import com.focus617.myopengldemo.programs.ShaderConstants.U_COLOR
-import com.focus617.myopengldemo.programs.ShaderConstants.U_MATRIX
+import com.focus617.myopengldemo.programs.ShaderConstants.U_MVP_MATRIX
 
 class ColorShaderProgram(context: Context) : ShaderProgram(
     context,
@@ -21,7 +21,7 @@ class ColorShaderProgram(context: Context) : ShaderProgram(
 
     fun setUniforms(matrix: FloatArray, r: Float, g: Float, b: Float) {
         // Pass the matrix into the shader program.
-        setMatrix4fv(U_MATRIX, matrix)
+        setMatrix4fv(U_MVP_MATRIX, matrix)
 
         // Pass the color into the shader program.
         setVector4fv(U_COLOR, floatArrayOf(r, g, b, 1f),1)

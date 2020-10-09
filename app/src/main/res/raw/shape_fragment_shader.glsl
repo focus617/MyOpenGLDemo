@@ -13,5 +13,6 @@ out vec4 gl_FragColor;
 
 void main()
 {
-    gl_FragColor = v_Color * texture(u_TextureUnit, v_Position);
+    //gl_FragColor = v_Color * texture(u_TextureUnit, v_Position);
+    gl_FragColor = v_Color;
 }

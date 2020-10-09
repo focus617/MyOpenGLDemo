@@ -288,13 +288,12 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawCube() {
-        Matrix.setIdentityM(mModelMatrix, 0)
         positionObjectInScene(10f,0.8f, 10f)
-        Matrix.rotateM(mModelMatrix, 0, -45f, 1f, 1f, 1f)
-        updateMvpMatrix()
+        updateViewMatrices()
 
         cubeProgram.useProgram()
-        cubeProgram.setUniforms(mMVPMatrix, skyboxTexture)
+        cubeProgram.setUniforms(
+            mModelMatrix, mViewMatrix, mProjectionMatrix, skyboxTexture)
         cube.bindData()
         cube.draw()
     }
@@ -340,6 +339,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun positionObjectInScene(x: Float, y: Float, z: Float) {
+        Matrix.setIdentityM(mModelMatrix, 0)
+        Matrix.rotateM(mModelMatrix, 0, -45f, 1f, 1f, 1f)
         Matrix.translateM(mModelMatrix, 0, x, y, z)
     }
 

@@ -17,14 +17,14 @@ import javax.microedition.khronos.opengles.GL10
 
 open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
-    protected val mModelMatrix = FloatArray(16)
-    protected val mViewMatrix = FloatArray(16)
-    protected val mProjectionMatrix = FloatArray(16)
+    private val mModelMatrix = FloatArray(16)
+    private val mViewMatrix = FloatArray(16)
+    private val mProjectionMatrix = FloatArray(16)
 
-    protected val mViewProjectionMatrix = FloatArray(16)
+    private val mViewProjectionMatrix = FloatArray(16)
     private val mModelViewMatrix = FloatArray(16)
 
-    protected val mMVPMatrix = FloatArray(16)
+    private val mMVPMatrix = FloatArray(16)
 
     private var mTriangle: Triangle? = null
     private var mSquare: Square? = null
@@ -37,6 +37,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         // 设置重绘背景框架颜色
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
+        glEnable(GL_DEPTH_TEST)
     }
 
     override fun onSurfaceChanged(glUnused: GL10, width: Int, height: Int) {
@@ -49,7 +50,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         // 计算透视投影矩阵 (Project Matrix)，而后将应用于onDrawFrame（）方法中的对象坐标
         val aspect: Float = width.toFloat() / height.toFloat()
-        Matrix.frustumM(mProjectionMatrix, 0, -aspect, aspect, -1f, 1f, 3f, 7f)
+        Matrix.frustumM(mProjectionMatrix, 0,
+            -aspect, aspect, -1f, 1f,
+            2f, 10f)
 
         // Build view matrix
         updateViewMatrices()
@@ -57,22 +60,13 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     override fun onDrawFrame(unused: GL10) {
         // 首先清理屏幕，重绘背景颜色
-        glClear(GL_COLOR_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        // 视图转换：Multiply the view and projection matrices together
-        Matrix.multiplyMM(mViewProjectionMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0)
+        updateViewMatrices()
 
         onDrawShape()
     }
 
-    private fun positionObjectInScene(x: Float, y: Float, z: Float) {
-        Matrix.setIdentityM(mModelMatrix, 0)
-
-        Matrix.translateM(mModelMatrix, 0, x, y, z)
-
-        // 视图转换：计算模型视图投影矩阵MVPMatrix，该矩阵可以将模型空间的坐标转换为归一化设备空间坐标
-        Matrix.multiplyMM(mMVPMatrix, 0, mViewProjectionMatrix, 0, mModelMatrix, 0)
-    }
 
     /**
      * 在 SurfaceView中通过触摸事件获取到要视图矩阵旋转的角度
@@ -88,40 +82,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         // translate camera to view matrix
         Matrix.translateM(mViewMatrix, 0, 0f, 0f, -3f)
     }
+    
 
-    private fun updateMvpMatrix() {
-        Matrix.multiplyMM(mModelViewMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mModelViewMatrix, 0)
-    }
-
-
-//    @Volatile
-//    var mAngle = 0f
-//
-//    fun getAngle(): Float {
-//        return mAngle
-//    }
-//
-//    fun setAngle(angle: Float) {
-//        mAngle = angle
-//    }
-
-    // 处理旋转
-    protected open fun setupRotation() {
-
-        // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
-        Matrix.setLookAtM(mViewMatrix, 0,
-            0f, 0f, 3.0f,
-            0f, 0f, 0f,
-            0f, 1.0f, 0.0f)
-
-        // 进行旋转变换
-        //Matrix.rotateM(mViewMatrix, 0, getAngle(), 1.0f, 0f, 0f)
-    }
-
-
-
-    private var shape: Shape = Shape.Unknown
+    private var shape: Shape = Shape.Cube
     fun setupShape(shape: Shape) {
         this.shape = shape
     }
@@ -158,19 +121,22 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawCube() {
-        Matrix.setIdentityM(mModelMatrix, 0)
         positionObjectInScene(0f, 0f, 0f)
-        Matrix.rotateM(mModelMatrix, 0, 45f, 1f, 0f, 1f)
-        updateMvpMatrix()
 
         mCubeProgram.useProgram()
-        mCubeProgram.setUniforms(mMVPMatrix, skyboxTexture)
+        mCubeProgram.setUniforms(
+            mModelMatrix, mViewMatrix, mProjectionMatrix, skyboxTexture)
         mCube!!.bindData()
         mCube!!.draw()
     }
 
-    companion object {
+    private fun positionObjectInScene(x: Float, y: Float, z: Float) {
+        Matrix.setIdentityM(mModelMatrix, 0)
+        Matrix.rotateM(mModelMatrix, 0, 45f, 1f, 0f, 0f)
+        Matrix.translateM(mModelMatrix, 0, x, y, z)
+    }
 
+    companion object {
         enum class Shape {
             Unknown,
             Triangle,
@@ -179,4 +145,17 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         }
     }
 
+    fun handleTouchDrag(deltaX: Float, deltaY: Float) {
+        xRotation += deltaX / 16f
+        yRotation += deltaY / 16f
+
+        if (yRotation < -90) {
+            yRotation = -90f
+        } else if (yRotation > 90) {
+            yRotation = 90f
+        }
+
+        // Setup view matrix
+        updateViewMatrices()
+    }
 }

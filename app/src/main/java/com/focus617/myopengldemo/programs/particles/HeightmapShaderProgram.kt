@@ -5,7 +5,7 @@ import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.programs.ShaderProgram
 import com.focus617.myopengldemo.programs.ShaderConstants.U_IT_MV_MATRIX
-import com.focus617.myopengldemo.programs.ShaderConstants.U_MATRIX
+import com.focus617.myopengldemo.programs.ShaderConstants.U_MVP_MATRIX
 import com.focus617.myopengldemo.programs.ShaderConstants.U_MV_MATRIX
 import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_LIGHT_COLORS
 import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_LIGHT_POSITIONS
@@ -31,7 +31,7 @@ class HeightmapShaderProgram(context: Context) : ShaderProgram(
     ) {
         setMatrix4fv(U_MV_MATRIX, mvMatrix)
         setMatrix4fv(U_IT_MV_MATRIX, it_mvMatrix)
-        setMatrix4fv(U_MATRIX, mvpMatrix)
+        setMatrix4fv(U_MVP_MATRIX, mvpMatrix)
 
         setVector3fv(U_VECTOR_TO_LIGHT, vectorToDirectionalLight, 1)
         setVector4fv(U_POINT_LIGHT_POSITIONS, pointLightPositions, 3)
