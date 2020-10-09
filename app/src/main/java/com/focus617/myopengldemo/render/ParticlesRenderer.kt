@@ -38,7 +38,6 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     private val mModelViewMatrix = FloatArray(16)
 
     private val tempMatrix = FloatArray(16)
-    private val modelViewMatrix = FloatArray(16)
     private val it_modelViewMatrix = FloatArray(16)
 
     // Maximum saturation and value.
@@ -264,7 +263,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         Matrix.multiplyMV(pointPositionsInEyeSpace, 8, mViewMatrix, 0, pointLightPositions, 8)
 
         heightmapProgram.setUniforms(
-            modelViewMatrix, it_modelViewMatrix,
+            mModelViewMatrix, it_modelViewMatrix,
             mMVPMatrix, vectorToLightInEyeSpace,
             pointPositionsInEyeSpace, pointLightColors,
             grassTexture, stoneTexture
@@ -290,8 +289,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
     private fun drawCube() {
         Matrix.setIdentityM(mModelMatrix, 0)
-        positionObjectInScene(-3.5f, 1.8f, 1.5f)
-        Matrix.rotateM(mModelMatrix, 0, 45f, 1f, 0f, 1f)
+        positionObjectInScene(10f,0.8f, 10f)
+        Matrix.rotateM(mModelMatrix, 0, -45f, 1f, 1f, 1f)
         updateMvpMatrix()
 
         cubeProgram.useProgram()
@@ -356,14 +355,16 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
     private fun updateMvpMatrix() {
         Matrix.multiplyMM(mModelViewMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
-        Matrix.invertM(tempMatrix, 0, modelViewMatrix, 0)
+        Matrix.invertM(tempMatrix, 0, mModelViewMatrix, 0)
         Matrix.transposeM(it_modelViewMatrix, 0, tempMatrix, 0)
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mModelViewMatrix, 0)
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0,
+            mModelViewMatrix, 0)
     }
 
     private fun updateMvpMatrixForSkybox() {
         Matrix.multiplyMM(mModelViewMatrix, 0, mViewMatrixForSkybox, 0, mModelMatrix, 0)
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mModelViewMatrix, 0)
+        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0,
+            mModelViewMatrix, 0)
     }
 
     fun handleTouchDrag(deltaX: Float, deltaY: Float) {
