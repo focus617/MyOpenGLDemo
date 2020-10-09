@@ -10,7 +10,7 @@ import android.opengl.Matrix
 import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.particles.*
-import com.focus617.myopengldemo.programs.other.ShapeShaderProgram
+import com.focus617.myopengldemo.programs.particles.SkeyCubeShaderProgram
 import com.focus617.myopengldemo.programs.particles.HeightmapShaderProgram
 import com.focus617.myopengldemo.programs.particles.ParticleShaderProgram
 import com.focus617.myopengldemo.programs.particles.SkyboxShaderProgram
@@ -63,7 +63,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     private lateinit var blueParticleShooter: ParticleShooter
     private lateinit var particleFireworksExplosion: ParticleFireworksExplosion
 
-    private lateinit var cubeProgram: ShapeShaderProgram
+    private lateinit var cubeProgram: SkeyCubeShaderProgram
     private lateinit var cube: Cube
 
     private lateinit var skyBoxProgram: SkyboxShaderProgram
@@ -123,7 +123,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         skyBoxProgram = SkyboxShaderProgram(context)
         skyBox = Skybox()
 
-        cubeProgram = ShapeShaderProgram(context)
+        cubeProgram = SkeyCubeShaderProgram(context)
         cube = Cube()
 
         particleProgram = ParticleShaderProgram(context)
@@ -288,7 +288,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawCube() {
-        positionObjectInScene(10f,0.8f, 10f)
+        positionObjectInScene(8f, 2f, 7f)
         updateViewMatrices()
 
         cubeProgram.useProgram()
@@ -340,7 +340,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
     private fun positionObjectInScene(x: Float, y: Float, z: Float) {
         Matrix.setIdentityM(mModelMatrix, 0)
-        Matrix.rotateM(mModelMatrix, 0, -45f, 1f, 1f, 1f)
+        Matrix.rotateM(mModelMatrix, 0, -45f, 1f, 0f, 1f)
         Matrix.translateM(mModelMatrix, 0, x, y, z)
     }
 

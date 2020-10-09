@@ -18,6 +18,9 @@ object ShaderConstants {
     const val U_VIEW_MATRIX = "u_ViewMatrix"
     const val U_PROJECT_MATRIX = "u_ProjectionMatrix"
 
+    const val OBJECT_COLOR = "objectColor"
+    const val LIGHT_COLOR = "lightColor"
+
     // Attribute constants
     const val A_POSITION = "a_Position"
     const val A_COLOR = "a_Color"

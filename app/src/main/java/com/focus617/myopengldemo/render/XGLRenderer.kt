@@ -4,13 +4,14 @@ import android.content.Context
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
-import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.other.Square
 import com.focus617.myopengldemo.objects.other.Triangle
-import com.focus617.myopengldemo.programs.other.ShapeShaderProgram
+import com.focus617.myopengldemo.programs.other.CubeShaderProgram
+import com.focus617.myopengldemo.programs.other.LightCubeShaderProgram
+import com.focus617.myopengldemo.util.Camera
+import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.MatrixHelper
-import com.focus617.myopengldemo.util.TextureHelper
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -22,16 +23,18 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private val mViewMatrix = FloatArray(16)
     private val mProjectionMatrix = FloatArray(16)
 
-    private val mViewProjectionMatrix = FloatArray(16)
-    private val mModelViewMatrix = FloatArray(16)
-
     private val mMVPMatrix = FloatArray(16)
 
     private var mTriangle: Triangle? = null
     private var mSquare: Square? = null
-    private var mCube: Cube? = null
 
-    private lateinit var mCubeProgram: ShapeShaderProgram
+    private var mCube: Cube? = null
+    private lateinit var mCubeProgram: CubeShaderProgram
+    private val mCubePos: Point = Point(0.0f, 0.0f, 0.0f)
+
+    private var mLight: Cube? = null
+    private lateinit var mLightProgram: LightCubeShaderProgram
+    private val mLightPos: Point = Point(2.0f, 3.0f, 6.0f)
 
     private var skyboxTexture = 0
 
@@ -39,8 +42,14 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         // 设置重绘背景框架颜色
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
         glEnable(GL_DEPTH_TEST)
+
+        mLightProgram = LightCubeShaderProgram(context)
+        mLight = Cube()
+        mLight!!.bindData()
     }
 
+    private var yFovInDegrees: Float = 45f
+    private var aspect: Float = 0f
     override fun onSurfaceChanged(glUnused: GL10, width: Int, height: Int) {
 
         // 设置渲染的OpenGL场景（视口）的位置和大小
@@ -50,13 +59,13 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         glViewport(0, 0, width, height)
 
         // 计算透视投影矩阵 (Project Matrix)，而后将应用于onDrawFrame（）方法中的对象坐标
-        val aspect: Float = width.toFloat() / height.toFloat()
+        aspect = width.toFloat() / height.toFloat()
 //        Matrix.frustumM(
 //            mProjectionMatrix, 0,
 //            -aspect, aspect, -1f, 1f,
 //            2f, 50f
 //        )
-        MatrixHelper.perspectiveM(mProjectionMatrix, 45f, aspect, 0.1f, 100f)
+        MatrixHelper.perspectiveM(mProjectionMatrix, yFovInDegrees, aspect, 0.1f, 100f)
 
     }
 
@@ -66,9 +75,20 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         updateViewMatrices()
 
+        drawLightCube()
+
         onDrawShape()
     }
 
+    private fun drawLightCube(){
+        positionObjectInScene(mLightPos)
+
+        mLightProgram.useProgram()
+        mLightProgram.setUniforms(
+            mModelMatrix, mViewMatrix, mProjectionMatrix
+        )
+        mLight!!.draw()
+    }
 
     /**
      * 在 SurfaceView中通过触摸事件获取到要视图矩阵旋转的角度
@@ -79,16 +99,13 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private fun updateViewMatrices() {
         // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
         Matrix.setLookAtM(mViewMatrix, 0,
-            0f, 0f, -3f,
+            Camera.cameraPos.x, Camera.cameraPos.y, Camera.cameraPos.z,
             0f, 0f, 0f,
-            0f, 1.0f, 0.0f)
+            Camera.cameraUp.x, Camera.cameraUp.y, Camera.cameraUp.z)
 
-//        Matrix.setIdentityM(mViewMatrix, 0)
-//        Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
-//        Matrix.rotateM(mViewMatrix, 0, -xRotation, 0f, 1f, 0f)
-//
-//        // translate camera to view matrix
-//        Matrix.translateM(mViewMatrix, 0, 0f, 0f, -3f)
+        Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
+        Matrix.rotateM(mViewMatrix, 0, xRotation, 0f, 1f, 0f)
+
     }
 
 
@@ -111,17 +128,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
             }
             Shape.Cube -> {
                 if (mCube == null) {
-                    mCubeProgram = ShapeShaderProgram(context)
+                    mCubeProgram = CubeShaderProgram(context)
                     mCube = Cube()
                     mCube!!.bindData()
-                    skyboxTexture = TextureHelper.loadCubeMap(
-                        context,
-                        intArrayOf(
-                            R.drawable.left, R.drawable.right,
-                            R.drawable.bottom, R.drawable.top,
-                            R.drawable.front, R.drawable.back
-                        )
-                    )
                 }
                 drawCube()
             }
@@ -133,24 +142,19 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         mCubeProgram.useProgram()
 
-        positionObjectInScene(0f, 0f, 1f)
-        mCubeProgram.setUniforms(
-            mModelMatrix, mViewMatrix, mProjectionMatrix, skyboxTexture
-        )
+        positionObjectInScene(mCubePos)
+        mCubeProgram.setUniforms(mModelMatrix, mViewMatrix, mProjectionMatrix)
         mCube!!.draw()
 
-        positionObjectInScene(2.0f, 2.0f, 10f)
-        mCubeProgram.setUniforms(
-            mModelMatrix, mViewMatrix, mProjectionMatrix, skyboxTexture
-        )
-        mCube!!.draw()
     }
 
     private fun positionObjectInScene(x: Float, y: Float, z: Float) {
         Matrix.setIdentityM(mModelMatrix, 0)
-        Matrix.rotateM(mModelMatrix, 0, -yRotation, 1f, 0f, 0f)
-        Matrix.rotateM(mModelMatrix, 0, -xRotation, 0f, 1f, 0f)
         Matrix.translateM(mModelMatrix, 0, x, y, z)
+    }
+
+    private fun positionObjectInScene(position: Point) {
+        positionObjectInScene(position.x, position.y, position.z)
     }
 
     companion object {
@@ -174,5 +178,16 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         // Setup view matrix
         //updateViewMatrices()
+    }
+
+    fun handleScroll(scale: Float){
+        if(yFovInDegrees in 1.0f..45.0f)
+            yFovInDegrees *= scale;
+        if(yFovInDegrees <= 1.0f)
+            yFovInDegrees = 1.0f;
+        if(yFovInDegrees >= 45.0f)
+            yFovInDegrees = 45.0f;
+
+        MatrixHelper.perspectiveM(mProjectionMatrix, yFovInDegrees, aspect, 0.1f, 100f)
     }
 }

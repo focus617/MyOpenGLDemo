@@ -5,14 +5,16 @@ precision highp float;
 precision mediump float;
 #endif
 
-uniform samplerCube u_TextureUnit;
+//uniform samplerCube u_TextureUnit;
 in vec3 v_Position;
 in vec4 v_Color;
+
+uniform vec3 objectColor;
+uniform vec3 lightColor;
 
 out vec4 gl_FragColor;
 
 void main()
 {
-    //gl_FragColor = v_Color * texture(u_TextureUnit, v_Position);
-    gl_FragColor = v_Color;
+    gl_FragColor = vec4(lightColor * objectColor, 1.0);
 }

@@ -37,7 +37,7 @@ class Geometry {
     companion object {
 
         class Vector(val x: Float, val y: Float, val z: Float) {
-            
+
             constructor(from: Point, to: Point) :
                     this((to.x-from.x), (to.y-from.y),(to.z-from.z))
 
