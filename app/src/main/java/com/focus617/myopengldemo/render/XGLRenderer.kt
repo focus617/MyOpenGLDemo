@@ -31,7 +31,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     private lateinit var mLight: Cube
     private lateinit var mLightProgram: LightCubeShaderProgram
-    private val mLightPos: Point = Point(0.0f, 0.0f, 7.0f)
+    private val mLightPos: Point = Point(2.0f, 3.0f, 7.0f)
     private val mLightColor: Vector = Vector(1.0f, 1.0f, 1.0f)
 
     private val mMaterialColor: Vector = Vector(1.0f, 0.5f, 0.31f)
@@ -116,11 +116,11 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private fun updateViewMatrices() {
         // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
         Matrix.setLookAtM(mViewMatrix, 0,
-            Camera.cameraPos.x, Camera.cameraPos.y, Camera.cameraPos.z,
+            Camera.cameraPos.x, Camera.cameraPos.y, -(Camera.cameraPos.z),
             0f, 0f, 0f,
             Camera.cameraUp.x, Camera.cameraUp.y, Camera.cameraUp.z)
 
-        Matrix.rotateM(mViewMatrix, 0, yRotation, 1f, 0f, 0f)
+        Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
         Matrix.rotateM(mViewMatrix, 0, xRotation, 0f, 1f, 0f)
 
     }
