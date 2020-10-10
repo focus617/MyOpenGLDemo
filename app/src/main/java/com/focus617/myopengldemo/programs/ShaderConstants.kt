@@ -19,10 +19,16 @@ object ShaderConstants {
     const val U_IT_MV_MATRIX = "u_IT_MVMatrix"
 
     const val U_POINT_VIEW_POSITION = "u_ViewPos"
-    const val U_POINT_LIGHT_POSITION = "u_worldSpaceLightPos"
-    const val U_POINT_LIGHT_COLOR = "u_PointLightColor"
-    const val U_MATERIAL_COLOR = "u_MaterialColor"
 
+    const val U_POINT_LIGHT_POSITION = "light.position"
+    const val U_POINT_LIGHT_AMBIENT = "light.ambient"
+    const val U_POINT_LIGHT_DIFFUSE = "light.diffuse"
+    const val U_POINT_LIGHT_SPECULAR = "light.specular"
+
+    const val U_MATERIAL_AMBIENT = "material.ambient"
+    const val U_MATERIAL_DIFFUSE = "material.diffuse"
+    const val U_MATERIAL_SPECULAR = "material.specular"
+    const val U_MATERIAL_SHININESS = "material.shininess"
 
     // Attribute constants
     const val A_POSITION = "a_Position"

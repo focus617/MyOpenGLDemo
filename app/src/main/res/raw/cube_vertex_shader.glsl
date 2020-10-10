@@ -8,10 +8,27 @@ uniform mat4 u_ProjectionMatrix;
 uniform mat4 u_IT_MVMatrix;
 
 uniform vec3 u_ViewPos;
-uniform vec3 u_worldSpaceLightPos;
 
-uniform vec3 u_PointLightColor;
-uniform vec3 u_MaterialColor;
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    // 镜面强度(Specular Intensity)
+    vec3 specular;
+    // 高光的反光度
+    float shininess;
+};
+
+uniform Material material;
+
+struct Light {
+    vec3 position;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+uniform Light light;
 
 out vec3 v_Color;
 
@@ -21,15 +38,6 @@ float lightDistance;
 
 vec3 viewDir;
 vec3 reflectDir;
-
-struct Material {
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-    float shininess;
-};
-
-uniform Material material;
 
 vec3 getAmbientLighting();
 vec3 getDiffuseLighting();
@@ -44,7 +52,7 @@ void main()
     vec3 worldSpaceViewPos = vec3(u_ViewMatrix * vec4(u_ViewPos, 1.0));
 
     // 在世界坐标空间中计算 着色点到点光源的距离 和 光照方向
-    lightDir = vec3(u_worldSpaceLightPos - worldSpacePos);
+    lightDir = vec3(light.position - worldSpacePos);
     lightDistance = length(lightDir);
 
     // 把法线和最终的方向向量都进行标准化
@@ -59,14 +67,13 @@ void main()
     result += getDiffuseLighting();
     result += getSpecularLighting();
 
-    v_Color = result * u_MaterialColor;
+    v_Color = result;
 }
 
 // 环境光
 vec3 getAmbientLighting()
 {
-    float ambientStrength = 0.1;
-    vec3 ambient = u_PointLightColor * ambientStrength;
+    vec3 ambient = light.ambient * material.ambient;
 
     return ambient;
 }
@@ -75,8 +82,8 @@ vec3 getAmbientLighting()
 vec3 getDiffuseLighting()
 {
     float cosine = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = u_PointLightColor * cosine * 25.0 / (pow(lightDistance, 2.0));
-    //      u_PointLightColor * (cosine * material.diffuse) / (pow(lightDistance, 2.0));
+    float diff = cosine * 25.0 / (pow(lightDistance, 2.0));
+    vec3 diffuse = light.diffuse *(diff * material.diffuse);
 
     return diffuse;
 }
@@ -84,13 +91,8 @@ vec3 getDiffuseLighting()
 // 镜面光
 vec3 getSpecularLighting()
 {
-    // 镜面强度(Specular Intensity)
-    float specularStrength = 0.5;
-    // 高光的反光度
-    float shininess = 132.0;
-
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-    vec3 specular = u_PointLightColor * spec * specularStrength;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    vec3 specular = light.specular * (spec * material.specular);
 
     return specular;
 }

@@ -98,8 +98,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         mCubeProgram.useProgram()
         mCubeProgram.setUniforms(
-            mModelMatrix, mViewMatrix, mProjectionMatrix, it_modelViewMatrix,
-            Camera.cameraPos, lightVector, mLightColor, mMaterialColor
+            mModelMatrix, mViewMatrix, mProjectionMatrix, it_modelViewMatrix, Camera.cameraPos
         )
         mCube.bindData()
         mCube.draw()
