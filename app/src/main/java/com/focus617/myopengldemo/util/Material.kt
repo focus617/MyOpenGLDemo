@@ -9,5 +9,5 @@ object Material {
     var specular: Vector = Vector(0.5f, 0.5f, 0.5f)
 
     // 高光的反光度
-    var shininess: Float = 100.0f
+    var shininess: Float = 32.0f
 }

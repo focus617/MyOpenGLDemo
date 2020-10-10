@@ -6,6 +6,6 @@ object Light {
     var position: Vector = Vector(3.0f, 4.0f, 6.0f)
 
     var ambient: Vector = Vector(0.2f, 0.2f, 0.2f)
-    var diffuse: Vector = Vector(0.5f, 0.5f, 0.5f) // 将光照调暗了一些以搭配场景
+    var diffuse: Vector = Vector(0.6f, 0.6f, 0.6f) // 将光照调暗了一些以搭配场景
     var specular: Vector = Vector(1.0f, 1.0f, 1.0f)
 }
