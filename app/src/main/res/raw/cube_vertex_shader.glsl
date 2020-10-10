@@ -7,19 +7,29 @@ uniform mat4 u_ViewMatrix;
 uniform mat4 u_ProjectionMatrix;
 uniform mat4 u_IT_MVMatrix;
 
-uniform vec3 u_worldSpaceViewPos;
+uniform vec3 u_ViewPos;
 uniform vec3 u_worldSpaceLightPos;
+
 uniform vec3 u_PointLightColor;
 uniform vec3 u_MaterialColor;
 
 out vec3 v_Color;
 
-vec3 eyeSpaceNormal;
-vec3 eyeSpaceLightDir;
-float eyeSpaceLightDistance;
+vec3 norm;
+vec3 lightDir;
+float lightDistance;
 
-vec3 eyeSpaceViewDir;
-vec3 eyeSpaceReflectDir;
+vec3 viewDir;
+vec3 reflectDir;
+
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+};
+
+uniform Material material;
 
 vec3 getAmbientLighting();
 vec3 getDiffuseLighting();
@@ -27,29 +37,23 @@ vec3 getSpecularLighting();
 
 void main()
 {
-    gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_ModelMatrix * vec4(a_Position, 1.0f);
+    gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_ModelMatrix * vec4(a_Position, 1.0);
 
-    // 将着色点转换到视图空间坐标
-    vec3 eyeSpacePosition = vec3(u_ViewMatrix * u_ModelMatrix * vec4(a_Position, 1.0f));
+    // 将着色点和摄像机转换到世界坐标空间
+    vec3 worldSpacePos = vec3(u_ModelMatrix * vec4(a_Position, 1.0));
+    vec3 worldSpaceViewPos = vec3(u_ViewMatrix * vec4(u_ViewPos, 1.0));
 
-    // 将点光源转换到视图空间坐标
-    vec3 eyeSpaceLightPos = vec3(u_ViewMatrix * vec4(u_worldSpaceLightPos, 1.0f));
+    // 在世界坐标空间中计算 着色点到点光源的距离 和 光照方向
+    lightDir = vec3(u_worldSpaceLightPos - worldSpacePos);
+    lightDistance = length(lightDir);
 
-    // 将观察点转换到视图空间坐标
-    vec3 eyeSpaceViewPos = vec3(u_ViewMatrix * vec4(u_worldSpaceViewPos, 1.0f));
-
-    // 在EyeSpace中计算 着色点到点光源的距离 和 光照方向
-    eyeSpaceLightDir = vec3(eyeSpaceLightPos - eyeSpacePosition);
-    eyeSpaceLightDistance = length(eyeSpaceLightDir);
-    eyeSpaceLightDir = normalize(eyeSpaceLightDir);
-
-    // The model normals need to be adjusted as per the transpose
-    // of the inverse of the modelview matrix.
-    eyeSpaceNormal = normalize(vec3(u_IT_MVMatrix * vec4(a_Normal, 0.0)));
+    // 把法线和最终的方向向量都进行标准化
+    norm = normalize(a_Normal);
+    lightDir = normalize(lightDir);
 
     // 计算视线方向向量，和对应的沿着法线轴的反射向量
-    eyeSpaceViewDir = normalize(eyeSpaceViewPos - eyeSpacePosition);
-    eyeSpaceReflectDir = reflect(-eyeSpaceLightDir, eyeSpaceNormal);
+    viewDir = normalize(worldSpaceViewPos - worldSpacePos);
+    reflectDir = reflect(-lightDir, norm);
 
     vec3 result = getAmbientLighting();
     result += getDiffuseLighting();
@@ -58,32 +62,35 @@ void main()
     v_Color = result * u_MaterialColor;
 }
 
+// 环境光
 vec3 getAmbientLighting()
 {
     float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * u_PointLightColor;
+    vec3 ambient = u_PointLightColor * ambientStrength;
 
     return ambient;
 }
 
+// 漫反射
 vec3 getDiffuseLighting()
 {
-
-    float cosine = max(dot(eyeSpaceNormal, eyeSpaceLightDir), 0.0);
-    vec3 diffuse = u_PointLightColor * cosine * 50.0 / (eyeSpaceLightDistance*eyeSpaceLightDistance);
+    float cosine = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = u_PointLightColor * cosine * 25.0 / (pow(lightDistance, 2.0));
+    //      u_PointLightColor * (cosine * material.diffuse) / (pow(lightDistance, 2.0));
 
     return diffuse;
 }
 
+// 镜面光
 vec3 getSpecularLighting()
 {
     // 镜面强度(Specular Intensity)
     float specularStrength = 0.5;
     // 高光的反光度
-    float shininess = 150.0;
+    float shininess = 132.0;
 
-    float spec = pow(max(dot(eyeSpaceViewDir, eyeSpaceReflectDir), 0.0), shininess);
-    vec3 specular = u_PointLightColor * specularStrength * spec;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+    vec3 specular = u_PointLightColor * spec * specularStrength;
 
     return specular;
 }

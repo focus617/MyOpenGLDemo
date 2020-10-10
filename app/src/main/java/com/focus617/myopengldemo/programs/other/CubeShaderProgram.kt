@@ -41,6 +41,11 @@ class CubeShaderProgram(context: Context) : ShaderProgram(
         setVector3fv(U_POINT_LIGHT_POSITION, pointLightPosition, 1)
         setVector3fv(U_POINT_LIGHT_COLOR, pointLightColor, 1)
         setVector3fv(U_MATERIAL_COLOR, materialColor, 1)
+
+        setVector3fv("material.ambient",  Vector(1.0f, 0.5f, 0.31f), 1)
+        setVector3fv("material.diffuse",  Vector(1.0f, 0.5f, 0.31f),1)
+        setVector3fv("material.specular", Vector(0.5f, 0.5f, 0.5f),1)
+        setFloat("material.shininess", 32.0f)
     }
 }
 

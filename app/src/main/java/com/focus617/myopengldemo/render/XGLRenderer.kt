@@ -22,7 +22,6 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private val mModelMatrix = FloatArray(16)
     private val mViewMatrix = FloatArray(16)
     private val mProjectionMatrix = FloatArray(16)
-
     private val it_modelViewMatrix = FloatArray(16)
 
     private lateinit var mCube: Cube2
@@ -31,7 +30,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     private lateinit var mLight: Cube
     private lateinit var mLightProgram: LightCubeShaderProgram
-    private val mLightPos: Point = Point(2.0f, 3.0f, 7.0f)
+    private val mLightPos: Point = Point(3.0f, 4.0f, 6.0f)
     private val mLightColor: Vector = Vector(1.0f, 1.0f, 1.0f)
 
     private val mMaterialColor: Vector = Vector(1.0f, 0.5f, 0.31f)
@@ -95,7 +94,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         positionObjectInScene(mCubePos)
         val lightVector = Vector(Point(0f,0f,0f), mLightPos)
 
-        updateItModelViewMatrix()
+//        updateItModelViewMatrix()
 
         mCubeProgram.useProgram()
         mCubeProgram.setUniforms(
@@ -116,11 +115,11 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private fun updateViewMatrices() {
         // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
         Matrix.setLookAtM(mViewMatrix, 0,
-            Camera.cameraPos.x, Camera.cameraPos.y, -(Camera.cameraPos.z),
+            Camera.cameraPos.x, Camera.cameraPos.y, Camera.cameraPos.z,
             0f, 0f, 0f,
             Camera.cameraUp.x, Camera.cameraUp.y, Camera.cameraUp.z)
 
-        Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
+        Matrix.rotateM(mViewMatrix, 0, yRotation, 1f, 0f, 0f)
         Matrix.rotateM(mViewMatrix, 0, xRotation, 0f, 1f, 0f)
 
     }
@@ -147,12 +146,12 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     fun handleTouchDrag(deltaX: Float, deltaY: Float) {
         xRotation += deltaX / 16f
-        yRotation += deltaY / 16f
+        yRotation -= deltaY / 16f
 
-        if (yRotation < -90) {
-            yRotation = -90f
-        } else if (yRotation > 90) {
-            yRotation = 90f
+        if (yRotation < -180) {
+            yRotation = -180f
+        } else if (yRotation > 180) {
+            yRotation = 180f
         }
 
         // Setup view matrix

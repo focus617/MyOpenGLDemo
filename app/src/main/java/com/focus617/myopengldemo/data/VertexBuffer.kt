@@ -1,9 +1,8 @@
 package com.focus617.myopengldemo.data
 
-import android.opengl.GLES31
 import android.opengl.GLES31.*
 import timber.log.Timber
-import java.nio.*
+import java.nio.IntBuffer
 import kotlin.properties.Delegates
 
 /**
@@ -26,8 +25,8 @@ class VertexBuffer private constructor() {
 
     init {
         // 创建缓存，并绑定缓存类型
-        var mVAOBuf: IntBuffer = IntBuffer.allocate(1)   // 顶点数组对象
-        var mVBOBuf: IntBuffer = IntBuffer.allocate(2)   // 顶点缓存对象
+        val mVAOBuf: IntBuffer = IntBuffer.allocate(1)   // 顶点数组对象
+        val mVBOBuf: IntBuffer = IntBuffer.allocate(2)   // 顶点缓存对象
 
         // allocate only on the first draw
         // Generate VBO ID
@@ -154,7 +153,7 @@ class VertexBuffer private constructor() {
     companion object {
 
         fun build(vertices: FloatArray, numVertex: Int, indices: ShortArray? = null): VertexBuffer {
-            Timber.d("buildVertices: vertices size=${vertices.size}")
+            Timber.d("buildVertices: vertices size=$numVertex")
             val vertexBuffer = VertexBuffer()
 
             // Transfer data to native memory.

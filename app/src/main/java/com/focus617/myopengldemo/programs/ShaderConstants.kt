@@ -18,7 +18,7 @@ object ShaderConstants {
     const val U_PROJECT_MATRIX = "u_ProjectionMatrix"
     const val U_IT_MV_MATRIX = "u_IT_MVMatrix"
 
-    const val U_POINT_VIEW_POSITION = "u_worldSpaceViewPos"
+    const val U_POINT_VIEW_POSITION = "u_ViewPos"
     const val U_POINT_LIGHT_POSITION = "u_worldSpaceLightPos"
     const val U_POINT_LIGHT_COLOR = "u_PointLightColor"
     const val U_MATERIAL_COLOR = "u_MaterialColor"
