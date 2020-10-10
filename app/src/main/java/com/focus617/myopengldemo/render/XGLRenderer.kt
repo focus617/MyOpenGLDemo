@@ -6,13 +6,11 @@ import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.other.Cube2
-import com.focus617.myopengldemo.objects.other.Square
-import com.focus617.myopengldemo.objects.other.Triangle
 import com.focus617.myopengldemo.programs.other.CubeShaderProgram
 import com.focus617.myopengldemo.programs.other.LightCubeShaderProgram
 import com.focus617.myopengldemo.util.Camera
-import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
+import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.MatrixHelper
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
@@ -25,10 +23,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private val mViewMatrix = FloatArray(16)
     private val mProjectionMatrix = FloatArray(16)
 
-    private val mMVPMatrix = FloatArray(16)
-
-    private var mTriangle: Triangle? = null
-    private var mSquare: Square? = null
+    private val it_modelViewMatrix = FloatArray(16)
 
     private lateinit var mCube: Cube2
     private lateinit var mCubeProgram: CubeShaderProgram
@@ -37,6 +32,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private lateinit var mLight: Cube
     private lateinit var mLightProgram: LightCubeShaderProgram
     private val mLightPos: Point = Point(4.0f, 6.0f, 8.0f)
+    private val mLightColor: Vector = Vector(1.0f, 1.0f, 1.0f)
+
+    private val mMaterialColor: Vector = Vector(1.0f, 0.5f, 0.31f)
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         // 设置重绘背景框架颜色
@@ -97,9 +95,12 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         positionObjectInScene(mCubePos)
         val lightVector = Vector(Point(0f,0f,0f), mLightPos)
 
+        updateItModelViewMatrix()
+
         mCubeProgram.useProgram()
         mCubeProgram.setUniforms(
-            mModelMatrix, mViewMatrix, mProjectionMatrix, lightVector
+            mModelMatrix, mViewMatrix, mProjectionMatrix, it_modelViewMatrix,
+            lightVector, mLightColor, mMaterialColor
         )
         mCube.bindData()
         mCube.draw()
@@ -122,6 +123,15 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         Matrix.rotateM(mViewMatrix, 0, -yRotation, 1f, 0f, 0f)
         Matrix.rotateM(mViewMatrix, 0, xRotation, 0f, 1f, 0f)
 
+    }
+
+    private fun updateItModelViewMatrix() {
+        val mModelViewMatrix = FloatArray(16)
+        val tempMatrix = FloatArray(16)
+
+        Matrix.multiplyMM(mModelViewMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
+        Matrix.invertM(tempMatrix, 0, mModelViewMatrix, 0)
+        Matrix.transposeM(it_modelViewMatrix, 0, tempMatrix, 0)
     }
 
     private fun positionObjectInScene(x: Float, y: Float, z: Float) {
