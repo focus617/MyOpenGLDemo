@@ -35,7 +35,7 @@ class Heightmap(bitmap: Bitmap) {
         Timber.d("Build VertexBuffer: indices(size=${indices.size})")
         for (i in 0..11) Timber.d("VertexBuffer $i : ${indices[i]}")
 
-        vertexBuffer = VertexBuffer.build(vertices, indices)
+        vertexBuffer = VertexBuffer.build(vertices, width*height, indices)
     }
 
 
@@ -165,7 +165,7 @@ class Heightmap(bitmap: Bitmap) {
         return indexData
     }
 
-    fun bindDataES3(heightmapProgram: HeightmapShaderProgram) {
+    fun bindData(heightmapProgram: HeightmapShaderProgram) {
         val attribPropertyList: List<AttributeProperty> = arrayListOf(
             AttributeProperty(
                 VERTEX_POS_INDEX,
@@ -190,7 +190,7 @@ class Heightmap(bitmap: Bitmap) {
     }
 
 
-    fun drawES3() {
+    fun draw() {
         vertexBuffer.draw()
     }
 

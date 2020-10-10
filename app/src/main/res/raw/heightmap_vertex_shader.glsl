@@ -98,7 +98,7 @@ vec3 getPointLighting()
         toPointLight = normalize(toPointLight);
 
         float cosine = max(dot(eyeSpaceNormal, toPointLight), 0.0);
-        lightingSum += (materialColor * u_PointLightColors[i] * 5.0 * cosine) / distance;
+        lightingSum += (materialColor * u_PointLightColors[i] * 4.0 * cosine) / distance;
     }
 
     return lightingSum;

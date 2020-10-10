@@ -36,7 +36,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     private lateinit var mLight: Cube
     private lateinit var mLightProgram: LightCubeShaderProgram
-    private val mLightPos: Point = Point(2.0f, 3.0f, 6.0f)
+    private val mLightPos: Point = Point(4.0f, 6.0f, 8.0f)
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         // 设置重绘背景框架颜色

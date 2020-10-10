@@ -21,7 +21,8 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int): 
         height,
         numPointsAroundMallet
     )
-    private val vertexBuffer = VertexBuffer.build(generatedData.vertexArray)
+    private val vertexBuffer =
+        VertexBuffer.build(generatedData.vertexArray, generatedData.vertexNumber)
     private val drawList: List<DrawCommand> = generatedData.drawList
 
     override fun bindData() {

@@ -4,7 +4,7 @@ import android.opengl.GLES31.*
 import com.focus617.myopengldemo.util.Geometry.Circle
 import com.focus617.myopengldemo.util.Geometry.Cylinder
 
-class ObjectBuilder(sizeInVertices: Int) {
+class ObjectBuilder(private val sizeInVertices: Int) {
 
     private val vertexArray = FloatArray(sizeInVertices * FLOATS_PER_VERTEX)
     private val drawList: MutableList<DrawCommand> = ArrayList()
@@ -73,7 +73,7 @@ class ObjectBuilder(sizeInVertices: Int) {
     }
 
     fun buildData(): GeneratedData {
-        return GeneratedData(vertexArray, drawList)
+        return GeneratedData(vertexArray, sizeInVertices, drawList)
     }
 
     companion object {
@@ -83,7 +83,11 @@ class ObjectBuilder(sizeInVertices: Int) {
             fun draw()
         }
 
-        class GeneratedData(val vertexArray: FloatArray, val drawList: List<DrawCommand>)
+        class GeneratedData(
+            val vertexArray: FloatArray,    // 顶点数组
+            val vertexNumber: Int,          // 顶点数量
+            val drawList: List<DrawCommand> // 绘制方法
+        )
 
         /**
          * 计算圆柱体顶部的顶点数量

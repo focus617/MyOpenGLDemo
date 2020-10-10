@@ -6,7 +6,7 @@ import com.focus617.myopengldemo.data.DrawingObject
 
 class Cube : DrawingObject() {
 
-    private val vertexBuffer = VertexBuffer.build(vertices, indices)
+    private val vertexBuffer = VertexBuffer.build(vertices, VERTEX_COUNT, indices)
 
     override fun bindData() {
         val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(
@@ -116,7 +116,7 @@ class Cube : DrawingObject() {
         internal const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE + VERTEX_COLOR_SIZE
 
         // 顶点的数量
-        internal val vertexCount = vertices.size / VERTEX_ATTRIBUTE_SIZE
+        internal val VERTEX_COUNT = vertices.size / VERTEX_ATTRIBUTE_SIZE
 
         // 连续的顶点属性组之间的间隔
         internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES

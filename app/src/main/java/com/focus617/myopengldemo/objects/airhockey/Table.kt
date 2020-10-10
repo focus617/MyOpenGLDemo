@@ -6,7 +6,7 @@ import com.focus617.myopengldemo.data.DrawingObject
 
 class Table : DrawingObject() {
 
-    private val vertexBuffer = VertexBuffer.build(vertices, indices)
+    private val vertexBuffer = VertexBuffer.build(vertices, VERTEX_COUNT, indices)
 
     override fun bindData() {
         val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(

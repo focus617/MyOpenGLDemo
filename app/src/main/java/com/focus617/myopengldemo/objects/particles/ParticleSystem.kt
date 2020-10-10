@@ -1,11 +1,9 @@
 package com.focus617.myopengldemo.objects.particles
 
 import android.graphics.Color
-import android.opengl.GLES20
-import android.opengl.GLES31
+import android.opengl.GLES31.*
 import com.focus617.myopengldemo.data.VertexArray
 import com.focus617.myopengldemo.data.VertexBuffer
-import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.programs.particles.ParticleShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
@@ -97,7 +95,16 @@ class ParticleSystem(private val maxParticleCount: Int) {
         Timber.d("drawES3(): currentParticleCount = $currentParticleCount")
 
         vertexBuffer.updateVertices(vertexArray, currentParticleCount)
-        vertexBuffer.draw()
+
+        // Bind the VAO and then draw with VAO settings
+        glBindVertexArray(vertexBuffer.mVaoId)
+
+        glDrawArrays(GL_POINTS, 0, currentParticleCount)
+
+        // Reset to the default VAO
+        glBindVertexArray(0)
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
 
     }
 
@@ -162,7 +169,7 @@ class ParticleSystem(private val maxParticleCount: Int) {
 //    fun drawES2() {
 //        Timber.d("drawES2(): currentParticleCount = $currentParticleCount")
 //
-//        GLES31.glDrawArrays(GLES31.GL_POINTS, 0, currentParticleCount)
-//        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, 0)
+//        glDrawArrays(GL_POINTS, 0, currentParticleCount)
+//        glBindBuffer(GL_ARRAY_BUFFER, 0)
 //    }
 }

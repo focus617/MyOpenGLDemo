@@ -73,7 +73,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     private lateinit var heightmap: Heightmap
 
     //private lateinit var vectorToLight: Vector
-    private val vectorToLight = floatArrayOf(0.30f, 0.35f, -0.89f, 0f)
+    private val vectorToLight = floatArrayOf(0.61f, 0.64f, -0.47f, 0f)
 
     private var random = Random
     private var globalStartTime by Delegates.notNull<Long>()
@@ -263,14 +263,14 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         Matrix.multiplyMV(pointPositionsInEyeSpace, 8, mViewMatrix, 0, pointLightPositions, 8)
 
         heightmapProgram.setUniforms(
-            mModelViewMatrix, it_modelViewMatrix,
-            mMVPMatrix, vectorToLightInEyeSpace,
-            pointPositionsInEyeSpace, pointLightColors,
+            mModelViewMatrix, it_modelViewMatrix, mMVPMatrix,
+            vectorToLightInEyeSpace, pointPositionsInEyeSpace,
+            pointLightColors,
             grassTexture, stoneTexture
         )
 
-        heightmap.bindDataES3(heightmapProgram)
-        heightmap.drawES3()
+        heightmap.bindData(heightmapProgram)
+        heightmap.draw()
     }
 
     private fun drawSkyBox() {

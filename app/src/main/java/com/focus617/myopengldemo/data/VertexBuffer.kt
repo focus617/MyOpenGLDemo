@@ -133,6 +133,7 @@ class VertexBuffer private constructor() {
         glBindVertexArray(0)
     }
 
+    // TODO: remove current limitation - only support drawing triangle
     fun draw() {
         // Bind the VAO and then draw with VAO settings
         glBindVertexArray(mVaoId)
@@ -140,7 +141,7 @@ class VertexBuffer private constructor() {
         if (withElement) {
             glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
         } else{
-            glDrawArrays(GL_POINTS, 0, numVertices)
+            glDrawArrays(GL_TRIANGLES, 0, numVertices)
         }
 
         // Reset to the default VAO
@@ -152,14 +153,14 @@ class VertexBuffer private constructor() {
 
     companion object {
 
-        fun build(vertices: FloatArray, indices: ShortArray? = null): VertexBuffer {
+        fun build(vertices: FloatArray, numVertex: Int, indices: ShortArray? = null): VertexBuffer {
             Timber.d("buildVertices: vertices size=${vertices.size}")
             val vertexBuffer = VertexBuffer()
 
             // Transfer data to native memory.
             vertexBuffer.mVertexArray = VertexArray(vertices)
             vertexBuffer.setupVertices()
-            vertexBuffer.numVertices = vertices.size
+            vertexBuffer.numVertices = numVertex
 
             if (indices != null) {
                 Timber.d("buildVertices: indices size=${indices.size}")

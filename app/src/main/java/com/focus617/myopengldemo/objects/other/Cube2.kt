@@ -7,7 +7,7 @@ import com.focus617.myopengldemo.data.DrawingObject
 
 class Cube2 : DrawingObject() {
 
-    private val vertexBuffer = VertexBuffer.build(vertices)
+    private val vertexBuffer = VertexBuffer.build(vertices, VERTEX_COUNT)
 
     override fun bindData() {
         val attribPropertyList: List<AttributeProperty> = arrayListOf(
@@ -31,15 +31,7 @@ class Cube2 : DrawingObject() {
     }
 
     override fun draw() {
-        // Bind the VAO and then draw with VAO settings
-        GLES31.glBindVertexArray(vertexBuffer.mVaoId)
-
-        GLES31.glDrawArrays(GLES31.GL_TRIANGLES, 0, vertexCount)
-
-        // Reset to the default VAO
-        GLES31.glBindVertexArray(0)
-
-        GLES31.glBindBuffer(GLES31.GL_ARRAY_BUFFER, 0)
+        vertexBuffer.draw()
     }
 
     // 顶点数据集，及其属性
@@ -115,7 +107,7 @@ class Cube2 : DrawingObject() {
         internal const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE
 
         // 顶点的数量
-        internal val vertexCount = vertices.size / VERTEX_ATTRIBUTE_SIZE
+        internal val VERTEX_COUNT = vertices.size / VERTEX_ATTRIBUTE_SIZE
 
         // 连续的顶点属性组之间的间隔
         internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES

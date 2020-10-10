@@ -20,7 +20,8 @@ class Puck(val radius: Float, val height: Float, numPointsAroundPuck: Int): Draw
             Cylinder(Point(0f, 0f, 0f), radius, height),
             numPointsAroundPuck
         )
-    private val vertexBuffer = VertexBuffer.build(generatedData.vertexArray)
+    private val vertexBuffer =
+        VertexBuffer.build(generatedData.vertexArray, generatedData.vertexNumber)
     private val drawList: List<DrawCommand> = generatedData.drawList
 
     override fun bindData() {
