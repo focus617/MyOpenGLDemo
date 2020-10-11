@@ -11,14 +11,12 @@ import android.view.View
 import android.view.View.OnTouchListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MotionEventCompat
 import com.focus617.myopengldemo.render.AirHockeyRendererEs3
 import com.focus617.myopengldemo.render.ParticlesRenderer
 import com.focus617.myopengldemo.render.XGLRenderer
-import com.focus617.myopengldemo.util.Geometry
 import com.focus617.myopengldemo.util.TextureHelper.FilterMode
 import timber.log.Timber
-import kotlin.math.pow
-import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
 
@@ -100,6 +98,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(mGLSurfaceView)
     }
 
+    private var mTwoFingerPointerId = INVALID_POINTER_ID
+
     @SuppressLint("ClickableViewAccessibility")
     private fun setXGLRenderer() {
         xGlRenderer = XGLRenderer(this)
@@ -107,39 +107,48 @@ class MainActivity : AppCompatActivity() {
         hasSetRenderer = true
 
         mGLSurfaceView.setOnTouchListener(object : OnTouchListener {
-            var previousX = 0f
-            var previousY = 0f
+            private var previousX = 0f
+            private var previousY = 0f
 
-            var isZooming = false
-            var distanceStart by Delegates.notNull<Float>()
+            private var mLastTouchX = 0f
+            private var mLastTouchY = 0f
 
             override fun onTouch(v: View, event: MotionEvent): Boolean {
-                val normalizedX = toOpenGLCoord(v, event.getX(), true);
-                val normalizedY = toOpenGLCoord(v, event.getY(), false);
 
-                return when (event.action) {
+                when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         previousX = event.x
                         previousY = event.y
-                        true
                     }
 
                     MotionEvent.ACTION_POINTER_DOWN -> {
-                        isZooming = true
-                        val x1 = toOpenGLCoord(v, event.getX(1), true)
-                        val y1 = toOpenGLCoord(v, event.getY(1), false)
-                        distanceStart = computeDistance(normalizedX, normalizedY, x1, y1)
-                        true
+                        Timber.d("detected two fingers, start the drag")
+
+                        mTwoFingerPointerId = MotionEventCompat.getActionIndex(event)
+                        val x = MotionEventCompat.getX(event, mTwoFingerPointerId)
+                        val y = MotionEventCompat.getY(event, mTwoFingerPointerId)
+
+                        // Remember where we started (for dragging)
+                        mLastTouchX = x
+                        mLastTouchY = y
                     }
 
                     MotionEvent.ACTION_MOVE -> {
-                        if (isZooming) {
-                            val x2 = toOpenGLCoord(v, event.getX(1), true)
-                            val y2 = toOpenGLCoord(v, event.getY(1), false)
-                            var distance = computeDistance(normalizedX, normalizedY, x2, y2)
-                            var scale = distance / distanceStart
-                            Timber.d("onTouch(): scale=$scale")
-                            distanceStart = distance
+                        // track the drag only if two fingers are placed on screen
+                        if (mTwoFingerPointerId != INVALID_POINTER_ID){
+                            val x = MotionEventCompat.getX(event, mTwoFingerPointerId)
+                            val y = MotionEventCompat.getY(event, mTwoFingerPointerId)
+
+                            // Calculate the distance moved
+                            val dx = x - mLastTouchX
+                            val dy = y - mLastTouchY
+
+                            // Remember this touch position for the next move event
+                            mLastTouchX = x
+                            mLastTouchY = y
+
+//                            MoveNative(dx, dy)
+
                         } else {
                             val deltaX = event.x - previousX
                             val deltaY = event.y - previousY
@@ -149,16 +158,22 @@ class MainActivity : AppCompatActivity() {
                                 xGlRenderer?.handleTouchDrag(deltaX, deltaY)
                             }
                         }
-                        true
                     }
 
                     MotionEvent.ACTION_POINTER_UP -> {
-                        isZooming = false
-                        true
+                        // two fingers are not placed on screen anymore
+                        mTwoFingerPointerId = INVALID_POINTER_ID
                     }
 
-                    else -> false
+                    MotionEvent.ACTION_UP -> {
+                        mTwoFingerPointerId = INVALID_POINTER_ID
+                    }
+
+                    MotionEvent.ACTION_CANCEL -> {
+                        mTwoFingerPointerId = INVALID_POINTER_ID
+                    }
                 }
+                return true
             }
         })
     }
@@ -248,20 +263,21 @@ class MainActivity : AppCompatActivity() {
      * Convert touch coordinates into normalized device coordinates,
      * keeping in mind that Android's Y coordinates are inverted.
      */
-    private fun toOpenGLCoord(v: View, value: Float, isWidth: Boolean): Float {
-        return if (isWidth) {
-            (value / v.width.toFloat()) * 2 - 1
-        } else {
-            -((value / v.height.toFloat()) * 2 - 1)
-        }
-    }
+//    private fun toOpenGLCoord(v: View, value: Float, isWidth: Boolean): Float {
+//        return if (isWidth) {
+//            (value / v.width.toFloat()) * 2 - 1
+//        } else {
+//            -((value / v.height.toFloat()) * 2 - 1)
+//        }
+//    }
 
     /**
      * 计算两个点之间的距离
      */
-    private fun computeDistance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
-        return kotlin.math.sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
-    }
+//    private fun computeDistance(x1: Float, y1: Float, x2: Float, y2: Float): Float {
+//        return kotlin.math.sqrt((x2 - x1).pow(2) + (y2 - y1).pow(2))
+//    }
+
 
     override fun onResume() {
         super.onResume()
@@ -325,6 +341,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    companion object {
+        const val INVALID_POINTER_ID = -100
+    }
 
 
 }

@@ -1,9 +1,22 @@
 package com.focus617.myopengldemo.data
 
+import android.content.Context
 import android.opengl.GLES31.*
 import timber.log.Timber
-import java.nio.IntBuffer
+import java.nio.*
+import java.util.*
 import kotlin.properties.Delegates
+
+class Vertex {
+    var position = FloatArray(3)
+    var normal = FloatArray(3)
+    var textureCoords = FloatArray(3)
+}
+
+class Texture {
+    var id: Int = 0
+    var type: String = ""   // 比如是漫反射贴图或者是镜面光贴图
+}
 
 /**
  * 本对象负责将顶点属性和索引加载到 GPU，并执行显示操作
@@ -11,17 +24,16 @@ import kotlin.properties.Delegates
 class Mesh private constructor() {
     // OpenGL对象的句柄
     var mVaoId by Delegates.notNull<Int>()
-    var mVertexId by Delegates.notNull<Int>()
-    var mElementId by Delegates.notNull<Int>()
+    private var mVertexId by Delegates.notNull<Int>()
+    private var mElementId by Delegates.notNull<Int>()
 
-    var withElement: Boolean = false    // 本对象是否包含索引对象
     private var numVertices: Int = 0    // 顶点的数目
     private var numElements: Int = 0    // 索引的数目
 
-    // 包含内存中的Buffer对象，用以动态更新顶点和索引数据（updateBuffer()）
-    // 调用setupVertices和setupElements重新写入GPU
-    private lateinit var mVertexArray: VertexArray
-    private lateinit var mElementArray: ElementArray
+    /*  网格数据  */
+    var vertices = mutableListOf<Vertex>()
+    var indices = mutableListOf<Short>()
+    var textures = mutableListOf<Texture>()
 
     init {
         // 创建缓存，并绑定缓存类型
@@ -55,63 +67,69 @@ class Mesh private constructor() {
 
         Timber.d("setupVertices()")
 
+        val verticesBuffer: FloatBuffer = ByteBuffer
+            .allocateDirect(vertices.size * VERTEX_COMPONENT_COUNT * Float.SIZE_BYTES)
+            .order(ByteOrder.nativeOrder())
+            .asFloatBuffer()
+
+        for (vertex in vertices) {
+            verticesBuffer.put(vertex.position)
+//            verticesBuffer.put(vertex.normal)
+//            verticesBuffer.put(vertex.textureCoords)
+        }
+        numVertices = vertices.size
+
         glBindBuffer(GL_ARRAY_BUFFER, mVertexId)
 
         // Reset to origin offset
-        mVertexArray.position(0)
+        verticesBuffer.position(0)
 
         // Transfer data from native memory to the GPU buffer.
         glBufferData(
             GL_ARRAY_BUFFER,
-            mVertexArray.capacity() * Float.SIZE_BYTES,
-            mVertexArray.getFloatBuffer(),
+            verticesBuffer.capacity() * Float.SIZE_BYTES,
+            verticesBuffer,
             GL_STATIC_DRAW
         )
         glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 
-    fun updateVertices(vertexArray: VertexArray, numVertex: Int) {
-
-        Timber.d("updateVertices()")
-
-        mVertexArray = vertexArray
-        setupVertices()
-        numVertices = numVertex
-    }
-
     fun setupElements() {
         Timber.d("setupElements()")
+
+        val indicesBuffer: ShortBuffer = ByteBuffer
+            .allocateDirect(indices.size * Short.SIZE_BYTES)
+            .order(ByteOrder.nativeOrder())
+            .asShortBuffer()
+
+        for (index in indices) {
+            indicesBuffer.put(index)
+        }
+        numElements = indices.size
 
         // bind buffer object for element indices
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mElementId)
 
         // Reset to origin offset
-        mElementArray.position(0)
+        indicesBuffer.position(0)
 
         // Transfer data from native memory to the GPU buffer.
         glBufferData(
             GL_ELEMENT_ARRAY_BUFFER,
-            mElementArray.capacity() * Short.SIZE_BYTES,
-            mElementArray.getShortBuffer(),
+            indicesBuffer.capacity() * Short.SIZE_BYTES,
+            indicesBuffer,
             GL_STATIC_DRAW
         )
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
-    class AttributeProperty(
-        val componentIndex: Int,
-        val componentCount: Int,
-        val stride: Int,
-        val dataOffset: Int
-    )
-
-    fun bindData(attribProperties: List<AttributeProperty>) {
+    fun bindData() {
         // Bind the VAO and then set up the vertex attributes
         glBindVertexArray(mVaoId)
         // Bind VBO buffer
         glBindBuffer(GL_ARRAY_BUFFER, mVertexId)
 
-        for (attrib in attribProperties) {
+        for (attrib in attribPropertyList) {
             // 设置顶点属性
             glVertexAttribPointer(
                 attrib.componentIndex,
@@ -125,23 +143,17 @@ class Mesh private constructor() {
             glEnableVertexAttribArray(attrib.componentIndex)
         }
 
-        if (withElement) {
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mElementId)
-        }
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mElementId)
+
         // Reset to the default VAO
         glBindVertexArray(0)
     }
 
-    // TODO: remove current limitation - only support drawing triangle
     fun draw() {
         // Bind the VAO and then draw with VAO settings
         glBindVertexArray(mVaoId)
 
-        if (withElement) {
-            glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
-        } else{
-            glDrawArrays(GL_TRIANGLES, 0, numVertices)
-        }
+        glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
 
         // Reset to the default VAO
         glBindVertexArray(0)
@@ -152,37 +164,63 @@ class Mesh private constructor() {
 
     companion object {
 
-        fun build(vertices: FloatArray, numVertex: Int, indices: ShortArray? = null): Mesh {
-            Timber.d("buildVertices: vertices size=$numVertex")
-            val vertexBuffer = Mesh()
+        class AttributeProperty(
+            val componentIndex: Int,
+            val componentCount: Int,
+            val stride: Int,
+            val dataOffset: Int
+        )
 
-            // Transfer data to native memory.
-            vertexBuffer.mVertexArray = VertexArray(vertices)
-            vertexBuffer.setupVertices()
-            vertexBuffer.numVertices = numVertex
+        // 顶点坐标的每个属性的Index
+        private const val VERTEX_POS_INDEX = 0
+        private const val VERTEX_NORMAL_INDEX = 1
+        private const val VERTEX_TEXCOORDO_INDEX = 2
 
-            if (indices != null) {
-                Timber.d("buildVertices: indices size=${indices.size}")
-                // Transfer data to native memory.
-                vertexBuffer.mElementArray = ElementArray(indices)
-                vertexBuffer.setupElements()
-                vertexBuffer.withElement = true
-                vertexBuffer.numElements = indices.size
-            }
-            else Timber.d("buildVertices: without indices")
+        // 顶点坐标的每个属性的Size
+        private const val VERTEX_POS_SIZE = 3            //x,y,z
+        private const val VERTEX_NORMAL_SIZE = 3         //Nx, Ny, Nz
+        private const val VERTEX_TEXCOORDO_SIZE = 3      //s, t and w
 
-            return vertexBuffer
-        }
+        // the following 4 defines are used to determine the locations
+        // of various attributes if vertex data are stored as an array
+        //of structures
+        private const val VERTEX_POS_OFFSET = 0
+        private const val VERTEX_NORMAL_OFFSET = VERTEX_POS_SIZE * Float.SIZE_BYTES
+        private const val VERTEX_TEX_COORDO_OFFSET =
+            (VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE) * Float.SIZE_BYTES
 
-        fun build(vertexArray: VertexArray, numVertex: Int): Mesh {
-            Timber.d("buildVertices: with vertexArray, numVertex=$numVertex")
+        private const val VERTEX_COMPONENT_COUNT =
+            VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE + VERTEX_TEXCOORDO_SIZE
 
-            val vertexBuffer = Mesh()
-            vertexBuffer.mVertexArray = vertexArray
-            vertexBuffer.setupVertices()
-            vertexBuffer.numVertices = numVertex
+        // 连续的顶点属性组之间的间隔
+        internal const val VERTEX_STRIDE = VERTEX_COMPONENT_COUNT * Float.SIZE_BYTES
 
-            return vertexBuffer
-        }
+        private val attribPropertyList: List<AttributeProperty> = arrayListOf(
+            // 顶点的位置属性
+            AttributeProperty(
+                VERTEX_POS_INDEX,
+                VERTEX_POS_SIZE,
+                VERTEX_STRIDE,
+                VERTEX_POS_OFFSET
+            ),
+
+            // 顶点的法线
+            AttributeProperty(
+                VERTEX_NORMAL_INDEX,
+                VERTEX_NORMAL_SIZE,
+                VERTEX_STRIDE,
+                VERTEX_NORMAL_OFFSET
+            ),
+
+            // 顶点的纹理坐标
+            AttributeProperty(
+                VERTEX_TEXCOORDO_INDEX,
+                VERTEX_TEXCOORDO_SIZE,
+                VERTEX_STRIDE,
+                VERTEX_TEX_COORDO_OFFSET
+            )
+        )
     }
 }
+
+

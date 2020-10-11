@@ -125,5 +125,8 @@ class Geometry {
             return ray.point.translate(ray.vector.scale(scaleFactor))
         }
 
+
     }
 }
+
+
