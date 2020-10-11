@@ -1,6 +1,7 @@
 #version 300 es
 layout (location = 0) in vec3 a_Position;
 layout (location = 1) in vec3 a_Normal;
+layout (location = 2) in vec2 a_TexCoords;
 
 uniform mat4 u_ModelMatrix;
 uniform mat4 u_ViewMatrix;
@@ -11,6 +12,7 @@ uniform vec3 u_ViewPos;
 out vec3 v_worldSpacePos;
 out vec3 v_worldSpaceViewPos;
 out vec3 v_Normal;
+out vec2 v_TexCoords;
 
 void main()
 {
@@ -21,7 +23,7 @@ void main()
     v_worldSpaceViewPos = vec3(u_ViewMatrix * vec4(u_ViewPos, 1.0));
 
     v_Normal = a_Normal;
-
+    v_TexCoords = a_TexCoords;
 }
 
 

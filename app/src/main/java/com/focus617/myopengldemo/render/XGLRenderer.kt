@@ -4,6 +4,7 @@ import android.content.Context
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.other.Cube2
 import com.focus617.myopengldemo.programs.other.CubeShaderProgram
@@ -11,7 +12,9 @@ import com.focus617.myopengldemo.programs.other.LightCubeShaderProgram
 import com.focus617.myopengldemo.util.Camera
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.util.Geometry.Point
+import com.focus617.myopengldemo.util.Light
 import com.focus617.myopengldemo.util.MatrixHelper
+import com.focus617.myopengldemo.util.TextureHelper
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -27,13 +30,11 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private lateinit var mCube: Cube2
     private lateinit var mCubeProgram: CubeShaderProgram
     private val mCubePos: Point = Point(0.0f, 0.0f, 0.0f)
+    private var boxTexture = 0
 
     private lateinit var mLight: Cube
     private lateinit var mLightProgram: LightCubeShaderProgram
-    private val mLightPos: Point = Point(3.0f, 4.0f, 6.0f)
-    private val mLightColor: Vector = Vector(1.0f, 1.0f, 1.0f)
 
-    private val mMaterialColor: Vector = Vector(1.0f, 0.5f, 0.31f)
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         // 设置重绘背景框架颜色
@@ -45,6 +46,8 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         mCubeProgram = CubeShaderProgram(context)
         mCube = Cube2()
+        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
+
     }
 
     private var yFovInDegrees: Float = 45f
@@ -80,7 +83,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawLightCube(){
-        positionObjectInScene(mLightPos)
+        positionObjectInScene(Light.position)
 
         mLightProgram.useProgram()
         mLightProgram.setUniforms(
@@ -92,13 +95,13 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     private fun drawCube() {
         positionObjectInScene(mCubePos)
-        val lightVector = Vector(Point(0f,0f,0f), mLightPos)
 
 //        updateItModelViewMatrix()
 
         mCubeProgram.useProgram()
         mCubeProgram.setUniforms(
-            mModelMatrix, mViewMatrix, mProjectionMatrix, it_modelViewMatrix, Camera.cameraPos
+            mModelMatrix, mViewMatrix, mProjectionMatrix, it_modelViewMatrix,
+            Camera.cameraPos, boxTexture
         )
         mCube.bindData()
         mCube.draw()
@@ -138,6 +141,10 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun positionObjectInScene(position: Point) {
+        positionObjectInScene(position.x, position.y, position.z)
+    }
+
+    private fun positionObjectInScene(position: Vector) {
         positionObjectInScene(position.x, position.y, position.z)
     }
 

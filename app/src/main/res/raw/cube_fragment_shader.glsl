@@ -8,16 +8,15 @@ precision mediump float;
 in vec3 v_worldSpacePos;
 in vec3 v_worldSpaceViewPos;
 in vec3 v_Normal;
+in vec2 v_TexCoords;
 
 out vec4 gl_FragColor;
 
 struct Material {
-//    sampler2D diffuse;
-    vec3 ambient;
-    vec3 diffuse;
-// 镜面强度(Specular Intensity)
+    sampler2D diffuse;
+    // 镜面强度(Specular Intensity)
     vec3 specular;
-// 高光的反光度
+    // 高光的反光度
     float shininess;
 };
 
@@ -69,8 +68,8 @@ void main()
 // 环境光
 vec3 getAmbientLighting()
 {
-   // vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
-    vec3 ambient = light.ambient * material.ambient;
+    //vec3 ambient = light.ambient * material.ambient;
+    vec3 ambient = light.ambient * vec3(texture(material.diffuse, v_TexCoords));
 
     return ambient;
 }
@@ -80,8 +79,9 @@ vec3 getDiffuseLighting()
 {
     float cosine = max(dot(norm, lightDir), 0.0);
     float diff = cosine * 25.0 / (pow(lightDistance, 2.0));
-    //vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
-    vec3 diffuse = light.diffuse * diff * material.diffuse;
+
+    //vec3 diffuse = light.diffuse * diff * material.diffuse;
+    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, v_TexCoords));
 
     return diffuse;
 }

@@ -25,7 +25,6 @@ object ShaderConstants {
     const val U_POINT_LIGHT_DIFFUSE = "light.diffuse"
     const val U_POINT_LIGHT_SPECULAR = "light.specular"
 
-    const val U_MATERIAL_AMBIENT = "material.ambient"
     const val U_MATERIAL_DIFFUSE = "material.diffuse"
     const val U_MATERIAL_SPECULAR = "material.specular"
     const val U_MATERIAL_SHININESS = "material.shininess"
