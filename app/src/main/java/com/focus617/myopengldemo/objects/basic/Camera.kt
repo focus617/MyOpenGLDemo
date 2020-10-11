@@ -5,18 +5,27 @@ import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 
 object Camera {
     private const val defaultDistance: Float = 5.0F
+    private val WorldUp = Vector(0.0f, 1.0f, 0.0f)
 
     var Position: Vector= Vector(0.0f, 0.0f, defaultDistance)
-    var directionUp: Vector = Vector(0.0f, 1.0f, 0.0f)
-    var targetPos: Vector = Vector(0.0f, 0.0f, 0.0f)
+    private var directionUp: Vector = WorldUp
+    private val targetPos: Vector = Vector(0.0f, 0.0f, 0.0f)
 
-    var directionFront: Vector = Vector(Position, targetPos).normalize()
+    private lateinit var directionFront: Vector
+    private lateinit var directionRight: Vector
     var targetDistance: Float = defaultDistance
 
-    fun rotate(pitch: Float = 0f, yaw: Float = 0f){
+    fun rotate(pitch: Float = 0f, yaw: Float = 0f) {
         Position.y = kotlin.math.sin(pitch) * targetDistance
         Position.x = kotlin.math.cos(pitch) * kotlin.math.cos(yaw) * targetDistance
         Position.z = kotlin.math.cos(pitch) * kotlin.math.sin(yaw) * targetDistance
+
+        // also re-calculate the Right and Up vector
+        directionFront = Vector(Position, targetPos).normalize()
+        directionRight = directionFront.crossProduct(WorldUp).normalize()
+        // normalize the vectors, because their length gets closer to 0
+        // the more you look up or down which results in slower movement.
+        directionUp = directionRight.crossProduct(directionFront).normalize()
     }
 
     fun lookAt(): FloatArray {

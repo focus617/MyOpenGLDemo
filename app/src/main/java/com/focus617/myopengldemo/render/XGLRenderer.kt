@@ -156,11 +156,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     fun handleScroll(scale: Float){
         if(yFovInDegrees in 1.0f..45.0f)
-            yFovInDegrees *= scale;
-        if(yFovInDegrees <= 1.0f)
-            yFovInDegrees = 1.0f;
-        if(yFovInDegrees >= 45.0f)
-            yFovInDegrees = 45.0f;
+            yFovInDegrees *= scale
+
+        yFovInDegrees = clamp(yFovInDegrees, 1.0f, 45.0f)
 
         MatrixHelper.perspectiveM(mProjectionMatrix, yFovInDegrees, aspect, 0.1f, 100f)
     }
