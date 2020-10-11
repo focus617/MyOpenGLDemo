@@ -249,7 +249,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         Matrix.scaleM(mModelMatrix, 0, 100f, 10f, 100f)
         updateMvpMatrix()
 
-        heightmapProgram.useProgram()
+        heightmapProgram.use()
 
         // Put the light positions into eye space.
         /*
@@ -279,7 +279,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
         glDepthFunc(GL_LEQUAL) // This avoids problems with the skybox itself getting clipped.
 
-        skyBoxProgram.useProgram()
+        skyBoxProgram.use()
         skyBoxProgram.setUniforms(mMVPMatrix, skyboxTexture)
         skyBox.bindDataES3(skyBoxProgram)
         skyBox.drawES3()
@@ -291,7 +291,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         positionObjectInScene(8f, 2f, 7f)
         updateViewMatrices()
 
-        cubeProgram.useProgram()
+        cubeProgram.use()
         cubeProgram.setUniforms(
             mModelMatrix, mViewMatrix, mProjectionMatrix, skyboxTexture)
         cube.bindData()
@@ -329,7 +329,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE)
 
-        particleProgram.useProgram()
+        particleProgram.use()
         particleProgram.setUniforms(mMVPMatrix, currentTime, particleTexture)
         particleSystem.bindDataES3(particleProgram)
         particleSystem.drawES3()

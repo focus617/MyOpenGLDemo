@@ -13,6 +13,7 @@ in vec2 v_TexCoords;
 out vec4 gl_FragColor;
 
 struct Material {
+    // 漫反射贴图
     sampler2D diffuse;
     // 镜面强度(Specular Intensity)
     vec3 specular;
@@ -28,6 +29,10 @@ struct Light {
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+    // 衰减参数
+    float constant;
+    float linear;
+    float quadratic;
 };
 
 uniform Light light;
@@ -77,9 +82,11 @@ vec3 getAmbientLighting()
 // 漫反射
 vec3 getDiffuseLighting()
 {
-    float adjustParam = 50.0;
+    float adjustParam = 5.0;
     float cosine = max(dot(norm, lightDir), 0.0);
-    float diff = cosine * adjustParam / (pow(lightDistance, 2.0));
+    float attenuation = 1.0 / (light.constant + light.linear * lightDistance +
+                            light.quadratic * (pow(lightDistance, 2.0)));
+    float diff = cosine * adjustParam * attenuation;
 
     //vec3 diffuse = light.diffuse * diff * material.diffuse;
     vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, v_TexCoords));

@@ -69,13 +69,13 @@ class AirHockeyRendererEs2(override val context: Context) : XGLRenderer(context)
         glClear(GL_COLOR_BUFFER_BIT)
 
         // Draw the table.
-        textureProgram.useProgram()
+        textureProgram.use()
         textureProgram.setUniforms(projectionMatrix, texture)
         table.bindData()
         table.draw()
 
         // Draw the mallets.
-        colorProgram.useProgram()
+        colorProgram.use()
         colorProgram.setUniforms(projectionMatrix, 1f, 0f, 0f)
         mallet.bindData()
         mallet.draw()

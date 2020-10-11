@@ -12,13 +12,17 @@ import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_LIGHT_AMBIENT
 import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_LIGHT_DIFFUSE
 import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_LIGHT_POSITION
 import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_LIGHT_SPECULAR
+import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_LIGHT_CONSTANT
+import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_LIGHT_LINEAR
+import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_LIGHT_QUADRATIC
 import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_VIEW_POSITION
 import com.focus617.myopengldemo.programs.ShaderConstants.U_PROJECT_MATRIX
 import com.focus617.myopengldemo.programs.ShaderConstants.U_VIEW_MATRIX
 import com.focus617.myopengldemo.programs.ShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
-import com.focus617.myopengldemo.objects.basic.Light
+import com.focus617.myopengldemo.objects.basic.PointLight
 import com.focus617.myopengldemo.objects.basic.Material
+
 
 class CubeShaderProgram(context: Context) : ShaderProgram(
     context,
@@ -44,10 +48,13 @@ class CubeShaderProgram(context: Context) : ShaderProgram(
         setVector3fv(U_MATERIAL_SPECULAR, Material.specular,1)
         setFloat(U_MATERIAL_SHININESS, Material.shininess)
 
-        setVector3fv(U_POINT_LIGHT_POSITION, Light.position, 1)
-        setVector3fv(U_POINT_LIGHT_AMBIENT, Light.ambient, 1)
-        setVector3fv(U_POINT_LIGHT_DIFFUSE,  Light.diffuse, 1)
-        setVector3fv(U_POINT_LIGHT_SPECULAR, Light.specular, 1)
+        setVector3fv(U_POINT_LIGHT_POSITION, PointLight.position, 1)
+        setVector3fv(U_POINT_LIGHT_AMBIENT, PointLight.ambient, 1)
+        setVector3fv(U_POINT_LIGHT_DIFFUSE,  PointLight.diffuse, 1)
+        setVector3fv(U_POINT_LIGHT_SPECULAR, PointLight.specular, 1)
+        setFloat(U_POINT_LIGHT_CONSTANT, PointLight.Constant)
+        setFloat(U_POINT_LIGHT_LINEAR, PointLight.Linear)
+        setFloat(U_POINT_LIGHT_QUADRATIC, PointLight.Quadratic)
 
         GLES31.glActiveTexture(GLES31.GL_TEXTURE0)
         GLES31.glBindTexture(GLES31.GL_TEXTURE_2D, boxTextureId)

@@ -28,9 +28,14 @@ abstract class ShaderProgram protected constructor(
     )
 
     // 使用/激活程序
-    fun useProgram() {
+    fun use() {
         // Set the current OpenGL shader program to this program.
         glUseProgram(program)
+    }
+
+    //销毁着色器程序
+    fun destroy(){
+        glDeleteProgram(program)
     }
 
     /**

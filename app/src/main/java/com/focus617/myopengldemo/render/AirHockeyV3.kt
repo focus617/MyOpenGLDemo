@@ -114,14 +114,14 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
 
         // Draw the table.
         positionTableInScene()
-        textureProgram.useProgram()
+        textureProgram.use()
         textureProgram.setUniforms(mMVPMatrix, texture)
         table.bindData()
         table.draw()
 
         // Draw the mallets.
         positionObjectInScene(0f, mallet.height / 2f, -0.5f)
-        colorProgram.useProgram()
+        colorProgram.use()
         colorProgram.setUniforms(mMVPMatrix, 1f, 0f, 0f)
         mallet.bindData()
         mallet.draw()

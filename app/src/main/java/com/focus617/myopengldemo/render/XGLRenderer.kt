@@ -11,7 +11,7 @@ import com.focus617.myopengldemo.programs.other.CubeShaderProgram
 import com.focus617.myopengldemo.programs.other.LightCubeShaderProgram
 import com.focus617.myopengldemo.objects.basic.Camera
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
-import com.focus617.myopengldemo.objects.basic.Light
+import com.focus617.myopengldemo.objects.basic.PointLight
 import com.focus617.myopengldemo.util.MatrixHelper
 import com.focus617.myopengldemo.util.TextureHelper
 import com.focus617.myopengldemo.util.clamp
@@ -83,9 +83,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawLightCube(){
-        positionObjectInScene(Light.position)
+        positionObjectInScene(PointLight.position)
 
-        mLightProgram.useProgram()
+        mLightProgram.use()
         mLightProgram.setUniforms(
             mModelMatrix, mViewMatrix, mProjectionMatrix
         )
@@ -98,7 +98,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
 //        updateItModelViewMatrix()
 
-        mCubeProgram.useProgram()
+        mCubeProgram.use()
         mCubeProgram.setUniforms(
             mModelMatrix, mViewMatrix, mProjectionMatrix, it_modelViewMatrix,
             Camera.Position, boxTexture
