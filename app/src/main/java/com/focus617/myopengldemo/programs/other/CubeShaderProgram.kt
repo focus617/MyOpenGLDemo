@@ -3,7 +3,6 @@ package com.focus617.myopengldemo.programs.other
 import android.content.Context
 import android.opengl.GLES31
 import com.focus617.myopengldemo.R
-import com.focus617.myopengldemo.programs.ShaderConstants
 import com.focus617.myopengldemo.programs.ShaderConstants.U_IT_MV_MATRIX
 import com.focus617.myopengldemo.programs.ShaderConstants.U_MATERIAL_DIFFUSE
 import com.focus617.myopengldemo.programs.ShaderConstants.U_MATERIAL_SHININESS
@@ -18,8 +17,8 @@ import com.focus617.myopengldemo.programs.ShaderConstants.U_PROJECT_MATRIX
 import com.focus617.myopengldemo.programs.ShaderConstants.U_VIEW_MATRIX
 import com.focus617.myopengldemo.programs.ShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
-import com.focus617.myopengldemo.util.Light
-import com.focus617.myopengldemo.util.Material
+import com.focus617.myopengldemo.objects.basic.Light
+import com.focus617.myopengldemo.objects.basic.Material
 
 class CubeShaderProgram(context: Context) : ShaderProgram(
     context,

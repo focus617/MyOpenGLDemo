@@ -44,9 +44,12 @@ class Geometry {
 
     companion object {
 
-        class Vector(val x: Float, val y: Float, val z: Float) {
+        class Vector(var x: Float, var y: Float, var z: Float) {
 
             constructor(from: Point, to: Point) :
+                    this((to.x-from.x), (to.y-from.y),(to.z-from.z))
+
+            constructor(from: Vector, to: Vector) :
                     this((to.x-from.x), (to.y-from.y),(to.z-from.z))
 
             fun length(): Float = kotlin.math.sqrt(x * x + y * y + z * z)
@@ -60,6 +63,12 @@ class Geometry {
 
             // http://en.wikipedia.org/wiki/Dot_product
             fun dotProduct(other: Vector): Float = x * other.x + y * other.y + z * other.z
+
+            fun plus(other: Vector) = Vector(
+                x + other.x,
+                y + other.y,
+                z * other.z
+            )
 
             fun scale(f: Float) = Vector(
                 x * f,

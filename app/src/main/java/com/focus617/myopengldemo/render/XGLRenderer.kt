@@ -9,12 +9,12 @@ import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.other.Cube2
 import com.focus617.myopengldemo.programs.other.CubeShaderProgram
 import com.focus617.myopengldemo.programs.other.LightCubeShaderProgram
-import com.focus617.myopengldemo.util.Camera
+import com.focus617.myopengldemo.objects.basic.Camera
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
-import com.focus617.myopengldemo.util.Geometry.Point
-import com.focus617.myopengldemo.util.Light
+import com.focus617.myopengldemo.objects.basic.Light
 import com.focus617.myopengldemo.util.MatrixHelper
 import com.focus617.myopengldemo.util.TextureHelper
+import com.focus617.myopengldemo.util.clamp
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -23,13 +23,13 @@ import javax.microedition.khronos.opengles.GL10
 open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     private val mModelMatrix = FloatArray(16)
-    private val mViewMatrix = FloatArray(16)
+    private var mViewMatrix = FloatArray(16)
     private val mProjectionMatrix = FloatArray(16)
     private val it_modelViewMatrix = FloatArray(16)
 
     private lateinit var mCube: Cube2
     private lateinit var mCubeProgram: CubeShaderProgram
-    private val mCubePos: Point = Point(0.0f, 0.0f, 0.0f)
+    private val mCubePos: Vector = Vector(0.0f, 0.0f, 0.0f)
     private var boxTexture = 0
 
     private lateinit var mLight: Cube
@@ -75,7 +75,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         // 首先清理屏幕，重绘背景颜色
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        updateViewMatrices()
+        placeCamera()
 
         drawLightCube()
 
@@ -101,28 +101,10 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         mCubeProgram.useProgram()
         mCubeProgram.setUniforms(
             mModelMatrix, mViewMatrix, mProjectionMatrix, it_modelViewMatrix,
-            Camera.cameraPos, boxTexture
+            Camera.Position, boxTexture
         )
         mCube.bindData()
         mCube.draw()
-
-    }
-
-    /**
-     * 在 SurfaceView中通过触摸事件获取到要视图矩阵旋转的角度
-     */
-    private var xRotation: Float = 0f
-    private var yRotation: Float = 0f
-
-    private fun updateViewMatrices() {
-        // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
-        Matrix.setLookAtM(mViewMatrix, 0,
-            Camera.cameraPos.x, Camera.cameraPos.y, Camera.cameraPos.z,
-            0f, 0f, 0f,
-            Camera.cameraUp.x, Camera.cameraUp.y, Camera.cameraUp.z)
-
-        Matrix.rotateM(mViewMatrix, 0, yRotation, 1f, 0f, 0f)
-        Matrix.rotateM(mViewMatrix, 0, xRotation, 0f, 1f, 0f)
 
     }
 
@@ -140,28 +122,38 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         Matrix.translateM(mModelMatrix, 0, x, y, z)
     }
 
-    private fun positionObjectInScene(position: Point) {
-        positionObjectInScene(position.x, position.y, position.z)
-    }
-
     private fun positionObjectInScene(position: Vector) {
         positionObjectInScene(position.x, position.y, position.z)
     }
 
 
+    /**
+     * 在 SurfaceView中通过触摸事件控制相机的位置
+     */
+    private var xRotation: Float = 0f
+    private var yRotation: Float = 0f
+
+    private fun placeCamera() {
+
+        Camera.rotateX(xRotation)
+        Camera.rotateY(yRotation)
+
+        // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
+        mViewMatrix = Camera.lookAt()
+
+//        Matrix.rotateM(mViewMatrix, 0, yRotation, 1f, 0f, 0f)
+//        Matrix.rotateM(mViewMatrix, 0, xRotation, 0f, 1f, 0f)
+
+    }
 
     fun handleTouchDrag(deltaX: Float, deltaY: Float) {
-        xRotation += deltaX / 16f
-        yRotation -= deltaY / 16f
+        xRotation += deltaX / 180f
+        yRotation -= deltaY / 180f
 
-        if (yRotation < -180) {
-            yRotation = -180f
-        } else if (yRotation > 180) {
-            yRotation = 180f
-        }
+        yRotation = clamp(yRotation, -180f, 180f)
 
         // Setup view matrix
-        updateViewMatrices()
+        placeCamera()
     }
 
     fun handleScroll(scale: Float){
