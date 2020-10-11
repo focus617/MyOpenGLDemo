@@ -13,13 +13,10 @@ object Camera {
     var directionFront: Vector = Vector(Position, targetPos).normalize()
     var targetDistance: Float = defaultDistance
 
-    fun rotateX(xRotation: Float = 0f){
-        Position.x = kotlin.math.sin(xRotation) * targetDistance
-        Position.z = kotlin.math.cos(xRotation) * targetDistance
-    }
-
-    fun rotateY(yRotation: Float = 0f){
-        Position.y = kotlin.math.sin(yRotation) * targetDistance
+    fun rotate(pitch: Float = 0f, yaw: Float = 0f){
+        Position.y = kotlin.math.sin(pitch) * targetDistance
+        Position.x = kotlin.math.cos(pitch) * kotlin.math.cos(yaw) * targetDistance
+        Position.z = kotlin.math.cos(pitch) * kotlin.math.sin(yaw) * targetDistance
     }
 
     fun lookAt(): FloatArray {

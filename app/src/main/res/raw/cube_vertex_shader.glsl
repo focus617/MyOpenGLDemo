@@ -21,10 +21,10 @@ void main()
     // 将着色点和摄像机转换到世界坐标空间
     v_worldSpacePos = vec3(u_ModelMatrix * vec4(a_Position, 1.0));
 
-    //v_worldSpaceViewPos = vec3(u_ViewMatrix * vec4(u_ViewPos, 1.0));
     v_worldSpaceViewPos = u_ViewPos;
 
     v_Normal = a_Normal;
+
     v_TexCoords = a_TexCoords;
 }
 

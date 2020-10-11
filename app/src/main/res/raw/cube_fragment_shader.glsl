@@ -77,8 +77,9 @@ vec3 getAmbientLighting()
 // 漫反射
 vec3 getDiffuseLighting()
 {
+    float adjustParam = 50.0;
     float cosine = max(dot(norm, lightDir), 0.0);
-    float diff = cosine * 25.0 / (pow(lightDistance, 2.0));
+    float diff = cosine * adjustParam / (pow(lightDistance, 2.0));
 
     //vec3 diffuse = light.diffuse * diff * material.diffuse;
     vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, v_TexCoords));

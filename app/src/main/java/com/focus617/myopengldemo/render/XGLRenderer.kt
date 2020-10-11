@@ -135,20 +135,18 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     private fun placeCamera() {
 
-        Camera.rotateX(xRotation)
-        Camera.rotateY(yRotation)
+        Camera.rotate(yRotation, xRotation)
 
         // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
         mViewMatrix = Camera.lookAt()
 
-//        Matrix.rotateM(mViewMatrix, 0, yRotation, 1f, 0f, 0f)
-//        Matrix.rotateM(mViewMatrix, 0, xRotation, 0f, 1f, 0f)
-
     }
 
     fun handleTouchDrag(deltaX: Float, deltaY: Float) {
-        xRotation += deltaX / 180f
-        yRotation -= deltaY / 180f
+        val sensitivity: Float = 180f
+
+        xRotation += deltaX / sensitivity
+        yRotation -= deltaY / sensitivity
 
         yRotation = clamp(yRotation, -180f, 180f)
 
