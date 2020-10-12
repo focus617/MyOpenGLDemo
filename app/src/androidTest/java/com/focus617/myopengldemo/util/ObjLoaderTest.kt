@@ -20,8 +20,7 @@ class ObjLoaderTest {
     fun loadFromObjFile() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val objLoader = ObjLoader()
-        objLoader.load(appContext, "sculpt.obj")
+        ObjLoader.load(appContext, "sculpt.obj")
 
         assertEquals("com.focus617.myopengldemo", appContext.packageName)
     }
