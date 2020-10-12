@@ -1,28 +1,32 @@
 package com.focus617.myopengldemo.data
 
 import com.focus617.myopengldemo.programs.ShaderProgram
-import com.focus617.myopengldemo.programs.other.CubeShaderProgram
 
 class Model(path: String) {
 
-    init {
-        loadModel(path);
-    }
-    //渲染模型，即依次渲染各个网格
-    fun draw(shaderProgram: ShaderProgram){}
-
-    //销毁模型的所有网格
-    fun destroy(){}
-
-
     //模型所包含的网格
-    private val meshes: List<Mesh> = mutableListOf()
+    private val meshes = mutableListOf<Mesh>()
 
     //模型文件所在目录
     private lateinit var directory: String
 
+    init {
+        loadModel(path);
+    }
+
+    //渲染模型，即依次渲染各个网格
+    fun draw(shaderProgram: ShaderProgram)
+    {
+        for(mesh in meshes)
+            mesh.draw(shaderProgram);
+    }
+
     //加载模型
     fun loadModel(path: String){}
+
+    //销毁模型
+    fun destroy(){}
+
 
     //处理 aiScene 对象包含的节点和子节点
 //    fun processNode(node: aiNode, scene: aiScene){}
