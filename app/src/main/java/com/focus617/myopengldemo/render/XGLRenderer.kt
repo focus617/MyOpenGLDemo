@@ -13,9 +13,9 @@ import com.focus617.myopengldemo.objects.basic.Camera
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.objects.basic.PointLight
 import com.focus617.myopengldemo.util.MatrixHelper
-import com.focus617.myopengldemo.xuassimp.utils.ObjLoader
 import com.focus617.myopengldemo.util.TextureHelper
 import com.focus617.myopengldemo.util.clamp
+import com.focus617.myopengldemo.xuassimp.data.XuScene
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -49,7 +49,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         mCube = Cube2()
         boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
 
-        ObjLoader.load(context,"sculpt.obj")
+        XuScene.loadFromObj(context,"sculpt.obj")
+        XuScene.dumpMesh()
+        XuScene.dumpMaterials()
 
     }
 

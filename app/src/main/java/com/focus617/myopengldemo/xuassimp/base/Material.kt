@@ -1,5 +1,6 @@
 package com.focus617.myopengldemo.xuassimp.base
 
+import android.graphics.Color
 import timber.log.Timber
 
 /**
@@ -43,7 +44,7 @@ import timber.log.Timber
  */
 class Material {
     // 材质对象名称
-    var type: String? = null
+    var name: String? = null
 
     // 环境光
     var Ka_Color = 0
@@ -60,6 +61,9 @@ class Material {
     // 溶解度，为0时完全透明，1完全不透明
     var alpha = 1f
 
+    // 材质的光照模型
+    var illum = 0
+
     // map_Ka，map_Kd，map_Ks：材质的环境（ambient），散射（diffuse）和镜面（specular）贴图
     var Ka_Texture: String? = null
     var Kd_Texture: String? = null
@@ -69,11 +73,19 @@ class Material {
     var bumpTexture: String? = null
 
     fun dump() {
-        Timber.d("MtlName: $type")
+        Timber.d("MtlName: $name")
         Timber.d("Ka_Color: $Ka_Color")
         Timber.d("Kd_Color: $Kd_Color")
         Timber.d("Ks_Color: $Ks_Color")
         Timber.d("ns: $ns")
         Timber.d("alpha: $alpha")
+        Timber.d("illum: $illum")
+
+        if(Ka_Texture!=null) Timber.d("Ka_Texture: $Ka_Texture")
+        if(Kd_Texture!=null) Timber.d("Kd_Texture: $Kd_Texture")
+        if(Ks_ColorTexture!=null) Timber.d("Ks_ColorTexture: $Ks_ColorTexture")
+        if(Ns_Texture!=null) Timber.d("Ns_Texture: $Ns_Texture")
+        if(alphaTexture!=null) Timber.d("alphaTexture: $alphaTexture")
+        if(bumpTexture!=null) Timber.d("bumpTexture: $bumpTexture")
     }
 }

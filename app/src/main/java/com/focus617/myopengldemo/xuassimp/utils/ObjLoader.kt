@@ -15,36 +15,14 @@ import java.util.*
  */
 object ObjLoader {
 
-    private var currentMesh = XuMesh()
-    private var currentTextureName: String = ""
+    private lateinit var currentMesh : XuMesh
+    private var currentTextureName: String = ""     // 存放解析出来的face当前使用的texture
+    private var mMtlFiles = ArrayList<String>()     // 存放解析出来的 mtl文件名称
 
-    // 存放解析出来的 mtl文件名称
-    var mMtlFileName: String? = null
-
-    /**
-     * 加载并分析Obj文件，构造 current ObjInfo
-     * @param context   Context
-     * @param objFileName assets的obj文件路径
-     * @return
-     */
-    fun load(context: Context, objFileName: String) {
-        if (objFileName.isEmpty() or TextUtils.isEmpty(objFileName)) {
-            Timber.w("Obj File doesn't exist")
-            return
-        }
-        loadFromObjFile(context, objFileName)
-
-        currentMesh.dump()
-        currentMesh.dumpVertices()
-        currentMesh.dumpNormals()
-        currentMesh.dumpTextureCoords()
-        currentMesh.dumpFaces()
-
-    }
-
-    private fun loadFromObjFile(context: Context, objFileName: String) {
+    fun load(context: Context, objFileName: String): XuMesh {
 
         Timber.d("loadFromObjFile(): $objFileName")
+        currentMesh = XuMesh()
         currentMesh.name = objFileName
 
         try {
@@ -87,6 +65,13 @@ object ObjLoader {
         } catch (ex: Exception) {
             Timber.e(ex.message.toString())
         }
+
+        // TODO: How to move Scene's MtlMap out of MtlLoader
+        for(file in mMtlFiles) {
+            MtlLoader.load(context, file)
+        }
+
+        return currentMesh
     }
 
     // 对象名称
@@ -101,9 +86,7 @@ object ObjLoader {
         val items = line.split(DELIMITER).toTypedArray()
         if (items.size != 2) return
         if (!TextUtils.isEmpty(items[1])) {
-            mMtlFileName = items[1]
-            // TODO: support MtlLoader
-            // mtlMap = MtlLoader.load(context, item[1])
+            mMtlFiles.add(items[1])
         }
     }
 
