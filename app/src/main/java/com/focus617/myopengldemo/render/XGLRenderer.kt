@@ -13,7 +13,7 @@ import com.focus617.myopengldemo.objects.basic.Camera
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.objects.basic.PointLight
 import com.focus617.myopengldemo.util.MatrixHelper
-import com.focus617.myopengldemo.util.ObjLoader
+import com.focus617.myopengldemo.xuassimp.utils.ObjLoader
 import com.focus617.myopengldemo.util.TextureHelper
 import com.focus617.myopengldemo.util.clamp
 import timber.log.Timber

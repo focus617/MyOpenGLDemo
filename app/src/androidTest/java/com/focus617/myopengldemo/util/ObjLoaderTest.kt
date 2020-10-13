@@ -2,6 +2,7 @@ package com.focus617.myopengldemo.util
 
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
+import com.focus617.myopengldemo.xuassimp.utils.ObjLoader
 import org.junit.Test
 
 import org.junit.Assert.*
