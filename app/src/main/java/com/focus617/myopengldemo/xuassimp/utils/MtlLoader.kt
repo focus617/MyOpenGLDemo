@@ -13,8 +13,6 @@ import java.util.*
  */
 object MtlLoader {
 
-//    var mMtlMap = XuScene.mMaterials      // 全部材质列表
-
     private var currentMaterial: Material? = null
 
     /**
@@ -23,7 +21,7 @@ object MtlLoader {
      * @param mtlFileName assets的 mtl文件路径
      * @return
      */
-    fun load(context: Context, mtlFileName: String) {
+    fun load(context: Context, mtlFileName: String, mMtlMap: HashMap<String, Material>) {
 
         Timber.d("load() From Mtl File: $mtlFileName")
         if (mtlFileName.isEmpty() or TextUtils.isEmpty(mtlFileName)) {
@@ -42,7 +40,7 @@ object MtlLoader {
                     line.startsWith(ANNOTATION) -> continue // 注释行
 
                     line.startsWith(NEWMTL) -> {            // 定义一个名为 'xxx'的材质
-                        fillNewMTL(line)
+                        fillNewMTL(line, mMtlMap)
                     }
                     line.startsWith(KA) -> {                // 环境光
                         currentMaterial!!.Ka_Color = getColorFromLine(line)
@@ -92,17 +90,17 @@ object MtlLoader {
             Timber.e(ex.message.toString())
         }
         // 将最后一个材质保存
-        XuScene.mMaterials.set(currentMaterial!!.name!!, currentMaterial!!)
-        Timber.d("MTL: ${currentMaterial!!.name!!} closed")
+        mMtlMap[currentMaterial!!.name!!] = currentMaterial!!
+        Timber.d("MTL: ${currentMaterial!!.name!!} finished")
     }
 
-    private fun fillNewMTL(line: String) {
+    private fun fillNewMTL(line: String, mMtlMap: HashMap<String, Material>) {
         val items = line.split(DELIMITER).toTypedArray()
         if (items.size != 2) return
 
         if (currentMaterial != null) {
             // 开始定义一个新的材质，因此要将上一个材质存入 mMtlMap
-            XuScene.mMaterials[currentMaterial!!.name!!] = currentMaterial!!
+            mMtlMap[currentMaterial!!.name!!] = currentMaterial!!
             Timber.d("MTL: ${currentMaterial!!.name!!} closed")
         }
         currentMaterial = Material()

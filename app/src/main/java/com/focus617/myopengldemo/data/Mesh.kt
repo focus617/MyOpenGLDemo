@@ -2,26 +2,27 @@ package com.focus617.myopengldemo.data
 
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.programs.ShaderProgram
+import com.focus617.myopengldemo.xuassimp.base.XuMesh
 import timber.log.Timber
 import java.nio.*
 import kotlin.properties.Delegates
 
-class Vertex {
-    var position = FloatArray(3)
-    var normal = FloatArray(3)
-    var textureCoords = FloatArray(3)
-}
+data class Vertex (
+    var position: FloatArray = FloatArray(3),
+    var normal: FloatArray = FloatArray(3),
+    var textureCoords: FloatArray = FloatArray(3)
+)
 
 enum class TextureType{
     TextureDiffuse,        // 漫反射纹理
     TextureSpecular        // 镜面光纹理
 }
 
-class Texture {
-    var id: Int = 0
-    var type: TextureType = TextureType.TextureDiffuse
-    var fileName: String = ""
-}
+data class Texture (
+    var id: Int,
+    var type: TextureType,
+    var fileName: String
+)
 
 /**
  * 本对象负责将顶点属性和索引加载到 GPU，并执行显示操作
@@ -215,6 +216,10 @@ class Mesh private constructor() {
     }
 
     companion object {
+
+        fun getRawMesh(): Mesh{
+            return Mesh()
+        }
 
         class AttributeProperty(
             val componentIndex: Int,

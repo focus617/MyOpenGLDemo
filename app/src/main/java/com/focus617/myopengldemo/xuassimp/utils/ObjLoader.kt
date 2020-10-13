@@ -15,15 +15,14 @@ import java.util.*
  */
 object ObjLoader {
 
-    private lateinit var currentMesh : XuMesh
+    private lateinit var mesh : XuMesh
     private var currentTextureName: String = ""     // 存放解析出来的face当前使用的texture
-    private var mMtlFiles = ArrayList<String>()     // 存放解析出来的 mtl文件名称
 
     fun load(context: Context, objFileName: String): XuMesh {
 
         Timber.d("loadFromObjFile(): $objFileName")
-        currentMesh = XuMesh()
-        currentMesh.name = objFileName
+        mesh = XuMesh()
+        mesh.name = objFileName
 
         try {
             val scanner = Scanner(context.assets.open(objFileName))
@@ -65,20 +64,14 @@ object ObjLoader {
         } catch (ex: Exception) {
             Timber.e(ex.message.toString())
         }
-
-        // TODO: How to move Scene's MtlMap out of MtlLoader
-        for(file in mMtlFiles) {
-            MtlLoader.load(context, file)
-        }
-
-        return currentMesh
+        return mesh
     }
 
     // 对象名称
     private fun fillObjName(line: String) {
         val items = line.split(DELIMITER).toTypedArray()
         if (items.size != 2) return
-        currentMesh.name = items[1]
+        mesh.name = items[1]
     }
 
     // 材质
@@ -86,7 +79,7 @@ object ObjLoader {
         val items = line.split(DELIMITER).toTypedArray()
         if (items.size != 2) return
         if (!TextUtils.isEmpty(items[1])) {
-            mMtlFiles.add(items[1])
+            mesh.mMaterial = items[1]
         }
     }
 
@@ -100,7 +93,7 @@ object ObjLoader {
         val x = coordinates[1].toFloat()
         val y = coordinates[2].toFloat()
         val z = coordinates[3].toFloat()
-        currentMesh.mVertices.add(ObjVertex(x, y, z))
+        mesh.mVertices.add(ObjVertex(x, y, z))
     }
 
     /**
@@ -113,7 +106,7 @@ object ObjLoader {
         val x = vectors[1].toFloat()
         val y = vectors[2].toFloat()
         val z = vectors[3].toFloat()
-        currentMesh.mNormals.add(ObjNormal(x, y, z))
+        mesh.mNormals.add(ObjNormal(x, y, z))
     }
 
     /**
@@ -124,8 +117,8 @@ object ObjLoader {
     private fun fillTextureCoordList(line: String) {
         val coordinates = line.split(DELIMITER)
         when (coordinates.size) {
-            3 -> currentMesh.textureDimension = 2
-            4 -> currentMesh.textureDimension = 3
+            3 -> mesh.textureDimension = 2
+            4 -> mesh.textureDimension = 3
             !in 3..4 -> return
         }
 
@@ -138,7 +131,7 @@ object ObjLoader {
         if (coordinates.size == 4) {
             objTexture.put(2, coordinates[3].toFloat())
         }
-        currentMesh.mTextureCoords.add(objTexture)
+        mesh.mTextureCoords.add(objTexture)
     }
 
     private fun switchTexture(line: String) {
@@ -160,8 +153,8 @@ object ObjLoader {
 
         if (!(vertexIndices[1].contains("/"))) {
             // vertexIndices[] format: "f vertexIndex1 vertexIndex2 vertexIndex3"
-            currentMesh.hasNormalInFace = false
-            currentMesh.hasTextureInFace = false
+            mesh.hasNormalInFace = false
+            mesh.hasTextureInFace = false
 
             for (i in 1 until clamp(vertexIndices.size + 1, 2, 4)) {
                 objFace.add(
@@ -171,8 +164,8 @@ object ObjLoader {
 
         } else {
             // vertexIndices[] format: "f vertexIndex/textureIndex/normalIndex .."
-            currentMesh.hasNormalInFace = true
-            currentMesh.hasTextureInFace = true
+            mesh.hasNormalInFace = true
+            mesh.hasTextureInFace = true
 
             for (i in 1 until clamp(vertexIndices.size + 1, 2, 4)) {
                 val indices = vertexIndices[i].split("/").toTypedArray()
@@ -190,7 +183,7 @@ object ObjLoader {
             }
 
         }
-        currentMesh.mFaces.add(objFace)
+        mesh.mFaces.add(objFace)
     }
 
 

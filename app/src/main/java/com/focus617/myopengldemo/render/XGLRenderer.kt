@@ -5,6 +5,7 @@ import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import com.focus617.myopengldemo.R
+import com.focus617.myopengldemo.data.Model
 import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.other.Cube2
 import com.focus617.myopengldemo.programs.other.CubeShaderProgram
@@ -36,8 +37,12 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private lateinit var mLight: Cube
     private lateinit var mLightProgram: LightCubeShaderProgram
 
+    private lateinit var mModel: Model
+
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
+
+
         // 设置重绘背景框架颜色
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
         glEnable(GL_DEPTH_TEST)
@@ -49,9 +54,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         mCube = Cube2()
         boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
 
-        XuScene.loadFromObj(context,"sculpt.obj")
-        XuScene.dumpMesh()
-        XuScene.dumpMaterials()
+        mModel = Model(context, "sculpt.obj")
 
     }
 
@@ -87,7 +90,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         drawCube()
     }
 
-    private fun drawLightCube(){
+    private fun drawLightCube() {
         positionObjectInScene(PointLight.position)
 
         mLightProgram.use()
@@ -159,8 +162,8 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         placeCamera()
     }
 
-    fun handleScroll(scale: Float){
-        if(yFovInDegrees in 1.0f..45.0f)
+    fun handleScroll(scale: Float) {
+        if (yFovInDegrees in 1.0f..45.0f)
             yFovInDegrees *= scale
 
         yFovInDegrees = clamp(yFovInDegrees, 1.0f, 45.0f)

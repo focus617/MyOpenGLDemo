@@ -1,6 +1,5 @@
 package com.focus617.myopengldemo.xuassimp.base
 
-import com.focus617.myopengldemo.xuassimp.utils.MtlLoader
 import com.focus617.myopengldemo.xuassimp.utils.ObjLoader
 import timber.log.Timber
 import java.util.ArrayList
@@ -28,8 +27,8 @@ class XuMesh {
     // 解析对象名
     var name: String? = "def"
 
-    // 存放解析出来的 mtl数据
-    val mMaterialIndex: Material? = null
+    // 存放解析出来的 mtl文件名称
+    var mMaterial: String? = null
 
     // 存放解析出来的顶点的坐标
     val mVertices = ArrayList<ObjLoader.ObjVertex>()
@@ -49,6 +48,7 @@ class XuMesh {
 
     fun dump() {
         Timber.d("ObjName: $name")
+        Timber.d("MTLName: $mMaterial")
         Timber.d("Vertices Size: ${mVertices.size}")
         Timber.d("Normals Size: ${mNormals.size}")
         Timber.d("TextureCoords Size: ${mTextureCoords.size}")
