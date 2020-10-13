@@ -7,7 +7,7 @@ import com.focus617.myopengldemo.xuassimp.data.XuScene
 
 class Model(val context: Context, path: String) {
 
-    //模型所包含的网格
+    //模型所包含的Mesh集合
     private val meshes = mutableListOf<Mesh>()
 
     //模型文件所在目录
@@ -22,16 +22,19 @@ class Model(val context: Context, path: String) {
 
     //加载模型
     private fun loadModel(path: String) {
+
         val scene = XuScene(context)
         scene.loadFromObj(path)
+
         scene.dumpMesh()
-        scene.dumpMaterials()
 
         // process ASSIMP's root node recursively
-        processNode(scene.mRootNode, scene)
+//        processNode(scene.mRootNode, scene)
+        if(scene.mMesh != null)
+            processMesh(scene.mMesh!!)
     }
 
-    //销毁模型
+    //销毁模型及其所有Mesh
     fun destroy() {}
 
     //渲染模型，即依次渲染各个网格
@@ -50,16 +53,9 @@ class Model(val context: Context, path: String) {
      * 轮胎网格）都会随着一起位移。这样的系统能够用父子关系很容易地创建出来。
      */
 //    fun processNode(node: Node, scene: XuScene){}
-    private fun processNode(node: Int, scene: XuScene){
-        for(mesh in scene.mMeshes)
-            meshes.add(processMesh(mesh, scene))
-    }
 
     //生成网格
-    private fun processMesh(mesh: XuMesh, scene: XuScene): Mesh{
-
-        return Mesh.getRawMesh()
-    }
+    private fun processMesh(mesh: XuMesh): Mesh = Mesh.build(mesh)
 
     //创建纹理并加载图像数据
 //    fun loadMaterialTextures(mat: aiMaterial, type: aiTextureType, typeName: String): vector<Texture>

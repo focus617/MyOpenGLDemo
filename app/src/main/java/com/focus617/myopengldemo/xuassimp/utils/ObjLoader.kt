@@ -15,8 +15,12 @@ import java.util.*
  */
 object ObjLoader {
 
-    private lateinit var mesh : XuMesh
-    private var currentTextureName: String = ""     // 存放解析出来的face当前使用的texture
+    private lateinit var mesh: XuMesh
+
+    private var currentMaterialName: String = ""     // 存放解析出来的face当前使用的texture
+    private var currentFaceList: ArrayList<Face>? = null
+    private var hasFace = false
+
 
     fun load(context: Context, objFileName: String): XuMesh {
 
@@ -36,6 +40,8 @@ object ObjLoader {
 
                     line.startsWith(MTLLIB) -> {
                         fillMtlLib(line)
+                        if (mesh.mMtlFileName != null)
+                            MtlLoader.load(context, mesh.mMtlFileName!!, mesh.mMaterials)
                     }
                     line.startsWith(O) -> {
                         fillObjName(line)
@@ -50,7 +56,7 @@ object ObjLoader {
                         fillVertexList(line)
                     }
                     line.startsWith(USEMTL) -> {
-                        switchTexture(line)
+                        switchUseMtl(line)
                     }
                     line.startsWith(F) -> {
                         fillFaceList(line)
@@ -79,7 +85,7 @@ object ObjLoader {
         val items = line.split(DELIMITER).toTypedArray()
         if (items.size != 2) return
         if (!TextUtils.isEmpty(items[1])) {
-            mesh.mMaterial = items[1]
+            mesh.mMtlFileName = items[1]
         }
     }
 
@@ -134,11 +140,28 @@ object ObjLoader {
         mesh.mTextureCoords.add(objTexture)
     }
 
-    private fun switchTexture(line: String) {
+    private fun switchUseMtl(line: String) {
         val textureName = line.split(DELIMITER)
-        when (textureName.size) {
-            2 -> currentTextureName = textureName[1]
-            else -> return
+        if (textureName.size != 2) return
+
+        // TODO: Need save old faceList to HashMap?
+//        mesh.mFaces[currentMaterialName] = currentFaceList!!
+
+        // Get new material name
+        currentMaterialName = textureName[1]
+        Timber.d("switchUseMtl(): $currentMaterialName")
+
+        if (mesh.mFaces.containsKey(currentMaterialName)) {
+            // switch to old FaceList based on switched material name
+            currentFaceList = mesh.mFaces[currentMaterialName]
+            Timber.d("switchUseMtl(): Reuse FaceList $currentMaterialName")
+            Timber.d("switchUseMtl(): size = ${currentFaceList!!.size}")
+
+        } else {
+            // create a new FaceList
+            currentFaceList = ArrayList<Face>()
+            mesh.mFaces[currentMaterialName] = currentFaceList!!
+            Timber.d("switchUseMtl(): Create new FaceList $currentMaterialName")
         }
     }
 
@@ -148,8 +171,7 @@ object ObjLoader {
     private fun fillFaceList(line: String) {
         val vertexIndices = line.split(DELIMITER).toTypedArray()
 
-        val objFace = Face()
-        objFace.fileName = currentTextureName
+        val face = Face()
 
         if (!(vertexIndices[1].contains("/"))) {
             // vertexIndices[] format: "f vertexIndex1 vertexIndex2 vertexIndex3"
@@ -157,7 +179,7 @@ object ObjLoader {
             mesh.hasTextureInFace = false
 
             for (i in 1 until clamp(vertexIndices.size + 1, 2, 4)) {
-                objFace.add(
+                face.add(
                     FaceElement(Integer.valueOf(vertexIndices[i]) - 1, 0, 0)
                 )
             }
@@ -179,11 +201,12 @@ object ObjLoader {
                 val normalIndex =
                     if (indices[2].isNotEmpty()) Integer.valueOf(indices[2]) - 1 else 0
 
-                objFace.add(FaceElement(vertexIndex, textureIndex, normalIndex))
+                face.add(FaceElement(vertexIndex, textureIndex, normalIndex))
             }
 
         }
-        mesh.mFaces.add(objFace)
+        currentFaceList?.add(face)
+        hasFace = true
     }
 
 

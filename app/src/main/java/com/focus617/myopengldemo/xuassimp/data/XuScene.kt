@@ -14,12 +14,13 @@ import timber.log.Timber
  */
 class XuScene(val context: Context) {
 
-    var mMeshes = ArrayList<XuMesh>()
+    var mMesh: XuMesh? = null
 
-    var mMaterials = HashMap<String, Material>()      // 全部材质列表
+    // 材质库：统一放入XuMesh
+//    var mMaterials = HashMap<String, Material>()
 
     // 未实现的Mesh父子关系管理
-    var mRootNode: Int = 0
+//    var mRootNode: Int = 0
 
 
     /**
@@ -34,33 +35,17 @@ class XuScene(val context: Context) {
             Timber.w("Obj File doesn't exist")
             return
         }
-        val mesh = ObjLoader.load(context, objFileName)
-        mMeshes.add(mesh)
-
-        if (mesh.mMaterial != null) {
-            MtlLoader.load(context, mesh.mMaterial!!, mMaterials)
-        }
-
+        mMesh = ObjLoader.load(context, objFileName)
     }
 
     fun dumpMesh() {
         Timber.d("dumpMesh()")
-        for (mesh in mMeshes) {
-            mesh.dump()
-            mesh.dumpVertices()
-            mesh.dumpNormals()
-            mesh.dumpTextureCoords()
-            mesh.dumpFaces()
-        }
-    }
-
-    fun dumpMaterials() {
-        Timber.d("dumpMaterials()")
-        Timber.d("Size of Materials: ${mMaterials.size}")
-        mMaterials.forEach { (key, material) ->
-            Timber.d("\nMaterial[$key]:")
-            material.dump()
-        }
+        mMesh?.dump()
+        mMesh?.dumpVertices()
+        mMesh?.dumpNormals()
+        mMesh?.dumpTextureCoords()
+        mMesh?.dumpFaces()
+        mMesh?.dumpMaterials()
     }
 
 }

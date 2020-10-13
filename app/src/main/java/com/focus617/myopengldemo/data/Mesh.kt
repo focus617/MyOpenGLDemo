@@ -3,22 +3,23 @@ package com.focus617.myopengldemo.data
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.programs.ShaderProgram
 import com.focus617.myopengldemo.xuassimp.base.XuMesh
+import com.focus617.myopengldemo.xuassimp.data.XuScene
 import timber.log.Timber
 import java.nio.*
 import kotlin.properties.Delegates
 
-data class Vertex (
+data class Vertex(
     var position: FloatArray = FloatArray(3),
     var normal: FloatArray = FloatArray(3),
     var textureCoords: FloatArray = FloatArray(3)
 )
 
-enum class TextureType{
+enum class TextureType {
     TextureDiffuse,        // 漫反射纹理
     TextureSpecular        // 镜面光纹理
 }
 
-data class Texture (
+data class Texture(
     var id: Int,
     var type: TextureType,
     var fileName: String
@@ -155,15 +156,14 @@ class Mesh private constructor() {
         glBindVertexArray(0)
     }
 
-    private fun setTextures(shaderProgram: ShaderProgram){
+    private fun setTextures(shaderProgram: ShaderProgram) {
 
         val PreFix = "material."
 
         var diffuseNr = 1
         var specularNr = 1
 
-        for((index,texture) in textures.withIndex())
-        {
+        for ((index, texture) in textures.withIndex()) {
             // 在绑定之前激活相应的纹理单元
             glActiveTexture(GL_TEXTURE0 + index);
 
@@ -171,8 +171,8 @@ class Mesh private constructor() {
             var name: String
             var number: String
 
-            when(textures[index].type){
-                TextureType.TextureDiffuse ->  {
+            when (textures[index].type) {
+                TextureType.TextureDiffuse -> {
                     name = "texture_diffuse"
                     number = (diffuseNr++).toString()
                 }
@@ -215,10 +215,66 @@ class Mesh private constructor() {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
+    // 销毁纹理和缓冲区对象
+//    fun destroy(){
+//        for (texture in textures) {
+//            glDeleteTextures(1, texture.id);
+//        }
+//        glDeleteBuffers(1, mElementId)
+//        glDeleteBuffers(1, numVertices)
+//        glDeleteVertexArrays(1,mVaoId)
+//    }
+
     companion object {
 
-        fun getRawMesh(): Mesh{
-            return Mesh()
+        fun build(xuMesh: XuMesh): Mesh {
+
+            val mesh = Mesh()
+
+            // 处理顶点坐标、法线和纹理坐标
+            // data to fill
+            var position = FloatArray(3)
+            var normal = FloatArray(3)
+            var textureCoords = FloatArray(3)
+
+            // walk through each of the XuMesh's vertices
+            for (i in 0 until xuMesh.mVertices.size) {
+                position[0] = xuMesh.mVertices[i].x
+                position[1] = xuMesh.mVertices[i].y
+                position[2] = xuMesh.mVertices[i].z
+
+                // normals
+                if (xuMesh.hasNormalInFace) {
+                    normal[0] = xuMesh.mNormals[i].x
+                    normal[1] = xuMesh.mNormals[i].y
+                    normal[2] = xuMesh.mNormals[i].z
+                }
+
+                // texture coordinates
+
+                // create Vertex
+                mesh.vertices.add(Vertex(position, normal, textureCoords))
+            }
+
+            // 处理顶点索引
+            var indices = ShortArray(3)
+
+            // walk through each of the XuMesh's faces
+            for ((key, faceList) in xuMesh.mFaces)
+                for (i in 0 until faceList.size) {
+                    val face = faceList[i]
+
+                    for (j in 0 until face.mIndices.size) {
+                        val index = face.mIndices[j]
+                        mesh.indices.add(index.vId.toShort())
+                    }
+                }
+
+            // 处理材质
+            // walk through each of the XuMesh's materials
+
+
+            return mesh
         }
 
         class AttributeProperty(

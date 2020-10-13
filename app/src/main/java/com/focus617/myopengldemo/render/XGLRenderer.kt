@@ -54,7 +54,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         mCube = Cube2()
         boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
 
+        // build model
         mModel = Model(context, "sculpt.obj")
+        // build shader program
 
     }
 

@@ -28,7 +28,10 @@ class XuMesh {
     var name: String? = "def"
 
     // 存放解析出来的 mtl文件名称
-    var mMaterial: String? = null
+    var mMtlFileName: String? = null
+
+    // 存放解析出来的材质库
+    var mMaterials = HashMap<String, Material>()
 
     // 存放解析出来的顶点的坐标
     val mVertices = ArrayList<ObjLoader.ObjVertex>()
@@ -40,20 +43,32 @@ class XuMesh {
     val mTextureCoords = ArrayList<ObjLoader.ObjTexture>()
 
     //存放解析出来面的索引
-    val mFaces = ArrayList<Face>()
+    val mFaces = HashMap<String, ArrayList<Face>>()
 
     var hasNormalInFace = false
     var hasTextureInFace = false
     var textureDimension = 2
 
+    fun clear(){
+        name = "def"
+        mMtlFileName = null
+        mVertices.clear()
+        mNormals.clear()
+        mTextureCoords.clear()
+        mFaces.clear()
+        hasNormalInFace = false
+        hasTextureInFace = false
+        textureDimension = 2
+    }
+
     fun dump() {
         Timber.d("ObjName: $name")
-        Timber.d("MTLName: $mMaterial")
+        Timber.d("MTLName: $mMtlFileName")
         Timber.d("Vertices Size: ${mVertices.size}")
         Timber.d("Normals Size: ${mNormals.size}")
         Timber.d("TextureCoords Size: ${mTextureCoords.size}")
         Timber.d("Texture Dimension: $textureDimension")
-        Timber.d("Faces Size: ${mFaces.size}")
+        Timber.d("Faces Map Size: ${mFaces.size}")
     }
 
     fun dumpVertices() {
@@ -109,17 +124,31 @@ class XuMesh {
 
     fun dumpFaces() {
         Timber.d("mFaceList dump:")
-        Timber.d("Face Array Size: ${mFaces.size}")
+        Timber.d("Face Map Size: ${mFaces.size}")
 
-        if (mFaces.size < 4) {
-            for (i in 0..mFaces.size)
-                Timber.d("Face[$i]: ${mFaces[i]}")
-        } else {
-            for (i in 0..2)
-                Timber.d("Face[$i]: ${mFaces[i]}")
-            Timber.d("...")
-            for (i in (mFaces.size - 3) until mFaces.size)
-                Timber.d("Face[$i]: ${mFaces[i]}")
+        for ((key, faceList) in mFaces) {
+
+            Timber.d("FaceList for $key: size=${faceList.size}")
+
+            if (faceList.size < 4) {
+                for (i in 0..faceList.size)
+                    Timber.d("Face[$i]: ${faceList[i]}")
+            } else {
+                for (i in 0..2)
+                    Timber.d("Face[$i]: ${faceList[i]}")
+                Timber.d("...")
+                for (i in (faceList.size - 3) until faceList.size)
+                    Timber.d("Face[$i]: ${faceList[i]}")
+            }
+        }
+    }
+
+    fun dumpMaterials() {
+        Timber.d("dumpMaterials()")
+        Timber.d("Size of Materials: ${mMaterials.size}")
+        mMaterials.forEach { (key, material) ->
+            Timber.d("\nMaterial[$key]:")
+            material.dump()
         }
     }
 }
