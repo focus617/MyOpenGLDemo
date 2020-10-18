@@ -26,6 +26,7 @@ abstract class ShaderProgram protected constructor(
             context, fragmentShaderResourceId
         )
     )
+    fun getId() = program
 
     // 使用/激活程序
     fun use() {

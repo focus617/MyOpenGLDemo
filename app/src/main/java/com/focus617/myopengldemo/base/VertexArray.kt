@@ -12,9 +12,9 @@ class VertexArray(vertices: FloatArray) {
 
     private val floatBuffer: FloatBuffer = ByteBuffer
         .allocateDirect(vertices.size * Float.SIZE_BYTES)
-        .order(ByteOrder.nativeOrder())
-        .asFloatBuffer()
-        .put(vertices)
+        .order(ByteOrder.nativeOrder())         //设置字节顺序为本地操作系统顺序
+        .asFloatBuffer()                        //转换为浮点(Float)型缓冲
+        .put(vertices)                          //在缓冲区内写入数据
 
     fun getFloatBuffer() = floatBuffer
 

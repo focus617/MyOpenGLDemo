@@ -10,6 +10,7 @@ import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.basic.PointLight
 import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.other.Cube2
+import com.focus617.myopengldemo.objects.other.Triangle
 import com.focus617.myopengldemo.programs.other.CubeShaderProgram
 import com.focus617.myopengldemo.programs.other.LightCubeShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
@@ -38,13 +39,16 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     private lateinit var mModel: Model
 
+    private lateinit var mTriangle: Triangle
+    private val mTrianglePos: Vector = Vector(0.0f, 0.0f, -2.0f)
+
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
 
 
         // 设置重绘背景框架颜色
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
-        
+
         //打开深度检测
         glEnable(GL_DEPTH_TEST)
 
@@ -61,6 +65,8 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 //        // build model
 //        mModel = Model(context, "sculpt.obj")
 //        // build shader program
+
+        mTriangle = Triangle(context)
 
     }
 
@@ -94,6 +100,8 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         drawLightCube()
 
         drawCube()
+
+        drawTriangle()
     }
 
     private fun drawLightCube() {
@@ -120,6 +128,16 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         mCube.bindData()
         mCube.draw()
 
+    }
+
+    private fun drawTriangle()    {
+        positionObjectInScene(mTrianglePos)
+        mTriangle.getProgram().use()
+        mTriangle.getProgram().setUniforms(
+            mModelMatrix, mViewMatrix, mProjectionMatrix, it_modelViewMatrix,
+            Camera.Position, boxTexture)
+
+        mTriangle.draw()
     }
 
     private fun updateItModelViewMatrix() {

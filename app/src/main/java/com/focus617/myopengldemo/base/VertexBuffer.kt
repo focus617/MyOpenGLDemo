@@ -67,6 +67,7 @@ class VertexBuffer private constructor() {
             mVertexArray.getFloatBuffer(),
             GL_STATIC_DRAW
         )
+
         glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 
@@ -95,6 +96,7 @@ class VertexBuffer private constructor() {
             mElementArray.getShortBuffer(),
             GL_STATIC_DRAW
         )
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
