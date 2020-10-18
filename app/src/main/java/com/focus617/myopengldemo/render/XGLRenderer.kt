@@ -6,13 +6,13 @@ import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.base.Model
+import com.focus617.myopengldemo.base.basic.Camera
+import com.focus617.myopengldemo.base.basic.PointLight
 import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.other.Cube2
 import com.focus617.myopengldemo.programs.other.CubeShaderProgram
 import com.focus617.myopengldemo.programs.other.LightCubeShaderProgram
-import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
-import com.focus617.myopengldemo.base.basic.PointLight
 import com.focus617.myopengldemo.util.MatrixHelper
 import com.focus617.myopengldemo.util.TextureHelper
 import com.focus617.myopengldemo.util.clamp
@@ -44,7 +44,12 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         // 设置重绘背景框架颜色
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f)
+        
+        //打开深度检测
         glEnable(GL_DEPTH_TEST)
+
+        //打开背面剪裁
+        glEnable(GL_CULL_FACE)
 
         mLightProgram = LightCubeShaderProgram(context)
         mLight = Cube()
@@ -53,9 +58,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         mCube = Cube2()
         boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
 
-        // build model
-        mModel = Model(context, "sculpt.obj")
-        // build shader program
+//        // build model
+//        mModel = Model(context, "sculpt.obj")
+//        // build shader program
 
     }
 

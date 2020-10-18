@@ -24,8 +24,11 @@ class XGLSurfaceView @JvmOverloads constructor(context: Context, attrs: Attribut
 
         super.setRenderer(renderer)
 
-        // 仅在绘图数据发生更改时才渲染视图: 在该模式下当渲染内容变化时不会主动刷新效果，需要手动调用requestRender()
+        // 设置渲染模式: 仅在绘图数据发生更改时才渲染视图
+        // 在该模式下当渲染内容变化时不会主动刷新效果，需要手动调用requestRender()
         //renderMode = RENDERMODE_WHEN_DIRTY
+
+        // 设置渲染模式为主动渲染
         renderMode = RENDERMODE_CONTINUOUSLY
     }
 
