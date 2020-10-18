@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.xuassimp.base
+package com.focus617.myopengldemo.xuscene.base
 
 import java.util.ArrayList
 

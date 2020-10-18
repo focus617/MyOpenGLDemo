@@ -3,7 +3,7 @@ package com.focus617.myopengldemo.render
 import android.content.Context
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
-import com.focus617.myopengldemo.data.DrawingObject
+import com.focus617.myopengldemo.base.DrawingObject
 import com.focus617.myopengldemo.util.ShaderHelper
 import com.focus617.myopengldemo.util.TextResourceReader
 import timber.log.Timber

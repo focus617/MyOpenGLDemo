@@ -1,8 +1,7 @@
 package com.focus617.myopengldemo.objects.airhockey
 
-import com.focus617.myopengldemo.data.VertexBuffer
-import com.focus617.myopengldemo.programs.airhockey.TextureShaderProgram
-import com.focus617.myopengldemo.data.DrawingObject
+import com.focus617.myopengldemo.base.VertexBuffer
+import com.focus617.myopengldemo.base.DrawingObject
 
 class Table : DrawingObject() {
 

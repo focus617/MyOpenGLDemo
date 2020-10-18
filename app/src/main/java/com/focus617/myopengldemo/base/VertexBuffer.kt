@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.data
+package com.focus617.myopengldemo.base
 
 import android.opengl.GLES31.*
 import timber.log.Timber

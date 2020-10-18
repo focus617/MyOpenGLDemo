@@ -1,11 +1,9 @@
-package com.focus617.myopengldemo.xuassimp.data
+package com.focus617.myopengldemo.xuscene.data
 
 import android.content.Context
 import android.text.TextUtils
-import com.focus617.myopengldemo.xuassimp.base.Material
-import com.focus617.myopengldemo.xuassimp.base.XuMesh
-import com.focus617.myopengldemo.xuassimp.utils.MtlLoader
-import com.focus617.myopengldemo.xuassimp.utils.ObjLoader
+import com.focus617.myopengldemo.xuscene.base.XuMesh
+import com.focus617.myopengldemo.xuscene.utils.ObjLoader
 import timber.log.Timber
 
 /**

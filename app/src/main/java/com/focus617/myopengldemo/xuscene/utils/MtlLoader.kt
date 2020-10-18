@@ -1,10 +1,10 @@
-package com.focus617.myopengldemo.xuassimp.utils
+package com.focus617.myopengldemo.xuscene.utils
 
 import android.content.Context
 import android.graphics.Color
 import android.text.TextUtils
-import com.focus617.myopengldemo.xuassimp.base.Material
-import com.focus617.myopengldemo.xuassimp.data.XuScene
+import com.focus617.myopengldemo.xuscene.base.Material
+import com.focus617.myopengldemo.xuscene.data.XuScene
 import timber.log.Timber
 import java.util.*
 

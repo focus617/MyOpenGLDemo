@@ -1,14 +1,12 @@
 package com.focus617.myopengldemo.objects.airhockey
 
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.data.DrawingObject
-import com.focus617.myopengldemo.data.VertexArray
-import com.focus617.myopengldemo.data.VertexBuffer
+import com.focus617.myopengldemo.base.DrawingObject
+import com.focus617.myopengldemo.base.VertexBuffer
 import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.Geometry.Cylinder
-import com.focus617.myopengldemo.data.ObjectBuilder.Companion.DrawCommand
-import com.focus617.myopengldemo.data.ObjectBuilder.Companion.GeneratedData
-import com.focus617.myopengldemo.programs.airhockey.ColorShaderProgram
+import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder.Companion.DrawCommand
+import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder.Companion.GeneratedData
 
 
 /**

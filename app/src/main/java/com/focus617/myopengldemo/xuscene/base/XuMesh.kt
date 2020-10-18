@@ -1,6 +1,6 @@
-package com.focus617.myopengldemo.xuassimp.base
+package com.focus617.myopengldemo.xuscene.base
 
-import com.focus617.myopengldemo.xuassimp.utils.ObjLoader
+import com.focus617.myopengldemo.xuscene.utils.ObjLoader
 import timber.log.Timber
 import java.util.ArrayList
 

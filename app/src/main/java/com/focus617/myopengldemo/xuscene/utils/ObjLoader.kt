@@ -1,10 +1,10 @@
-package com.focus617.myopengldemo.xuassimp.utils
+package com.focus617.myopengldemo.xuscene.utils
 
 import android.content.Context
 import android.text.TextUtils
-import com.focus617.myopengldemo.xuassimp.base.Face
-import com.focus617.myopengldemo.xuassimp.base.FaceElement
-import com.focus617.myopengldemo.xuassimp.base.XuMesh
+import com.focus617.myopengldemo.xuscene.base.Face
+import com.focus617.myopengldemo.xuscene.base.FaceElement
+import com.focus617.myopengldemo.xuscene.base.XuMesh
 import com.focus617.myopengldemo.util.clamp
 import timber.log.Timber
 import java.util.*

@@ -1,6 +1,5 @@
-package com.focus617.myopengldemo.xuassimp.base
+package com.focus617.myopengldemo.xuscene.base
 
-import android.graphics.Color
 import timber.log.Timber
 
 /**

@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.objects.basic
+package com.focus617.myopengldemo.base.basic
 
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 

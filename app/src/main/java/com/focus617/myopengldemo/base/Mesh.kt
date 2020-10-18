@@ -1,9 +1,8 @@
-package com.focus617.myopengldemo.data
+package com.focus617.myopengldemo.base
 
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.programs.ShaderProgram
-import com.focus617.myopengldemo.xuassimp.base.XuMesh
-import com.focus617.myopengldemo.xuassimp.data.XuScene
+import com.focus617.myopengldemo.xuscene.base.XuMesh
 import timber.log.Timber
 import java.nio.*
 import kotlin.properties.Delegates
@@ -267,6 +266,8 @@ class Mesh private constructor() {
                     for (j in 0 until face.mIndices.size) {
                         val index = face.mIndices[j]
                         mesh.indices.add(index.vId.toShort())
+
+                        // TODO: fill Vertex Array based on above index for vertex/texture/normal
                     }
                 }
 

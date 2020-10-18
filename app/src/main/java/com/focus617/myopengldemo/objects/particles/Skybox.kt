@@ -1,6 +1,6 @@
 package com.focus617.myopengldemo.objects.particles
 
-import com.focus617.myopengldemo.data.VertexBuffer
+import com.focus617.myopengldemo.base.VertexBuffer
 import com.focus617.myopengldemo.programs.particles.SkyboxShaderProgram
 
 class Skybox {

@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.data
+package com.focus617.myopengldemo.base.objectbuilder
 
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.util.Geometry.Circle

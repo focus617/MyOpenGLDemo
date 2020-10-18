@@ -1,9 +1,9 @@
-package com.focus617.myopengldemo.data
+package com.focus617.myopengldemo.base
 
 import android.content.Context
 import com.focus617.myopengldemo.programs.ShaderProgram
-import com.focus617.myopengldemo.xuassimp.base.XuMesh
-import com.focus617.myopengldemo.xuassimp.data.XuScene
+import com.focus617.myopengldemo.xuscene.base.XuMesh
+import com.focus617.myopengldemo.xuscene.data.XuScene
 
 class Model(val context: Context, path: String) {
 

@@ -1,9 +1,8 @@
 package com.focus617.myopengldemo.objects.other
 
-import android.opengl.GLES31
-import com.focus617.myopengldemo.data.VertexBuffer
-import com.focus617.myopengldemo.data.VertexBuffer.AttributeProperty
-import com.focus617.myopengldemo.data.DrawingObject
+import com.focus617.myopengldemo.base.VertexBuffer
+import com.focus617.myopengldemo.base.VertexBuffer.AttributeProperty
+import com.focus617.myopengldemo.base.DrawingObject
 
 class Cube2 : DrawingObject() {
 
