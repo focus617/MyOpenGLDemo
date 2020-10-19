@@ -123,8 +123,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         skyBoxProgram = SkyboxShaderProgram(context)
         skyBox = Skybox()
 
-        cubeProgram = SkeyCubeShaderProgram(context)
-        cube = Cube()
+//        cubeProgram = SkeyCubeShaderProgram(context)
+        cube = Cube(context)
 
         particleProgram = ParticleShaderProgram(context)
         particleSystem = ParticleSystem(10000)

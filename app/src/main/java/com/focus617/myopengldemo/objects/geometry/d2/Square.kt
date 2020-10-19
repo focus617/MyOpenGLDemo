@@ -21,11 +21,12 @@ class Square(context: Context) : MeshObject(context) {
 
     //初始化顶点数据的方法
     override fun initVertexArray() {
-        //顶点坐标数据的初始化
-        mVertexArray = VertexArray(vertices)
+
         numVertices = VERTEX_COUNT
         Timber.d("initVertexArray(): vertex number = $numVertices")
 
+        //顶点坐标数据的初始化
+        mVertexArray = VertexArray(vertices)
         // 将顶点数据存入缓冲区
         setupVertices()
 
@@ -153,13 +154,13 @@ class Square(context: Context) : MeshObject(context) {
     companion object {
         // 假定每个顶点有4个顶点属性一位置、法线和两个纹理坐标
 
-        // 顶点坐标的每个属性的Size
-        private const val VERTEX_POS_SIZE = 3          //x,y,and z
-        private const val VERTEX_COLOR_SIZE = 4          //R,G,B,Alpha
-
         // 顶点坐标的每个属性的Index
         private const val VERTEX_POS_INDEX = 0
         private const val VERTEX_COLOR_INDEX = 1
+
+        // 顶点坐标的每个属性的Size
+        private const val VERTEX_POS_SIZE = 3          //x,y,and z
+        private const val VERTEX_COLOR_SIZE = 4          //R,G,B,Alpha
 
         // the following 4 defines are used to determine the locations
         // of various attributes if vertex data are stored as an array

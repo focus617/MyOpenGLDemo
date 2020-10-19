@@ -7,7 +7,8 @@ interface DrawingObject{
     fun draw()
 }
 
-interface NewDrawingObject{
+interface NewDrawingObject {
+
     //初始化Shader Program
     fun initShader()
 

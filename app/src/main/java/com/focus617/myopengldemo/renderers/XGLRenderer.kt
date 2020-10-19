@@ -4,6 +4,7 @@ import android.content.Context
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.base.Model
 import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.basic.PointLight
@@ -13,9 +14,9 @@ import com.focus617.myopengldemo.objects.geometry.d3.Cube
 import com.focus617.myopengldemo.objects.geometry.d3.Cube2
 import com.focus617.myopengldemo.objects.geometry.d2.Triangle
 import com.focus617.myopengldemo.programs.other.CubeShaderProgram
-import com.focus617.myopengldemo.programs.other.LightCubeShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.util.MatrixHelper
+import com.focus617.myopengldemo.util.TextureHelper
 import com.focus617.myopengldemo.util.clamp
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
@@ -24,7 +25,7 @@ import javax.microedition.khronos.opengles.GL10
 
 open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
-    private val mModelMatrix = FloatArray(16)
+    private val mCubeModelMatrix = FloatArray(16)
     private var mViewMatrix = FloatArray(16)
     private val mProjectionMatrix = FloatArray(16)
     private val it_modelViewMatrix = FloatArray(16)
@@ -35,7 +36,6 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private var boxTexture = 0
 
     private lateinit var mLight: Cube
-    private lateinit var mLightProgram: LightCubeShaderProgram
 
     private lateinit var mModel: Model
 
@@ -56,8 +56,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         //打开背面剪裁
         glEnable(GL_CULL_FACE)
 
-//        mLightProgram = LightCubeShaderProgram(context)
-//        mLight = Cube()
+        mLight = Cube(context)
 //
 //        mCubeProgram = CubeShaderProgram(context)
 //        mCube = Cube2()
@@ -100,7 +99,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         placeCamera()
 
-//        drawLightCube()
+        drawLightCube()
 //        drawCube()
 
 //        drawTriangle()
@@ -111,13 +110,11 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawLightCube() {
-        positionObjectInScene(PointLight.position)
+        mLight.move(PointLight.position)
 
-        mLightProgram.use()
-        mLightProgram.setUniforms(
-            mModelMatrix, mViewMatrix, mProjectionMatrix
+        mLight.updateShaderUniforms(
+            mLight.mModelMatrix, mViewMatrix, mProjectionMatrix
         )
-        mLight.bindData()
         mLight.draw()
     }
 
@@ -128,7 +125,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         mCubeProgram.use()
         mCubeProgram.setUniforms(
-            mModelMatrix, mViewMatrix, mProjectionMatrix, it_modelViewMatrix,
+            mCubeModelMatrix, mViewMatrix, mProjectionMatrix, it_modelViewMatrix,
             Camera.Position, boxTexture
         )
         mCube.bindData()
@@ -158,14 +155,14 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         val mModelViewMatrix = FloatArray(16)
         val tempMatrix = FloatArray(16)
 
-        Matrix.multiplyMM(mModelViewMatrix, 0, mViewMatrix, 0, mModelMatrix, 0)
+        Matrix.multiplyMM(mModelViewMatrix, 0, mViewMatrix, 0, mCubeModelMatrix, 0)
         Matrix.invertM(tempMatrix, 0, mModelViewMatrix, 0)
         Matrix.transposeM(it_modelViewMatrix, 0, tempMatrix, 0)
     }
 
     private fun positionObjectInScene(x: Float, y: Float, z: Float) {
-        Matrix.setIdentityM(mModelMatrix, 0)
-        Matrix.translateM(mModelMatrix, 0, x, y, z)
+        Matrix.setIdentityM(mCubeModelMatrix, 0)
+        Matrix.translateM(mCubeModelMatrix, 0, x, y, z)
     }
 
     private fun positionObjectInScene(position: Vector) {

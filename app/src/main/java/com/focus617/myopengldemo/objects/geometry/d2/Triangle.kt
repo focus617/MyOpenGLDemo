@@ -104,7 +104,8 @@ class Triangle(context: Context) : MeshObject(context) {
         projectionMatrix: FloatArray,
     ) {
         mProgram.use()
-        (mProgram as SimpleShapeShaderProgram).setUniforms(modelMatrix, viewMatrix, projectionMatrix)
+        (mProgram as SimpleShapeShaderProgram).setUniforms(
+            modelMatrix, viewMatrix, projectionMatrix)
     }
 
     companion object {

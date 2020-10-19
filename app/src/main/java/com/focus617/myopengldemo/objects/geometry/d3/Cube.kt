@@ -1,15 +1,49 @@
 package com.focus617.myopengldemo.objects.geometry.d3
 
-import com.focus617.myopengldemo.base.objectbuilder.DrawingObject
-import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
-import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer.AttributeProperty
+import android.content.Context
+import android.opengl.GLES31.*
+import com.focus617.myopengldemo.base.objectbuilder.VertexArray
+import com.focus617.myopengldemo.base.objectbuilder.ElementArray
+import com.focus617.myopengldemo.base.objectbuilder.MeshObject
+import com.focus617.myopengldemo.base.objectbuilder.MeshObject.Companion.AttributeProperty
+import com.focus617.myopengldemo.programs.other.LightCubeShaderProgram
+import timber.log.Timber
 
-class Cube : DrawingObject {
+class Cube(context: Context): MeshObject(context) {
 
-    private val vertexBuffer = VertexBuffer.build(vertices, VERTEX_COUNT, indices)
+    init {
+        //调用初始化顶点数据的initVertexArray方法
+        initVertexArray()
+
+        //调用初始化着色器的intShader方法
+        initShader()
+    }
+
+    override fun initVertexArray() {
+
+        numVertices = VERTEX_COUNT
+        Timber.d("initVertexArray(): vertex number = $numVertices")
+
+        //顶点数据的初始化
+        mVertexArray = VertexArray(vertices)
+        // 将顶点数据存入缓冲区
+        setupVertices()
+
+        numElements = indices.size
+        Timber.d("initVertexArray(): element number = $numElements")
+
+        mElementArray = ElementArray(indices)
+        setupElements()
+    }
+
+    override fun initShader() {
+        //自定义渲染管线程序
+        mProgram = LightCubeShaderProgram(context)
+        bindData()
+    }
 
     override fun bindData() {
-        val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(
+        val attribPropertyList: List<AttributeProperty> = arrayListOf(
             // 顶点的位置属性
             AttributeProperty(
                 VERTEX_POS_INDEX,
@@ -26,11 +60,65 @@ class Cube : DrawingObject {
                 VERTEX_COLOR_OFFSET
             )
         )
-        vertexBuffer.bindData(attribPropertyList)
+        
+        mProgram.use()
+
+        // Bind the VAO and then set up the vertex attributes
+        glBindVertexArray(mVaoId)
+        // Bind VBO buffer
+        glBindBuffer(GL_ARRAY_BUFFER, mVertexId)
+
+        for (attrib in attribPropertyList) {
+            // 设置顶点属性
+            glVertexAttribPointer(
+                attrib.componentIndex,
+                attrib.componentCount,
+                GL_FLOAT,
+                false,
+                attrib.stride,
+                attrib.dataOffset
+            )
+            // 启用顶点属性
+            glEnableVertexAttribArray(attrib.componentIndex)
+        }
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mElementId)
+
+        // Reset to the default VAO
+        glBindVertexArray(0)
     }
 
     override fun draw() {
-        vertexBuffer.draw()
+        // 将程序添加到OpenGL ES环境
+        mProgram.use()
+
+        // Bind the VAO and then draw with VAO settings
+        glBindVertexArray(mVaoId)
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mElementId)
+
+        // 图元装配，绘制三角形
+        glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
+
+        // Reset to the default VAO
+        glBindVertexArray(0)
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
+
+    }
+
+    fun updateShaderUniforms(
+        modelMatrix: FloatArray,
+        viewMatrix: FloatArray,
+        projectionMatrix: FloatArray,
+    ) {
+        mProgram.use()
+        (mProgram as LightCubeShaderProgram).setUniforms(
+            modelMatrix,
+            viewMatrix,
+            projectionMatrix
+        )
     }
 
     // 顶点数据集，及其属性
@@ -69,57 +157,51 @@ class Cube : DrawingObject {
         private val indices = shortArrayOf(
             // 6 indices per cube side
             // Front
-            1, 3, 0,
-            0, 3, 2,
+            1, 0, 3,
+            3, 0, 2,
 
             // Back
-            4, 6, 5,
-            5, 6, 7,
+            4, 5, 6,
+            5, 7, 6,
 
             // Left
-            0, 2, 4,
-            4, 2, 6,
+            2, 0, 4,
+            4, 6, 2,
 
             // Right
-            5, 7, 1,
-            1, 7, 3,
+            5, 1, 7,
+            7, 1, 3,
 
             // Top
-            5, 1, 4,
-            4, 1, 0,
+            5, 4, 1,
+            1, 4, 0,
 
             // Bottom
-            6, 2, 7,
-            7, 2, 3
+            6, 7, 2,
+            2, 7, 3
         )
 
         // 顶点坐标的每个属性的Index
-        internal const val VERTEX_POS_INDEX = 0
-        internal const val VERTEX_COLOR_INDEX = 1
-//        internal const val VERTEX_TEXCOORDO_INDEX = 2
-//        internal const val VERTEX_TEXCOORD1_INDEX = 3
+        private const val VERTEX_POS_INDEX = 0
+        private const val VERTEX_COLOR_INDEX = 1
 
         // 顶点坐标的每个属性的Size
-        internal const val VERTEX_POS_SIZE = 3            //x,y,z
-        internal const val VERTEX_COLOR_SIZE = 3          //r,g,b
-//        internal const val VERTEX_TEXCOORDO_SIZE = 2    //s and t
-//        internal const val VERTEX_TEXCOORD1_SIZE = 2    //s and t
+        private const val VERTEX_POS_SIZE = 3            //x,y,z
+        private const val VERTEX_COLOR_SIZE = 3          //r,g,b
 
         // the following 4 defines are used to determine the locations
         // of various attributes if vertex data are stored as an array
         //of structures
-        internal const val VERTEX_POS_OFFSET = 0
-        internal const val VERTEX_COLOR_OFFSET = VERTEX_POS_SIZE * Float.SIZE_BYTES
-//        internal const val VERTEX_TEX_COORDO_OFFSET =
-//        internal const val VERTEX_TEX_COORD1_OFFSET =
+        private const val VERTEX_POS_OFFSET = 0
+        private const val VERTEX_COLOR_OFFSET = VERTEX_POS_SIZE * Float.SIZE_BYTES
 
-        internal const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE + VERTEX_COLOR_SIZE
+        private const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE + VERTEX_COLOR_SIZE
 
         // 顶点的数量
-        internal val VERTEX_COUNT = vertices.size / VERTEX_ATTRIBUTE_SIZE
+        private val VERTEX_COUNT = vertices.size / VERTEX_ATTRIBUTE_SIZE
 
         // 连续的顶点属性组之间的间隔
-        internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
+        private const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
 
     }
 }

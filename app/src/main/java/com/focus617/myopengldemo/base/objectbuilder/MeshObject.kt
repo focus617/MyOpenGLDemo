@@ -7,7 +7,6 @@ import com.focus617.myopengldemo.base.program.ShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import timber.log.Timber
 import java.nio.*
-import java.text.FieldPosition
 import kotlin.properties.Delegates
 
 /**
@@ -93,6 +92,11 @@ abstract class MeshObject(val context: Context): NewDrawingObject {
 
     fun moveTo(position: Vector){
         mPosition = position
+        positionObjectInScene()
+    }
+
+    fun move(vector: Vector){
+        mPosition = mPosition.plus(vector)
         positionObjectInScene()
     }
 
