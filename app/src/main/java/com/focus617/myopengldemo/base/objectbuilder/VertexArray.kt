@@ -10,6 +10,8 @@ import java.nio.ShortBuffer
  */
 class VertexArray(vertices: FloatArray) {
 
+    //提示：由于不同平台字节顺序不同数据单元不是字节的一定要经过ByteBuffer转换，
+    //关键是要通过ByteOrder设置nativeOrder()，否则有可能会出问题
     private val floatBuffer: FloatBuffer = ByteBuffer
         .allocateDirect(vertices.size * Float.SIZE_BYTES)
         .order(ByteOrder.nativeOrder())         //设置字节顺序为本地操作系统顺序

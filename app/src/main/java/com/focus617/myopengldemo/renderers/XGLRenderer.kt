@@ -4,10 +4,10 @@ import android.content.Context
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
-import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.base.Model
 import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.basic.PointLight
+import com.focus617.myopengldemo.objects.geometry.d2.Star
 import com.focus617.myopengldemo.objects.geometry.d2.Square
 import com.focus617.myopengldemo.objects.geometry.d3.Cube
 import com.focus617.myopengldemo.objects.geometry.d3.Cube2
@@ -16,7 +16,6 @@ import com.focus617.myopengldemo.programs.other.CubeShaderProgram
 import com.focus617.myopengldemo.programs.other.LightCubeShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.util.MatrixHelper
-import com.focus617.myopengldemo.util.TextureHelper
 import com.focus617.myopengldemo.util.clamp
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
@@ -42,6 +41,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     private lateinit var mTriangle: Triangle
     private lateinit var mSquare: Square
+    private lateinit var mStar: Star
 
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
@@ -56,12 +56,12 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         //打开背面剪裁
         glEnable(GL_CULL_FACE)
 
-        mLightProgram = LightCubeShaderProgram(context)
-        mLight = Cube()
-
-        mCubeProgram = CubeShaderProgram(context)
-        mCube = Cube2()
-        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
+//        mLightProgram = LightCubeShaderProgram(context)
+//        mLight = Cube()
+//
+//        mCubeProgram = CubeShaderProgram(context)
+//        mCube = Cube2()
+//        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
 
 //        // build model
 //        mModel = Model(context, "sculpt.obj")
@@ -69,6 +69,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
 //        mTriangle = Triangle(context)
 //        mSquare = Square(context)
+        mStar = Star(context, 0.4f, 1.0f, -0.3f )
 
     }
 
@@ -99,13 +100,14 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         placeCamera()
 
-        drawLightCube()
-
-        drawCube()
+//        drawLightCube()
+//        drawCube()
 
 //        drawTriangle()
 
 //        drawSquare()
+
+        drawStar()
     }
 
     private fun drawLightCube() {
@@ -134,16 +136,22 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     }
 
-    private fun drawTriangle()    {
+    private fun drawTriangle() {
         mTriangle.positionObjectInScene()
         mTriangle.updateShaderUniforms(mTriangle.mModelMatrix, mViewMatrix, mProjectionMatrix)
         mTriangle.draw()
     }
 
-    private fun drawSquare()    {
+    private fun drawSquare() {
         mSquare.positionObjectInScene()
         mSquare.updateShaderUniforms(mSquare.mModelMatrix, mViewMatrix, mProjectionMatrix)
         mSquare.draw()
+    }
+
+    private fun drawStar(){
+        mStar.positionObjectInScene()
+        mStar.updateShaderUniforms(mStar.mModelMatrix, mViewMatrix, mProjectionMatrix)
+        mStar.draw()
     }
 
     private fun updateItModelViewMatrix() {
@@ -185,7 +193,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         val sensitivity: Float = 480f
 
         xRotation += deltaX / sensitivity
-        yRotation -= deltaY / sensitivity
+        yRotation += deltaY / sensitivity
 
         yRotation = clamp(yRotation, -180f, 180f)
 
