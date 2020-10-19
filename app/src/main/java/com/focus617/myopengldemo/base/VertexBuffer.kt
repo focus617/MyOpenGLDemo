@@ -1,6 +1,8 @@
 package com.focus617.myopengldemo.base
 
 import android.opengl.GLES31.*
+import com.focus617.myopengldemo.base.objectbuilder.ElementArray
+import com.focus617.myopengldemo.base.objectbuilder.VertexArray
 import timber.log.Timber
 import java.nio.IntBuffer
 import kotlin.properties.Delegates

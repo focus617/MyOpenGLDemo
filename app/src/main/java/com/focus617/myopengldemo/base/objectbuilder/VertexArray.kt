@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.base
+package com.focus617.myopengldemo.base.objectbuilder
 
 import java.nio.ByteBuffer
 import java.nio.ByteOrder

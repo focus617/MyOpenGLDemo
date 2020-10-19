@@ -172,7 +172,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     fun handleTouchDrag(deltaX: Float, deltaY: Float) {
-        val sensitivity: Float = 720f
+        val sensitivity: Float = 480f
 
         xRotation += deltaX / sensitivity
         yRotation -= deltaY / sensitivity

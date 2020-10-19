@@ -2,7 +2,7 @@ package com.focus617.myopengldemo.objects.geometry.triangle
 
 import android.content.Context
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.base.VertexArray
+import com.focus617.myopengldemo.base.objectbuilder.VertexArray
 import com.focus617.myopengldemo.base.objectbuilder.MeshObject
 import com.focus617.myopengldemo.programs.ShaderConstants
 import timber.log.Timber
