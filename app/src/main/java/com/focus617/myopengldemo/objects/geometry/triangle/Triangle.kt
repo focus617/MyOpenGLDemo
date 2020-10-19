@@ -2,8 +2,8 @@ package com.focus617.myopengldemo.objects.geometry.triangle
 
 import android.content.Context
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.base.objectbuilder.VertexArray
 import com.focus617.myopengldemo.base.objectbuilder.MeshObject
+import com.focus617.myopengldemo.base.objectbuilder.VertexArray
 import com.focus617.myopengldemo.base.program.ShaderConstants
 import timber.log.Timber
 
@@ -55,7 +55,7 @@ class Triangle(context: Context) : MeshObject(context) {
     //初始化Shader Program
     override fun initShader() {
         //自定义渲染管线程序
-        mProgram = TriangleShaderProgram(context)
+        mProgram = SimpleShapeShaderProgram(context)
         bindData()
     }
 
@@ -104,7 +104,7 @@ class Triangle(context: Context) : MeshObject(context) {
         projectionMatrix: FloatArray,
     ) {
         mProgram.use()
-        (mProgram as TriangleShaderProgram).setUniforms(modelMatrix, viewMatrix, projectionMatrix)
+        (mProgram as SimpleShapeShaderProgram).setUniforms(modelMatrix, viewMatrix, projectionMatrix)
     }
 
     companion object {

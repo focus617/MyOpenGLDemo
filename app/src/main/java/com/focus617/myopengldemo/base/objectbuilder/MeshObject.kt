@@ -2,9 +2,12 @@ package com.focus617.myopengldemo.base.objectbuilder
 
 import android.content.Context
 import android.opengl.GLES31.*
+import android.opengl.Matrix
 import com.focus617.myopengldemo.base.program.ShaderProgram
+import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import timber.log.Timber
 import java.nio.*
+import java.text.FieldPosition
 import kotlin.properties.Delegates
 
 /**
@@ -36,6 +39,11 @@ abstract class MeshObject(val context: Context) {
     lateinit var mColorArray: VertexArray
     lateinit var mElementArray: ElementArray
 
+    // 保存本对象的模型矩阵
+    val mModelMatrix = FloatArray(16)
+    // 本对象的基准位置
+    var mPosition: Vector = Vector(0.0f, 0.0f, 0.0f)
+
     init {
         // allocate only on the first draw
         // Generate VBO ID
@@ -64,6 +72,9 @@ abstract class MeshObject(val context: Context) {
         mTextureId = mVBOBuf.get(3)
         // mVBOIds[4] - used to store vertex color attribute data
         mColorId = mVBOBuf.get(4)
+
+        // 初始化模型矩阵
+        Matrix.setIdentityM(mModelMatrix, 0)
     }
 
     // 销毁纹理和缓冲区对象
@@ -78,11 +89,24 @@ abstract class MeshObject(val context: Context) {
     //初始化顶点数据的方法
     abstract fun initVertexArray()
 
+    private fun positionObjectInScene(x: Float, y: Float, z: Float) {
+        Matrix.translateM(mModelMatrix, 0, x, y, z)
+    }
+
+    fun positionObjectInScene() {
+        positionObjectInScene(mPosition.x, mPosition.y, mPosition.z)
+    }
+
+    fun moveTo(position: Vector){
+        mPosition = position
+        positionObjectInScene()
+    }
+
     // 绘制方法
     abstract fun draw()
 
 
-    private fun setupVertices() {
+    protected fun setupVertices() {
 
         Timber.d("setupVertices()")
 

@@ -2,6 +2,7 @@ package com.focus617.myopengldemo
 
 import android.annotation.SuppressLint
 import android.app.ActivityManager
+import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -82,6 +83,9 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
+        //设置为竖屏模式
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         // 创建一个GLSurfaceView实例,并将其设置为此Activity的ContentView。
         mGLSurfaceView = XGLSurfaceView(this)
 
@@ -90,6 +94,8 @@ class MainActivity : AppCompatActivity() {
         // Request an OpenGL ES 3.0 compatible context.
         mGLSurfaceView.setEGLContextClientVersion(3)
         mGLSurfaceView.setEGLConfigChooser(MultisampleConfigChooser())
+        mGLSurfaceView.requestFocus()                   //获取焦点
+        mGLSurfaceView.isFocusableInTouchMode = true    //设置为可触控
 
         setXGLRenderer()
         //setAirHockeyAsRenderer()

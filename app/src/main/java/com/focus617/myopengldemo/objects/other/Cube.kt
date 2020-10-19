@@ -1,8 +1,8 @@
 package com.focus617.myopengldemo.objects.other
 
+import com.focus617.myopengldemo.base.DrawingObject
 import com.focus617.myopengldemo.base.VertexBuffer
 import com.focus617.myopengldemo.base.VertexBuffer.AttributeProperty
-import com.focus617.myopengldemo.base.DrawingObject
 
 class Cube : DrawingObject() {
 

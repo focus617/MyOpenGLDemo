@@ -7,6 +7,7 @@ import android.opengl.Matrix
 import com.focus617.myopengldemo.base.Model
 import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.basic.PointLight
+import com.focus617.myopengldemo.objects.geometry.triangle.Square
 import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.other.Cube2
 import com.focus617.myopengldemo.objects.geometry.triangle.Triangle
@@ -38,7 +39,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private lateinit var mModel: Model
 
     private lateinit var mTriangle: Triangle
-    private val mTrianglePos: Vector = Vector(0.0f, 0.0f, 0.0f)
+    private lateinit var mSquare: Square
 
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
@@ -64,7 +65,8 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 //        mModel = Model(context, "sculpt.obj")
 //        // build shader program
 
-        mTriangle = Triangle(context)
+//        mTriangle = Triangle(context)
+        mSquare = Square(context)
 
     }
 
@@ -99,7 +101,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 //
 //        drawCube()
 
-        drawTriangle()
+//        drawTriangle()
+
+        drawSquare()
     }
 
     private fun drawLightCube() {
@@ -129,9 +133,15 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawTriangle()    {
-        Matrix.setIdentityM(mModelMatrix, 0)
-        mTriangle.updateShaderUniforms(mModelMatrix, mViewMatrix, mProjectionMatrix)
+        mTriangle.positionObjectInScene()
+        mTriangle.updateShaderUniforms(mTriangle.mModelMatrix, mViewMatrix, mProjectionMatrix)
         mTriangle.draw()
+    }
+
+    private fun drawSquare()    {
+        mSquare.positionObjectInScene()
+        mSquare.updateShaderUniforms(mSquare.mModelMatrix, mViewMatrix, mProjectionMatrix)
+        mSquare.draw()
     }
 
     private fun updateItModelViewMatrix() {

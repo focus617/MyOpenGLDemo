@@ -10,7 +10,7 @@ const val PATH = "Triangle"
 const val VERTEX_FILE = "vertex_shader.glsl"
 const val FRAGMENT_FILE = "fragment_shader.glsl"
 
-class TriangleShaderProgram(context: Context) : ShaderProgram(
+class SimpleShapeShaderProgram(context: Context) : ShaderProgram(
     context,
     PATH,
     VERTEX_FILE,
