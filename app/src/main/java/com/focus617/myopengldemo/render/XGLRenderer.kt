@@ -10,7 +10,7 @@ import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.basic.PointLight
 import com.focus617.myopengldemo.objects.other.Cube
 import com.focus617.myopengldemo.objects.other.Cube2
-import com.focus617.myopengldemo.objects.other.Triangle
+import com.focus617.myopengldemo.objects.geometry.triangle.Triangle
 import com.focus617.myopengldemo.programs.other.CubeShaderProgram
 import com.focus617.myopengldemo.programs.other.LightCubeShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
@@ -40,7 +40,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private lateinit var mModel: Model
 
     private lateinit var mTriangle: Triangle
-    private val mTrianglePos: Vector = Vector(0.0f, 0.0f, -2.0f)
+    private val mTrianglePos: Vector = Vector(0.0f, 0.0f, 0.0f)
 
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
@@ -55,12 +55,12 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         //打开背面剪裁
         glEnable(GL_CULL_FACE)
 
-        mLightProgram = LightCubeShaderProgram(context)
-        mLight = Cube()
-
-        mCubeProgram = CubeShaderProgram(context)
-        mCube = Cube2()
-        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
+//        mLightProgram = LightCubeShaderProgram(context)
+//        mLight = Cube()
+//
+//        mCubeProgram = CubeShaderProgram(context)
+//        mCube = Cube2()
+//        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
 
 //        // build model
 //        mModel = Model(context, "sculpt.obj")
@@ -97,9 +97,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         placeCamera()
 
-        drawLightCube()
-
-        drawCube()
+//        drawLightCube()
+//
+//        drawCube()
 
         drawTriangle()
     }
@@ -132,11 +132,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     private fun drawTriangle()    {
         positionObjectInScene(mTrianglePos)
-        mTriangle.getProgram().use()
-        mTriangle.getProgram().setUniforms(
-            mModelMatrix, mViewMatrix, mProjectionMatrix, it_modelViewMatrix,
-            Camera.Position, boxTexture)
-
+        mTriangle.updateShaderUniforms(mModelMatrix, mViewMatrix, mProjectionMatrix)
         mTriangle.draw()
     }
 

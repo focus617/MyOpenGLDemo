@@ -35,4 +35,30 @@ object TextResourceReader {
         }
         return body.toString()
     }
+
+    /**
+     * Reads in text from a assets file and returns a String containing the
+     * text.
+     */
+    fun readTextFileFromAssets(context: Context, filePath: String): String {
+
+        Timber.d("readTextFileFromAssets($filePath)")
+
+        val body = StringBuilder()
+
+        try {
+            val inputStream = context.resources.assets.open(filePath)
+            val inputStreamReader = InputStreamReader(inputStream)
+            val bufferedReader = BufferedReader(inputStreamReader)
+            var nextLine: String?
+
+            while (bufferedReader.readLine().also { nextLine = it } != null) {
+                body.append(nextLine)
+                body.append('\n')
+            }
+        } catch (e: IOException) {
+            throw RuntimeException("Could not open shader file: $filePath $ e")
+        }
+        return body.toString()
+    }
 }

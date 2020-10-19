@@ -4,10 +4,7 @@ import android.content.Context
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.base.ElementArray
 import com.focus617.myopengldemo.base.VertexArray
-import com.focus617.myopengldemo.programs.ShaderConstants.A_COLOR
-import com.focus617.myopengldemo.programs.ShaderConstants.A_POSITION
 import com.focus617.myopengldemo.programs.ShaderProgram
-import com.focus617.myopengldemo.programs.other.CommonShaderProgram
 import timber.log.Timber
 import java.nio.*
 import kotlin.properties.Delegates
@@ -35,11 +32,7 @@ data class Texture(
 abstract class MeshObject(val context: Context) {
 
     //自定义渲染管线程序
-    protected var mProgram = CommonShaderProgram(context)
-    //获取程序中顶点位置属性引用
-    protected var maPositionHandle = glGetAttribLocation(mProgram.getId(), A_POSITION)
-    //顶点颜色属性引用
-    protected var maColorHandle = glGetAttribLocation(mProgram.getId(), A_COLOR)
+    protected lateinit var mProgram: ShaderProgram
 
     // OpenGL对象的句柄
     var mVaoId by Delegates.notNull<Int>()
@@ -94,8 +87,13 @@ abstract class MeshObject(val context: Context) {
         mColorId = mVBOBuf.get(4)
     }
 
+    //初始化Shader Program
+    abstract fun initShader()
+
     //初始化顶点数据的方法
     abstract fun initVertexArray()
+
+    abstract fun draw()
 
     fun getProgram() = mProgram
 
@@ -168,7 +166,7 @@ abstract class MeshObject(val context: Context) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
-    fun bindData() {
+    open fun bindData() {
         // Bind the VAO and then set up the vertex attributes
         glBindVertexArray(mVaoId)
         // Bind VBO buffer
@@ -232,26 +230,26 @@ abstract class MeshObject(val context: Context) {
         glActiveTexture(GL_TEXTURE0);
     }
 
-    open fun draw() {
-
-        mProgram.use()
-
-        // TODO: pass parameter to GPU
-        // shaderProgram.setUniforms()
-
-        setTextures(mProgram)
-
-        // Bind the VAO and then draw with VAO settings
-        glBindVertexArray(mVaoId)
-
-        glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
-
-        // Reset to the default VAO
-        glBindVertexArray(0)
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
-    }
+//    open fun draw() {
+//
+//        glUseProgram(mProgram)
+//
+//        // TODO: pass parameter to GPU
+//        // shaderProgram.setUniforms()
+//
+//        setTextures(mProgram)
+//
+//        // Bind the VAO and then draw with VAO settings
+//        glBindVertexArray(mVaoId)
+//
+//        glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
+//
+//        // Reset to the default VAO
+//        glBindVertexArray(0)
+//
+//        glBindBuffer(GL_ARRAY_BUFFER, 0)
+//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
+//    }
 
     // 销毁纹理和缓冲区对象
 //    fun destroy(){

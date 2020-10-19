@@ -26,12 +26,10 @@ object ShaderHelper {
      */
     private fun compileShader(type: Int, shaderCode: String): Int {
 
-        Timber.d("compileShader()")
-
         // Create a new shader object.
         val shaderObjectId = glCreateShader(type)
         if (shaderObjectId == 0) {
-            Timber.w("Could not create new shader.")
+            Timber.w("compileShader(): Could not create new shader.")
             return 0
         }
 
@@ -47,7 +45,7 @@ object ShaderHelper {
 
         // Print the shader info log to the Android log output.
         Timber.v(
-            ("Results of compiling source:\n" +
+            ("compileShader(): Results of compiling source:\n" +
                     "$shaderCode: ${glGetShaderInfoLog(shaderObjectId)}").trimIndent()
         )
 
@@ -56,7 +54,7 @@ object ShaderHelper {
         if (compileStatus[0] == 0) {
             // If it failed, delete the shader object.
             glDeleteShader(shaderObjectId)
-            Timber.w("Compilation of shader failed.")
+            Timber.w("compileShader(): Compilation of shader failed.")
             return 0
         }
 

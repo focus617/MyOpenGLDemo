@@ -1,17 +1,24 @@
-package com.focus617.myopengldemo.objects.other
+package com.focus617.myopengldemo.objects.geometry.triangle
 
 import android.content.Context
 import android.opengl.GLES30
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.base.VertexArray
+import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.objectbuilder.MeshObject
+import com.focus617.myopengldemo.programs.ShaderConstants
+import com.focus617.myopengldemo.util.Geometry
+import kotlin.properties.Delegates
 
 
 class Triangle(context: Context) : MeshObject(context) {
 
-    init{
+    init {
         //调用初始化顶点数据的initVertexArray方法
         initVertexArray()
+
+        //调用初始化着色器的intShader方法
+        initShader()
     }
 
     //初始化顶点数据的方法
@@ -34,10 +41,10 @@ class Triangle(context: Context) : MeshObject(context) {
         mVertexArray.position(0)
 
         val colors = floatArrayOf(
-            1f, 1f, 1f,
-            0f, 0f, 0f,
-            1f, 0f, 0f,
-            1f, 0f, 0f
+         // R,  G,  B,  Alpha
+            1f, 1f, 1f, 0f,
+            0f, 0f, 1f, 0f,
+            0f, 1f, 0f, 0f
         )
 
         // Transfer data to native memory.
@@ -47,8 +54,21 @@ class Triangle(context: Context) : MeshObject(context) {
         mColorArray.position(0)
     }
 
-    override fun draw() {
+    //初始化Shader Program
+    override fun initShader() {
+        //自定义渲染管线程序
+        mProgram = TriangleShaderProgram(context)
+        bindData()
+    }
 
+    override fun bindData() {
+        mProgram.use()
+
+        //获取程序中顶点位置属性引用
+        val maPositionHandle = glGetAttribLocation(mProgram.getId(), ShaderConstants.A_POSITION)
+        //顶点颜色属性引用
+        val maColorHandle = glGetAttribLocation(mProgram.getId(), ShaderConstants.A_COLOR)
+        
         //将顶点位置数据传送进渲染管线
         glVertexAttribPointer(
             maPositionHandle,
@@ -56,10 +76,10 @@ class Triangle(context: Context) : MeshObject(context) {
             GL_FLOAT,
             false,
             3 * 4,
-            mColorArray.getFloatBuffer()
+            mVertexArray.getFloatBuffer()
         )
         //将顶点颜色数据传送进渲染管线
-        GLES30.glVertexAttribPointer(
+        glVertexAttribPointer(
             maColorHandle,
             4,
             GL_FLOAT,
@@ -70,10 +90,23 @@ class Triangle(context: Context) : MeshObject(context) {
         glEnableVertexAttribArray(maPositionHandle) //启用顶点位置数据
 
         glEnableVertexAttribArray(maColorHandle) //启用顶点着色数据
+    }
 
+
+    override fun draw() {
+        mProgram.use()
         //绘制三角形
         glDrawArrays(GL_TRIANGLES, 0, numVertices)
 
+    }
+
+    fun updateShaderUniforms(
+        modelMatrix: FloatArray,
+        viewMatrix: FloatArray,
+        projectionMatrix: FloatArray,
+    ) {
+        mProgram.use()
+        (mProgram as TriangleShaderProgram).setUniforms(modelMatrix, viewMatrix, projectionMatrix)
     }
 
 }
