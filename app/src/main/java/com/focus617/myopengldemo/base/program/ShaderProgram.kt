@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.programs
+package com.focus617.myopengldemo.base.program
 
 import android.content.Context
 import android.opengl.GLES31.*
@@ -15,24 +15,24 @@ abstract class ShaderProgram protected constructor(
     vertexShader: String,
     fragmentShader: String
 ) {
-
+    // 基于Resource/raw中的文件构造
     constructor(
         context: Context,
         vertexShaderResourceId: Int,
         fragmentShaderResourceId: Int
     ) : this(
-        TextResourceReader.readTextFileFromResource(context, vertexShaderResourceId),
-        TextResourceReader.readTextFileFromResource(context, fragmentShaderResourceId)
+        TextResourceReader.loadFromResourceFile(context, vertexShaderResourceId),
+        TextResourceReader.loadFromResourceFile(context, fragmentShaderResourceId)
     )
-
+    // 基于Assets中的文件构造
     constructor(
         context: Context,
         path: String,
         vertexShaderFileName: String,
         fragmentShaderFileName: String
     ) : this(
-        TextResourceReader.readTextFileFromAssets(context, "$path/$vertexShaderFileName"),
-        TextResourceReader.readTextFileFromAssets(context, "$path/$fragmentShaderFileName")
+        TextResourceReader.loadFromAssetsFile(context, "$path/$vertexShaderFileName"),
+        TextResourceReader.loadFromAssetsFile(context, "$path/$fragmentShaderFileName")
     )
 
     // Shader program: compile the shaders and link the program.

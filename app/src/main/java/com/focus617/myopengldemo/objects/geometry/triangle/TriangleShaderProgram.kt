@@ -1,10 +1,10 @@
 package com.focus617.myopengldemo.objects.geometry.triangle
 
 import android.content.Context
-import com.focus617.myopengldemo.programs.ShaderConstants.U_MODEL_MATRIX
-import com.focus617.myopengldemo.programs.ShaderConstants.U_PROJECT_MATRIX
-import com.focus617.myopengldemo.programs.ShaderConstants.U_VIEW_MATRIX
-import com.focus617.myopengldemo.programs.ShaderProgram
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_MODEL_MATRIX
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_PROJECT_MATRIX
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_VIEW_MATRIX
+import com.focus617.myopengldemo.base.program.ShaderProgram
 
 const val PATH = "Triangle"
 const val VERTEX_FILE = "vertex_shader.glsl"

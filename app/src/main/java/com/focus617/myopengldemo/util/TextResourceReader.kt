@@ -12,9 +12,9 @@ object TextResourceReader {
      * Reads in text from a resource file and returns a String containing the
      * text.
      */
-    fun readTextFileFromResource(context: Context, resourceId: Int): String {
+    fun loadFromResourceFile(context: Context, resourceId: Int): String {
 
-        Timber.d("readTextFileFromResource($resourceId)")
+        Timber.d("loadFromResourceFile($resourceId)")
 
         val body = StringBuilder()
 
@@ -40,9 +40,9 @@ object TextResourceReader {
      * Reads in text from a assets file and returns a String containing the
      * text.
      */
-    fun readTextFileFromAssets(context: Context, filePath: String): String {
+    fun loadFromAssetsFile(context: Context, filePath: String): String {
 
-        Timber.d("readTextFileFromAssets($filePath)")
+        Timber.d("loadFromAssetsFile($filePath)")
 
         val body = StringBuilder()
 

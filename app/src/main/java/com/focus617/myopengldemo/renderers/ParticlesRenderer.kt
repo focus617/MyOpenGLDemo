@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.render
+package com.focus617.myopengldemo.renderers
 
 import android.annotation.SuppressLint
 import android.content.Context

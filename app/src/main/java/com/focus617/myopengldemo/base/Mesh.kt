@@ -1,7 +1,7 @@
 package com.focus617.myopengldemo.base
 
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.programs.ShaderProgram
+import com.focus617.myopengldemo.base.program.ShaderProgram
 import com.focus617.myopengldemo.xuscene.base.XuMesh
 import timber.log.Timber
 import java.nio.*

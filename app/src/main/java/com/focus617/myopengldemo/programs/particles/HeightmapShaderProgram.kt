@@ -3,15 +3,15 @@ package com.focus617.myopengldemo.programs.particles
 import android.content.Context
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
-import com.focus617.myopengldemo.programs.ShaderProgram
-import com.focus617.myopengldemo.programs.ShaderConstants.U_IT_MV_MATRIX
-import com.focus617.myopengldemo.programs.ShaderConstants.U_MVP_MATRIX
-import com.focus617.myopengldemo.programs.ShaderConstants.U_MV_MATRIX
-import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_LIGHT_COLORS
-import com.focus617.myopengldemo.programs.ShaderConstants.U_POINT_LIGHT_POSITIONS
-import com.focus617.myopengldemo.programs.ShaderConstants.U_TEXTURE_UNIT_1
-import com.focus617.myopengldemo.programs.ShaderConstants.U_TEXTURE_UNIT_2
-import com.focus617.myopengldemo.programs.ShaderConstants.U_VECTOR_TO_LIGHT
+import com.focus617.myopengldemo.base.program.ShaderProgram
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_IT_MV_MATRIX
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_MVP_MATRIX
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_MV_MATRIX
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_POINT_LIGHT_COLORS
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_POINT_LIGHT_POSITIONS
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_TEXTURE_UNIT_1
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_TEXTURE_UNIT_2
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_VECTOR_TO_LIGHT
 
 class HeightmapShaderProgram(context: Context) : ShaderProgram(
     context,

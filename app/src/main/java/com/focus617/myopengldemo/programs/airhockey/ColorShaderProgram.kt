@@ -3,10 +3,10 @@ package com.focus617.myopengldemo.programs.airhockey
 import android.content.Context
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
-import com.focus617.myopengldemo.programs.ShaderProgram
-import com.focus617.myopengldemo.programs.ShaderConstants.A_POSITION
-import com.focus617.myopengldemo.programs.ShaderConstants.U_COLOR
-import com.focus617.myopengldemo.programs.ShaderConstants.U_MVP_MATRIX
+import com.focus617.myopengldemo.base.program.ShaderProgram
+import com.focus617.myopengldemo.base.program.ShaderConstants.A_POSITION
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_COLOR
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_MVP_MATRIX
 
 class ColorShaderProgram(context: Context) : ShaderProgram(
     context,

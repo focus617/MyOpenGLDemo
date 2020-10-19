@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.render
+package com.focus617.myopengldemo.renderers
 
 import android.content.Context
 import android.opengl.GLES31.*
@@ -29,12 +29,12 @@ class AirHockeyV1(context: Context) : DrawingObject() {
     private fun setupProgram(context: Context) {
         // 顶点着色器
         val vertexShaderCode = TextResourceReader
-            .readTextFileFromResource(context, R.raw.simple_vertex_shader)
+            .loadFromResourceFile(context, R.raw.simple_vertex_shader)
         Timber.d("Load Vertex Shader Code:\n$vertexShaderCode\n")
 
         // 片段着色器
         val fragmentShaderCode = TextResourceReader
-            .readTextFileFromResource(context, R.raw.simple_fragment_shader)
+            .loadFromResourceFile(context, R.raw.simple_fragment_shader)
         Timber.d("Load Fragment Shader Code:\n$fragmentShaderCode\n")
 
         mProgramObject = ShaderHelper.buildProgram(vertexShaderCode, fragmentShaderCode)

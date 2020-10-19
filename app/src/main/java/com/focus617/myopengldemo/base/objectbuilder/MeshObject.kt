@@ -2,7 +2,7 @@ package com.focus617.myopengldemo.base.objectbuilder
 
 import android.content.Context
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.programs.ShaderProgram
+import com.focus617.myopengldemo.base.program.ShaderProgram
 import timber.log.Timber
 import java.nio.*
 import kotlin.properties.Delegates

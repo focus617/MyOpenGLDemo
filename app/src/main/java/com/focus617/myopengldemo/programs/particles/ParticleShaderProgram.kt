@@ -3,10 +3,10 @@ package com.focus617.myopengldemo.programs.particles
 import android.content.Context
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
-import com.focus617.myopengldemo.programs.ShaderProgram
-import com.focus617.myopengldemo.programs.ShaderConstants.U_MVP_MATRIX
-import com.focus617.myopengldemo.programs.ShaderConstants.U_TEXTURE_UNIT
-import com.focus617.myopengldemo.programs.ShaderConstants.U_TIME
+import com.focus617.myopengldemo.base.program.ShaderProgram
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_MVP_MATRIX
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_TEXTURE_UNIT
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_TIME
 
 class ParticleShaderProgram(context: Context) : ShaderProgram(
     context,

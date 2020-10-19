@@ -1,13 +1,11 @@
 package com.focus617.myopengldemo.programs.other
 
 import android.content.Context
-import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
-import com.focus617.myopengldemo.programs.ShaderProgram
-import com.focus617.myopengldemo.programs.ShaderConstants.U_MODEL_MATRIX
-import com.focus617.myopengldemo.programs.ShaderConstants.U_PROJECT_MATRIX
-import com.focus617.myopengldemo.programs.ShaderConstants.U_TEXTURE_UNIT
-import com.focus617.myopengldemo.programs.ShaderConstants.U_VIEW_MATRIX
+import com.focus617.myopengldemo.base.program.ShaderProgram
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_MODEL_MATRIX
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_PROJECT_MATRIX
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_VIEW_MATRIX
 
 class LightCubeShaderProgram(context: Context) : ShaderProgram(
     context,

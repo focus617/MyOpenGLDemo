@@ -3,9 +3,9 @@ package com.focus617.myopengldemo.programs.airhockey
 import android.content.Context
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
-import com.focus617.myopengldemo.programs.ShaderProgram
-import com.focus617.myopengldemo.programs.ShaderConstants.U_MVP_MATRIX
-import com.focus617.myopengldemo.programs.ShaderConstants.U_TEXTURE_UNIT
+import com.focus617.myopengldemo.base.program.ShaderProgram
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_MVP_MATRIX
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_TEXTURE_UNIT
 
 class TextureShaderProgram(context: Context) : ShaderProgram(
     context,

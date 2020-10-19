@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.programs
+package com.focus617.myopengldemo.base.program
 
 object ShaderConstants {
     // Uniform constants

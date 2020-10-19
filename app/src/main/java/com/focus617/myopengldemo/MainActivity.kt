@@ -12,9 +12,9 @@ import android.view.View.OnTouchListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MotionEventCompat
-import com.focus617.myopengldemo.render.AirHockeyRendererEs3
-import com.focus617.myopengldemo.render.ParticlesRenderer
-import com.focus617.myopengldemo.render.XGLRenderer
+import com.focus617.myopengldemo.renderers.AirHockeyRendererEs3
+import com.focus617.myopengldemo.renderers.ParticlesRenderer
+import com.focus617.myopengldemo.renderers.XGLRenderer
 import com.focus617.myopengldemo.util.TextureHelper.FilterMode
 import timber.log.Timber
 
