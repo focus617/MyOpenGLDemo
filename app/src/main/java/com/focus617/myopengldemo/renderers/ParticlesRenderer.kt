@@ -8,7 +8,7 @@ import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import com.focus617.myopengldemo.R
-import com.focus617.myopengldemo.objects.other.Cube
+import com.focus617.myopengldemo.objects.geometry.d3.Cube
 import com.focus617.myopengldemo.objects.particles.*
 import com.focus617.myopengldemo.programs.particles.SkeyCubeShaderProgram
 import com.focus617.myopengldemo.programs.particles.HeightmapShaderProgram

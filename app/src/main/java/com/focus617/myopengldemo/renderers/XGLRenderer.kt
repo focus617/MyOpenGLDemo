@@ -4,17 +4,19 @@ import android.content.Context
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.base.Model
 import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.basic.PointLight
-import com.focus617.myopengldemo.objects.geometry.triangle.Square
-import com.focus617.myopengldemo.objects.other.Cube
-import com.focus617.myopengldemo.objects.other.Cube2
-import com.focus617.myopengldemo.objects.geometry.triangle.Triangle
+import com.focus617.myopengldemo.objects.geometry.d2.Square
+import com.focus617.myopengldemo.objects.geometry.d3.Cube
+import com.focus617.myopengldemo.objects.geometry.d3.Cube2
+import com.focus617.myopengldemo.objects.geometry.d2.Triangle
 import com.focus617.myopengldemo.programs.other.CubeShaderProgram
 import com.focus617.myopengldemo.programs.other.LightCubeShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.util.MatrixHelper
+import com.focus617.myopengldemo.util.TextureHelper
 import com.focus617.myopengldemo.util.clamp
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
@@ -54,19 +56,19 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         //打开背面剪裁
         glEnable(GL_CULL_FACE)
 
-//        mLightProgram = LightCubeShaderProgram(context)
-//        mLight = Cube()
-//
-//        mCubeProgram = CubeShaderProgram(context)
-//        mCube = Cube2()
-//        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
+        mLightProgram = LightCubeShaderProgram(context)
+        mLight = Cube()
+
+        mCubeProgram = CubeShaderProgram(context)
+        mCube = Cube2()
+        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
 
 //        // build model
 //        mModel = Model(context, "sculpt.obj")
 //        // build shader program
 
 //        mTriangle = Triangle(context)
-        mSquare = Square(context)
+//        mSquare = Square(context)
 
     }
 
@@ -97,13 +99,13 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         placeCamera()
 
-//        drawLightCube()
-//
-//        drawCube()
+        drawLightCube()
+
+        drawCube()
 
 //        drawTriangle()
 
-        drawSquare()
+//        drawSquare()
     }
 
     private fun drawLightCube() {

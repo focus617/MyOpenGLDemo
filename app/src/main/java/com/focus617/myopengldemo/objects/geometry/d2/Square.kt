@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.objects.geometry.triangle
+package com.focus617.myopengldemo.objects.geometry.d2
 
 import android.content.Context
 import android.opengl.GLES31.*
@@ -170,7 +170,7 @@ class Square(context: Context) : MeshObject(context) {
         private const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE
 
         // 正方形的顶点
-        val UNIT_SIZE = 0.5f
+        val UNIT_SIZE = 0.8f
         private var vertices = floatArrayOf(  // 按逆时针顺序
             -1 * UNIT_SIZE, 1 * UNIT_SIZE, 0.0f,   // top left
             -1 * UNIT_SIZE, -1 * UNIT_SIZE, 0.0f,  // bottom left

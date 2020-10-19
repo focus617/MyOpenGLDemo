@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.objects.geometry.triangle
+package com.focus617.myopengldemo.objects.geometry.d2
 
 import android.content.Context
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_MODEL_MATRIX

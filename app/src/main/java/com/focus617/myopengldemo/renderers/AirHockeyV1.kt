@@ -3,7 +3,6 @@ package com.focus617.myopengldemo.renderers
 import android.content.Context
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
-import com.focus617.myopengldemo.base.DrawingObject
 import com.focus617.myopengldemo.util.ShaderHelper
 import com.focus617.myopengldemo.util.TextResourceReader
 import timber.log.Timber
@@ -14,7 +13,7 @@ import java.nio.ShortBuffer
 /**
  * 没有拆分类之前（第6章），按照ES 3.0 VBO, VAO和 Element改进的实现
  */
-class AirHockeyV1(context: Context) : DrawingObject() {
+class AirHockeyV1(context: Context)  {
 
     private var mProgramObject: Int = 0    // 着色器程序对象
     private var mVAOId = IntBuffer.allocate(1)  // 顶点数组对象

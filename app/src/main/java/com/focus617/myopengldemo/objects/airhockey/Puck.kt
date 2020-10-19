@@ -1,8 +1,8 @@
 package com.focus617.myopengldemo.objects.airhockey
 
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.base.DrawingObject
-import com.focus617.myopengldemo.base.VertexBuffer
+import com.focus617.myopengldemo.base.objectbuilder.DrawingObject
+import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
 import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.Geometry.Cylinder
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder.Companion.DrawCommand
@@ -12,7 +12,7 @@ import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder.Companion.Gene
 /**
  * 冰球
  */
-class Puck(val radius: Float, val height: Float, numPointsAroundPuck: Int): DrawingObject() {
+class Puck(val radius: Float, val height: Float, numPointsAroundPuck: Int): DrawingObject {
 
     private val generatedData: GeneratedData = AirHockeyObjectBuilder.createPuck(
             Cylinder(Point(0f, 0f, 0f), radius, height),

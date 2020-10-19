@@ -1,9 +1,9 @@
 package com.focus617.myopengldemo.objects.airhockey
 
-import com.focus617.myopengldemo.base.VertexBuffer
-import com.focus617.myopengldemo.base.DrawingObject
+import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
+import com.focus617.myopengldemo.base.objectbuilder.DrawingObject
 
-class Table : DrawingObject() {
+class Table : DrawingObject {
 
     private val vertexBuffer = VertexBuffer.build(vertices, VERTEX_COUNT, indices)
 

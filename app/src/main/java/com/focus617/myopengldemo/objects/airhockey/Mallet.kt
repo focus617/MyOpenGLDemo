@@ -2,8 +2,8 @@ package com.focus617.myopengldemo.objects.airhockey
 
 import android.opengl.GLES31
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.base.DrawingObject
-import com.focus617.myopengldemo.base.VertexBuffer
+import com.focus617.myopengldemo.base.objectbuilder.DrawingObject
+import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder.Companion.DrawCommand
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder.Companion.GeneratedData
 import com.focus617.myopengldemo.util.Geometry.Point
@@ -11,7 +11,7 @@ import com.focus617.myopengldemo.util.Geometry.Point
 /**
  * 木槌
  */
-class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int): DrawingObject() {
+class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int): DrawingObject {
 
     private val generatedData: GeneratedData = AirHockeyObjectBuilder.createMallet(
         Point(0f, 0f, 0f),

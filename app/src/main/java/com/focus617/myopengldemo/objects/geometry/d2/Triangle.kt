@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.objects.geometry.triangle
+package com.focus617.myopengldemo.objects.geometry.d2
 
 import android.content.Context
 import android.opengl.GLES31.*

@@ -2,8 +2,8 @@ package com.focus617.myopengldemo.objects.particles
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import com.focus617.myopengldemo.base.VertexBuffer
-import com.focus617.myopengldemo.base.VertexBuffer.AttributeProperty
+import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
+import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer.AttributeProperty
 import com.focus617.myopengldemo.programs.particles.HeightmapShaderProgram
 import com.focus617.myopengldemo.util.Geometry
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector

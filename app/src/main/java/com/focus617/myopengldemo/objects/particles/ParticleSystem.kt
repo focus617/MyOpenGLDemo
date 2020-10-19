@@ -3,7 +3,7 @@ package com.focus617.myopengldemo.objects.particles
 import android.graphics.Color
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.base.objectbuilder.VertexArray
-import com.focus617.myopengldemo.base.VertexBuffer
+import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
 import com.focus617.myopengldemo.programs.particles.ParticleShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector

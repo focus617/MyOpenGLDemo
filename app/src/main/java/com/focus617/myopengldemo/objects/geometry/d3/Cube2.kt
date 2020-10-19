@@ -1,10 +1,10 @@
-package com.focus617.myopengldemo.objects.other
+package com.focus617.myopengldemo.objects.geometry.d3
 
-import com.focus617.myopengldemo.base.DrawingObject
-import com.focus617.myopengldemo.base.VertexBuffer
-import com.focus617.myopengldemo.base.VertexBuffer.AttributeProperty
+import com.focus617.myopengldemo.base.objectbuilder.DrawingObject
+import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
+import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer.AttributeProperty
 
-class Cube2 : DrawingObject() {
+class Cube2 : DrawingObject {
 
     private val vertexBuffer = VertexBuffer.build(vertices, VERTEX_COUNT)
 

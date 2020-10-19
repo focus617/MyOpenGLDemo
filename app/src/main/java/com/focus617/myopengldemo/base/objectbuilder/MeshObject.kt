@@ -13,7 +13,7 @@ import kotlin.properties.Delegates
 /**
  * 本对象负责将顶点属性和索引加载到 GPU，并执行显示操作
  */
-abstract class MeshObject(val context: Context) {
+abstract class MeshObject(val context: Context): NewDrawingObject {
 
     //自定义渲染管线程序
     protected lateinit var mProgram: ShaderProgram
@@ -83,12 +83,6 @@ abstract class MeshObject(val context: Context) {
         glDeleteVertexArrays(1, mVAOBuf)
     }
 
-    //初始化Shader Program
-    abstract fun initShader()
-
-    //初始化顶点数据的方法
-    abstract fun initVertexArray()
-
     private fun positionObjectInScene(x: Float, y: Float, z: Float) {
         Matrix.translateM(mModelMatrix, 0, x, y, z)
     }
@@ -101,10 +95,6 @@ abstract class MeshObject(val context: Context) {
         mPosition = position
         positionObjectInScene()
     }
-
-    // 绘制方法
-    abstract fun draw()
-
 
     protected fun setupVertices() {
 
@@ -126,7 +116,7 @@ abstract class MeshObject(val context: Context) {
         glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 
-    fun updateVertices(vertexArray: VertexArray, numVertex: Int) {
+    protected fun updateVertices(vertexArray: VertexArray, numVertex: Int) {
 
         Timber.d("updateVertices()")
 
@@ -135,7 +125,7 @@ abstract class MeshObject(val context: Context) {
         numVertices = numVertex
     }
 
-    fun setupElements() {
+    protected fun setupElements() {
         Timber.d("setupElements()")
 
         // bind buffer object for element indices
@@ -155,7 +145,7 @@ abstract class MeshObject(val context: Context) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
-    open fun bindData() {
+    override fun bindData() {
         // Bind the VAO and then set up the vertex attributes
         glBindVertexArray(mVaoId)
         // Bind VBO buffer
@@ -180,28 +170,6 @@ abstract class MeshObject(val context: Context) {
         // Reset to the default VAO
         glBindVertexArray(0)
     }
-
-//    open fun draw() {
-//
-//        glUseProgram(mProgram)
-//
-//        // TODO: pass parameter to GPU
-//        // shaderProgram.setUniforms()
-//
-//        setTextures(mProgram)
-//
-//        // Bind the VAO and then draw with VAO settings
-//        glBindVertexArray(mVaoId)
-//
-//        glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
-//
-//        // Reset to the default VAO
-//        glBindVertexArray(0)
-//
-//        glBindBuffer(GL_ARRAY_BUFFER, 0)
-//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
-//    }
-
 
 
     companion object {
