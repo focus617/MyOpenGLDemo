@@ -6,7 +6,6 @@ import com.focus617.myopengldemo.base.objectbuilder.VertexArray
 import com.focus617.myopengldemo.base.objectbuilder.ElementArray
 import com.focus617.myopengldemo.base.objectbuilder.MeshObject
 import com.focus617.myopengldemo.base.objectbuilder.MeshObject.Companion.AttributeProperty
-import com.focus617.myopengldemo.programs.other.LightCubeShaderProgram
 import timber.log.Timber
 
 class Cube(context: Context): MeshObject(context) {
@@ -60,7 +59,7 @@ class Cube(context: Context): MeshObject(context) {
                 VERTEX_COLOR_OFFSET
             )
         )
-        
+
         mProgram.use()
 
         // Bind the VAO and then set up the vertex attributes
