@@ -147,7 +147,6 @@ class MainActivity : AppCompatActivity() {
                             mLastTouchX = x
                             mLastTouchY = y
 
-//                            MoveNative(dx, dy)
 
                         } else {
                             val deltaX = event.x - previousX

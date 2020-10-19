@@ -93,11 +93,11 @@ abstract class MeshObject(val context: Context) {
     //初始化顶点数据的方法
     abstract fun initVertexArray()
 
+    // 绘制方法
     abstract fun draw()
 
-    fun getProgram() = mProgram
 
-    fun setupVertices() {
+    private fun setupVertices() {
 
         Timber.d("setupVertices()")
 

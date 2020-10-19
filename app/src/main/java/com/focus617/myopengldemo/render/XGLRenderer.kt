@@ -131,7 +131,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawTriangle()    {
-        positionObjectInScene(mTrianglePos)
+        Matrix.setIdentityM(mModelMatrix, 0)
         mTriangle.updateShaderUniforms(mModelMatrix, mViewMatrix, mProjectionMatrix)
         mTriangle.draw()
     }
@@ -158,12 +158,13 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     /**
      * 在 SurfaceView中通过触摸事件控制相机的位置
      */
-    private var xRotation: Float = 0f
+    private var xRotation: Float = 90f
     private var yRotation: Float = 0f
 
     private fun placeCamera() {
 
         Camera.rotate(yRotation, xRotation)
+//        Timber.d("Camera at ${Camera.Position}")
 
         // 设置相机的位置，进而计算出视图矩阵 (View Matrix)
         mViewMatrix = Camera.lookAt()
@@ -171,7 +172,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     fun handleTouchDrag(deltaX: Float, deltaY: Float) {
-        val sensitivity: Float = 180f
+        val sensitivity: Float = 720f
 
         xRotation += deltaX / sensitivity
         yRotation -= deltaY / sensitivity

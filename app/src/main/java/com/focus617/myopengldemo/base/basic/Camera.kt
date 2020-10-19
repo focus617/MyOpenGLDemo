@@ -15,7 +15,7 @@ object Camera {
     private lateinit var directionRight: Vector
     var targetDistance: Float = defaultDistance
 
-    fun rotate(pitch: Float = 0f, yaw: Float = 0f) {
+    fun rotate(pitch: Float = 0f, yaw: Float = 90f) {
         Position.y = kotlin.math.sin(pitch) * targetDistance
         Position.x = kotlin.math.cos(pitch) * kotlin.math.cos(yaw) * targetDistance
         Position.z = kotlin.math.cos(pitch) * kotlin.math.sin(yaw) * targetDistance

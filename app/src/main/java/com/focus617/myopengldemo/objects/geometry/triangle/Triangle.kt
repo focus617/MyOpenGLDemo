@@ -1,14 +1,11 @@
 package com.focus617.myopengldemo.objects.geometry.triangle
 
 import android.content.Context
-import android.opengl.GLES30
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.base.VertexArray
-import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.objectbuilder.MeshObject
 import com.focus617.myopengldemo.programs.ShaderConstants
-import com.focus617.myopengldemo.util.Geometry
-import kotlin.properties.Delegates
+import timber.log.Timber
 
 
 class Triangle(context: Context) : MeshObject(context) {
@@ -24,9 +21,6 @@ class Triangle(context: Context) : MeshObject(context) {
     //初始化顶点数据的方法
     override fun initVertexArray() {
 
-        //顶点坐标数据的初始化
-        numVertices = 3
-
         val UNIT_SIZE = 0.3f
         val vertices = floatArrayOf(
             -4 * UNIT_SIZE, 0f, 0f,
@@ -39,6 +33,10 @@ class Triangle(context: Context) : MeshObject(context) {
 
         // Reset 缓冲区起始位置 to origin offset
         mVertexArray.position(0)
+
+        //顶点坐标数据的初始化
+        numVertices = vertices.size/VERTEX_POS_SIZE
+        Timber.d("initVertexArray(): vertex number = $numVertices")
 
         val colors = floatArrayOf(
          // R,  G,  B,  Alpha
@@ -68,28 +66,28 @@ class Triangle(context: Context) : MeshObject(context) {
         val maPositionHandle = glGetAttribLocation(mProgram.getId(), ShaderConstants.A_POSITION)
         //顶点颜色属性引用
         val maColorHandle = glGetAttribLocation(mProgram.getId(), ShaderConstants.A_COLOR)
-        
+
         //将顶点位置数据传送进渲染管线
         glVertexAttribPointer(
             maPositionHandle,
-            3,
+            VERTEX_POS_SIZE,
             GL_FLOAT,
             false,
-            3 * 4,
+            VERTEX_POS_SIZE * Float.SIZE_BYTES,
             mVertexArray.getFloatBuffer()
         )
         //将顶点颜色数据传送进渲染管线
         glVertexAttribPointer(
             maColorHandle,
-            4,
+            VERTEX_COLOR_SIZE,
             GL_FLOAT,
             false,
-            4 * 4,
+            VERTEX_COLOR_SIZE * Float.SIZE_BYTES,
             mColorArray.getFloatBuffer()
         )
-        glEnableVertexAttribArray(maPositionHandle) //启用顶点位置数据
 
-        glEnableVertexAttribArray(maColorHandle) //启用顶点着色数据
+        glEnableVertexAttribArray(maPositionHandle)     //启用顶点位置数据
+        glEnableVertexAttribArray(maColorHandle)        //启用顶点着色数据
     }
 
 
@@ -109,4 +107,11 @@ class Triangle(context: Context) : MeshObject(context) {
         (mProgram as TriangleShaderProgram).setUniforms(modelMatrix, viewMatrix, projectionMatrix)
     }
 
+    companion object {
+
+        // 顶点坐标的每个属性的Size
+        private const val VERTEX_POS_SIZE = 3            //x,y,z
+        private const val VERTEX_COLOR_SIZE = 4          //R,G,B,Alpha
+
+    }
 }

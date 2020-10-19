@@ -52,6 +52,8 @@ class Geometry {
             constructor(from: Vector, to: Vector) :
                     this((to.x-from.x), (to.y-from.y),(to.z-from.z))
 
+            override fun toString(): String = "($x, $y, $z)"
+
             fun length(): Float = kotlin.math.sqrt(x * x + y * y + z * z)
 
             // http://en.wikipedia.org/wiki/Cross_product
