@@ -11,6 +11,8 @@ class Ball(
     val radius: Float
 ): IndexMeshObject(context) {
 
+    val UNIT_SIZE: Float = 1f
+
     init {
         //调用初始化顶点数据的initVertexArray方法
         initVertexArray()
@@ -37,20 +39,20 @@ class Ball(
 
     override fun initShader() {
         //自定义渲染管线程序
-        mProgram = LightCubeShaderProgram(context)
+        mProgram = BallShaderProgram(context)
         bindData()
     }
 
     fun updateShaderUniforms(
         modelMatrix: FloatArray,
         viewMatrix: FloatArray,
-        projectionMatrix: FloatArray,
-    ) {
+        projectionMatrix: FloatArray) {
         mProgram.use()
-        (mProgram as LightCubeShaderProgram).setUniforms(
+        (mProgram as BallShaderProgram).setUniforms(
             modelMatrix,
             viewMatrix,
-            projectionMatrix
+            projectionMatrix,
+            radius * UNIT_SIZE
         )
     }
     override fun bindData() {

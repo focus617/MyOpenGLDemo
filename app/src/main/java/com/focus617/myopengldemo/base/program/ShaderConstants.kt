@@ -32,6 +32,9 @@ object ShaderConstants {
     const val U_MATERIAL_SPECULAR = "material.specular"
     const val U_MATERIAL_SHININESS = "material.shininess"
 
+    const val U_R = "uR"
+
+
     // Attribute constants
     const val A_POSITION = "a_Position"
     const val A_COLOR = "a_Color"
