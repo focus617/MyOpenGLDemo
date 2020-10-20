@@ -154,14 +154,15 @@ class Star(
     // 顶点数据集，及其属性
     companion object {
         // 假定每个顶点有4个顶点属性一位置、法线和两个纹理坐标
-
-        // 顶点坐标的每个属性的Size
-        private const val VERTEX_POS_SIZE = 3          //x,y,and z
-        private const val VERTEX_COLOR_SIZE = 4        //R,G,B,Alpha
-
         // 顶点坐标的每个属性的Index
         private const val VERTEX_POS_INDEX = 0
         private const val VERTEX_COLOR_INDEX = 1
+
+        // 顶点坐标的每个属性的Size
+        private const val VERTEX_POS_SIZE = 3          //x,y,and z
+        private const val VERTEX_NORMAL_SIZE = 3
+        private const val VERTEX_COLOR_SIZE = 4        //R,G,B,Alpha
+
 
         // the following 4 defines are used to determine the locations
         // of various attributes if vertex data are stored as an array
@@ -169,7 +170,7 @@ class Star(
         private const val VERTEX_POS_OFFSET = 0
         private const val VERTEX_COLOR_OFFSET = 0
 
-        private const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE
+        private const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE
 
         // 连续的顶点属性组之间的间隔
         private const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES

@@ -4,6 +4,7 @@ import android.content.Context
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.base.Model
 import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.basic.PointLight
@@ -15,6 +16,7 @@ import com.focus617.myopengldemo.objects.geometry.d2.Triangle
 import com.focus617.myopengldemo.objects.geometry.d3.Ball
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.util.MatrixHelper
+import com.focus617.myopengldemo.util.TextureHelper
 import com.focus617.myopengldemo.util.clamp
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
@@ -57,12 +59,12 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         mLightCube = Cube(context)
         mBall = Ball(context, 1.0f)
 
-//        mCube = Cube2(context)
-//        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
-//
-//        mTriangle = Triangle(context)
-//        mSquare = Square(context)
-//        mStar = Star(context, 0.4f, 1.0f, -0.3f)
+        mCube = Cube2(context)
+        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
+
+        mTriangle = Triangle(context)
+        mSquare = Square(context)
+        mStar = Star(context, 0.4f, 1.0f, -0.3f)
 
 
 //        // build model
@@ -100,12 +102,12 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         placeCamera()
 
         drawLightCube()
-//        drawCube()
+        drawCube()
 
         drawBall()
-//        drawTriangle()
-//        drawSquare()
-//        drawStar()
+        drawTriangle()
+        drawSquare()
+        drawStar()
     }
 
     private fun drawLightCube() {
@@ -115,7 +117,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawBall() {
-        mBall.positionObjectInScene()
+        mBall.positionObjectInScene(-4.0f, 3.0f, -5.0f)
         mBall.updateShaderUniforms(mBall.mModelMatrix, mViewMatrix, mProjectionMatrix, Camera.Position)
         mBall.draw()
     }
