@@ -1,5 +1,6 @@
 package com.focus617.myopengldemo.base.objectbuilder
 
+import timber.log.Timber
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -34,6 +35,23 @@ class VertexArray(vertices: FloatArray) {
         floatBuffer.put(vertexData, start, count)
         floatBuffer.position(0)
     }
+
+    fun dump() {
+        Timber.d("VertexArray dump:")
+        val buffSize = floatBuffer.capacity()
+        Timber.d("VertexArray float buffer Size: $buffSize")
+
+        if (buffSize < 6) {
+            for (i in 0..buffSize)
+                Timber.d("Vertex[$i]: ${floatBuffer[i]}")
+        } else {
+            for (i in 0..5)
+                Timber.d("Vertex[$i]: ${floatBuffer[i]}")
+            Timber.d("...")
+            for (i in (buffSize - 6) until buffSize)
+                Timber.d("Vertex[$i]: ${floatBuffer[i]}")
+        }
+    }
 }
 
 /**
@@ -61,5 +79,22 @@ class ElementArray(indices: ShortArray) {
         shortBuffer.position(start)
         shortBuffer.put(indices, start, count)
         shortBuffer.position(0)
+    }
+
+    fun dump() {
+        Timber.d("ElementArray dump:")
+        val buffSize = shortBuffer.capacity()
+        Timber.d("ElementArray short buffer Size: $buffSize")
+
+        if (buffSize < 6) {
+            for (i in 0..buffSize)
+                Timber.d("Element[$i]: ${shortBuffer[i]}")
+        } else {
+            for (i in 0..2)
+                Timber.d("Element[$i]: ${shortBuffer[i]}")
+            Timber.d("...")
+            for (i in (buffSize - 3) until buffSize)
+                Timber.d("Element[$i]: ${shortBuffer[i]}")
+        }
     }
 }

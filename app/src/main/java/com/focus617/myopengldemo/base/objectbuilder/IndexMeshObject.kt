@@ -70,11 +70,6 @@ abstract class IndexMeshObject(val context: Context) : NewDrawingObject {
         // mVBOIds[3] - used to store vertex texture attribute data
         mTextureId = mVBOBuf.get(3)
 
-        //调用初始化顶点数据的initVertexArray方法
-        initVertexArray()
-
-        //调用初始化着色器的intShader方法
-        initShader()
     }
 
     // 销毁纹理和缓冲区对象
@@ -88,18 +83,26 @@ abstract class IndexMeshObject(val context: Context) : NewDrawingObject {
 
         // Transfer data to native memory.
         mVertexArray = VertexArray(vertices)
+        mVertexArray.dump()
+
         setupVertices()
         numVertices = numVertex
 
         Timber.d("build(): indices size=${indices.size}")
         // Transfer data to native memory.
         mElementArray = ElementArray(indices)
+        mElementArray.dump()
+
         setupElements()
         numElements = indices.size
     }
 
+    fun build(data: ObjectBuilder2.Companion.GeneratedData){
+        build(data.vertexArray, data.vertexArray.size/3, data.indexArray)
+    }
 
-    private fun positionObjectInScene(x: Float, y: Float, z: Float) {
+
+    fun positionObjectInScene(x: Float, y: Float, z: Float) {
         // 初始化模型矩阵
         Matrix.setIdentityM(mModelMatrix, 0)
         Matrix.translateM(mModelMatrix, 0, x, y, z)

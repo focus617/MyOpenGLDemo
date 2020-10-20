@@ -5,10 +5,15 @@ import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 import com.focus617.myopengldemo.util.Geometry
 
-/**
- * Compare with Cube, Cube2 has different normal for vertex, hasn't element
- */
 class Cube2(context: Context): IndexMeshObject(context) {
+
+    init {
+        //调用初始化顶点数据的initVertexArray方法
+        initVertexArray()
+
+        //调用初始化着色器的intShader方法
+        initShader()
+    }
 
     override fun initVertexArray() {
         build(vertices, VERTEX_COUNT, indices)
