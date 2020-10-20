@@ -172,6 +172,7 @@ abstract class MeshObject(val context: Context): NewDrawingObject {
 
         // Reset to the default VAO
         glBindVertexArray(0)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 
 

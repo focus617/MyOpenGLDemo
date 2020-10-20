@@ -190,6 +190,7 @@ abstract class IndexMeshObject(val context: Context) : NewDrawingObject {
 
         // Reset to the default VAO
         glBindVertexArray(0)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 
     override fun draw() {
