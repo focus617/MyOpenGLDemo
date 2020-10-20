@@ -44,6 +44,7 @@ object TextureHelper {
         // Set filtering: a default must be set, or the texture will be black.
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+
         // Load the bitmap into the bound texture.
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0)
 

@@ -124,39 +124,27 @@ class ObjectBuilder2 {
         for (vAngle in -90 until 90 step angleSpan) {
             for (hAngle in 0..360 step angleSpan) {
                 // 纵向横向各到一个角度后计算对应的此点在球面上的坐标
-                val x0 = (radius * UNIT_SIZE
-                        * cos(Math.toRadians(vAngle.toDouble()))
-                        * cos(Math.toRadians(hAngle.toDouble()))).toFloat()
-                val y0 = (radius * UNIT_SIZE
-                        * cos(Math.toRadians(vAngle.toDouble()))
-                        * sin(Math.toRadians(hAngle.toDouble()))).toFloat()
+                var xozLength: Double =  radius * UNIT_SIZE * cos(Math.toRadians(vAngle.toDouble()))
+                val x0 = (xozLength * cos(Math.toRadians(hAngle.toDouble()))).toFloat()
+                val y0 = (xozLength * sin(Math.toRadians(hAngle.toDouble()))).toFloat()
                 val z0 = (radius * UNIT_SIZE
                         * sin(Math.toRadians(vAngle.toDouble()))).toFloat()
 
-                val x1 = (radius * UNIT_SIZE
-                        * cos(Math.toRadians(vAngle.toDouble()))
-                        * cos(Math.toRadians(hAngle + angleSpan.toDouble()))).toFloat()
-                val y1 = (radius * UNIT_SIZE
-                        * cos(Math.toRadians(vAngle.toDouble()))
-                        * sin(Math.toRadians(hAngle + angleSpan.toDouble()))).toFloat()
+                xozLength =  radius * UNIT_SIZE * cos(Math.toRadians(vAngle.toDouble()))
+                val x1 = (xozLength * cos(Math.toRadians(hAngle + angleSpan.toDouble()))).toFloat()
+                val y1 = (xozLength * sin(Math.toRadians(hAngle + angleSpan.toDouble()))).toFloat()
                 val z1 = (radius * UNIT_SIZE
                         * sin(Math.toRadians(vAngle.toDouble()))).toFloat()
 
-                val x2 = (radius * UNIT_SIZE
-                        * cos(Math.toRadians(vAngle + angleSpan.toDouble()))
-                        * cos(Math.toRadians(hAngle + angleSpan.toDouble()))).toFloat()
-                val y2 = (radius * UNIT_SIZE
-                        * cos(Math.toRadians(vAngle + angleSpan.toDouble()))
-                        * sin(Math.toRadians(hAngle + angleSpan.toDouble()))).toFloat()
+                xozLength =  radius * UNIT_SIZE * cos(Math.toRadians(vAngle + angleSpan.toDouble()))
+                val x2 = (xozLength * cos(Math.toRadians(hAngle + angleSpan.toDouble()))).toFloat()
+                val y2 = (xozLength * sin(Math.toRadians(hAngle + angleSpan.toDouble()))).toFloat()
                 val z2 = (radius * UNIT_SIZE
                         * sin(Math.toRadians(vAngle + angleSpan.toDouble()))).toFloat()
 
-                val x3 = (radius * UNIT_SIZE
-                        * cos(Math.toRadians(vAngle + angleSpan.toDouble()))
-                        * cos(Math.toRadians(hAngle.toDouble()))).toFloat()
-                val y3 = (radius * UNIT_SIZE
-                        * cos(Math.toRadians(vAngle + angleSpan.toDouble()))
-                        * sin(Math.toRadians(hAngle.toDouble()))).toFloat()
+                xozLength =  radius * UNIT_SIZE * cos(Math.toRadians(vAngle + angleSpan.toDouble()))
+                val x3 = (xozLength * cos(Math.toRadians(hAngle.toDouble()))).toFloat()
+                val y3 = (xozLength * sin(Math.toRadians(hAngle.toDouble()))).toFloat()
                 val z3 = (radius * UNIT_SIZE
                         * sin(Math.toRadians(vAngle + angleSpan.toDouble()))).toFloat()
 
