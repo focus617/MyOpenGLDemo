@@ -3,6 +3,7 @@ package com.focus617.myopengldemo.objects.geometry.d2
 import android.content.Context
 import android.opengl.GLES31
 import com.focus617.myopengldemo.base.objectbuilder.MeshObject
+import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2
 import com.focus617.myopengldemo.base.objectbuilder.VertexArray
 import timber.log.Timber
 
@@ -29,55 +30,14 @@ class Star(
 
     //初始化顶点坐标
     private fun initVertices(r: Float, R: Float, z: Float) {
+        val builder = ObjectBuilder2()
+        builder.appendStar(angleNum, radius, R, z)
 
-        val UNIT_SIZE = 1f
+        val data = builder.buildData()
 
-        val vertexList = ArrayList<Float>()
-        val tempAngle: Int = 360 / angleNum
-        val t = z + UNIT_SIZE * 0.12f
-
-        for (angle in 0 until 360 step tempAngle)//循环生成构成六角形各三角形的顶点坐标
-        {
-            //第一个三角形
-            //第一个点的x、y、z坐标
-            vertexList.add(0f)
-            vertexList.add(0f)
-            vertexList.add(t)
-            //第二个点的x、y、z坐标
-            vertexList.add((R * UNIT_SIZE * Math.cos(Math.toRadians(angle.toDouble()))).toFloat())
-            vertexList.add((R * UNIT_SIZE * Math.sin(Math.toRadians(angle.toDouble()))).toFloat())
-            vertexList.add(z)
-            //第三个点的x、y、z坐标
-            vertexList.add((r * UNIT_SIZE * Math.cos(Math.toRadians((angle + tempAngle / 2).toDouble()))).toFloat())
-            vertexList.add((r * UNIT_SIZE * Math.sin(Math.toRadians((angle + tempAngle / 2).toDouble()))).toFloat())
-            vertexList.add(z)
-
-            //第二个三角形
-            //第一个中心点的x、y、z坐标
-            vertexList.add(0f)
-            vertexList.add(0f)
-            vertexList.add(t)
-            //第二个点的x、y、z坐标
-            vertexList.add((r * UNIT_SIZE * Math.cos(Math.toRadians((angle + tempAngle / 2).toDouble()))).toFloat())
-            vertexList.add((r * UNIT_SIZE * Math.sin(Math.toRadians((angle + tempAngle / 2).toDouble()))).toFloat())
-            vertexList.add(z)
-            //第三个点的x、y、z坐标
-            vertexList.add((R * UNIT_SIZE * Math.cos(Math.toRadians((angle + tempAngle).toDouble()))).toFloat())
-            vertexList.add((R * UNIT_SIZE * Math.sin(Math.toRadians((angle + tempAngle).toDouble()))).toFloat())
-            vertexList.add(z)
-        }
-
-        // 将构造的顶点列表转存为顶点数组
-        numVertices = vertexList.size / 3
-        val vertexArray = FloatArray(vertexList.size)    //顶点坐标数组
-        for (i in 0 until numVertices) {
-            vertexArray[i * 3] = vertexList[i * 3]
-            vertexArray[i * 3 + 1] = vertexList[i * 3 + 1]
-            vertexArray[i * 3 + 2] = vertexList[i * 3 + 2]
-            Timber.d("$i:(${vertexArray[i * 3]},${vertexArray[i * 3 + 1]},${vertexArray[i * 3 + 2]})")
-        }
         //顶点坐标数据的初始化
-        mVertexArray = VertexArray(vertexArray)
+        mVertexArray = VertexArray(data.vertexArray)
+        numVertices = mVertexArray.capacity() / 3
         Timber.d("initVertexArray(): vertex number = $numVertices")
 
         // 将顶点数据存入缓冲区
