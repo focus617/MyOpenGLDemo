@@ -79,7 +79,7 @@ abstract class MeshObject(val context: Context): NewDrawingObject {
         glDeleteVertexArrays(1, mVAOBuf)
     }
 
-    private fun positionObjectInScene(x: Float, y: Float, z: Float) {
+    fun positionObjectInScene(x: Float, y: Float, z: Float) {
         // 初始化模型矩阵
         Matrix.setIdentityM(mModelMatrix, 0)
         Matrix.translateM(mModelMatrix, 0, x, y, z)

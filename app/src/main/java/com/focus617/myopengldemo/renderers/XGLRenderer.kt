@@ -13,7 +13,6 @@ import com.focus617.myopengldemo.objects.geometry.d2.Square
 import com.focus617.myopengldemo.objects.geometry.d3.Cube
 import com.focus617.myopengldemo.objects.geometry.d3.Cube2
 import com.focus617.myopengldemo.objects.geometry.d2.Triangle
-import com.focus617.myopengldemo.programs.other.CubeShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.util.MatrixHelper
 import com.focus617.myopengldemo.util.TextureHelper
@@ -31,7 +30,6 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private val it_modelViewMatrix = FloatArray(16)
 
     private lateinit var mCube: Cube2
-    private lateinit var mCubeProgram: CubeShaderProgram
     private val mCubePos: Vector = Vector(0.0f, 0.0f, 0.0f)
     private var boxTexture = 0
 
@@ -57,12 +55,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         glEnable(GL_CULL_FACE)
 
         mLight = Cube(context)
-//        mLight.mPosition = PointLight.position
-        Timber.d("${mLight.mPosition}")
 
-//        mCubeProgram = CubeShaderProgram(context)
-//        mCube = Cube2()
-//        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
+        mCube = Cube2(context)
+        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
 
 //        // build model
 //        mModel = Model(context, "sculpt.obj")
@@ -102,7 +97,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         placeCamera()
 
         drawLightCube()
-//        drawCube()
+        drawCube()
 
 //        drawTriangle()
 
@@ -118,16 +113,13 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawCube() {
-        positionObjectInScene(mCubePos)
-
+        mCube.moveTo(mCubePos)
 //        updateItModelViewMatrix()
 
-        mCubeProgram.use()
-        mCubeProgram.setUniforms(
-            mCubeModelMatrix, mViewMatrix, mProjectionMatrix, it_modelViewMatrix,
+        mCube.updateShaderUniforms(
+            mCube.mModelMatrix, mViewMatrix, mProjectionMatrix, it_modelViewMatrix,
             Camera.Position, boxTexture
         )
-        mCube.bindData()
         mCube.draw()
 
     }
@@ -145,7 +137,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawStar() {
-        mStar.positionObjectInScene()
+        mStar.positionObjectInScene(-2.0f, -3.0f, -7.0f)
         mStar.updateShaderUniforms(mStar.mModelMatrix, mViewMatrix, mProjectionMatrix)
         mStar.draw()
     }

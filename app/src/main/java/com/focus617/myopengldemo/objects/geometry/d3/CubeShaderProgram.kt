@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.programs.other
+package com.focus617.myopengldemo.objects.geometry.d3
 
 import android.content.Context
 import android.opengl.GLES31
@@ -23,11 +23,15 @@ import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.base.basic.PointLight
 import com.focus617.myopengldemo.base.basic.Material
 
+const val PATH = "Cube"
+const val VERTEX_FILE = "cube_vertex_shader.glsl"
+const val FRAGMENT_FILE = "cube_fragment_shader.glsl"
 
 class CubeShaderProgram(context: Context) : ShaderProgram(
     context,
-    R.raw.cube_vertex_shader,
-    R.raw.cube_fragment_shader
+    PATH,
+    VERTEX_FILE,
+    FRAGMENT_FILE
 ) {
     fun setUniforms(
         modelMatrix: FloatArray,

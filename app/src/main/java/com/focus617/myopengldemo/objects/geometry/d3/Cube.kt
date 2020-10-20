@@ -16,6 +16,19 @@ class Cube(context: Context): IndexMeshObject(context) {
         bindData()
     }
 
+    fun updateShaderUniforms(
+        modelMatrix: FloatArray,
+        viewMatrix: FloatArray,
+        projectionMatrix: FloatArray,
+    ) {
+        mProgram.use()
+        (mProgram as LightCubeShaderProgram).setUniforms(
+            modelMatrix,
+            viewMatrix,
+            projectionMatrix
+        )
+    }
+
     override fun bindData() {
         val attribPropertyList: List<AttributeProperty> = arrayListOf(
             // 顶点的位置属性
@@ -37,18 +50,6 @@ class Cube(context: Context): IndexMeshObject(context) {
         super.bindData(attribPropertyList)
     }
 
-    fun updateShaderUniforms(
-        modelMatrix: FloatArray,
-        viewMatrix: FloatArray,
-        projectionMatrix: FloatArray,
-    ) {
-        mProgram.use()
-        (mProgram as LightCubeShaderProgram).setUniforms(
-            modelMatrix,
-            viewMatrix,
-            projectionMatrix
-        )
-    }
 
     // 顶点数据集，及其属性
     companion object {

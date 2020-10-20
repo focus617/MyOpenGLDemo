@@ -7,15 +7,15 @@ import com.focus617.myopengldemo.base.program.ShaderConstants.U_MODEL_MATRIX
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_PROJECT_MATRIX
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_VIEW_MATRIX
 
-const val PATH = "Cube"
-const val VERTEX_FILE = "light_vertex_shader.glsl"
-const val FRAGMENT_FILE = "light_fragment_shader.glsl"
+const val LIGHT_PATH = "Cube"
+const val LIGHT_VERTEX_FILE = "light_vertex_shader.glsl"
+const val LIGHT_FRAGMENT_FILE = "light_fragment_shader.glsl"
 
 class LightCubeShaderProgram(context: Context) : ShaderProgram(
     context,
-    PATH,
-    VERTEX_FILE,
-    FRAGMENT_FILE
+    LIGHT_PATH,
+    LIGHT_VERTEX_FILE,
+    LIGHT_FRAGMENT_FILE
 ) {
 
     fun setUniforms(
