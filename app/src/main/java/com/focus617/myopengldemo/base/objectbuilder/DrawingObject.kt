@@ -20,3 +20,12 @@ interface NewDrawingObject {
     // 绘制方法
     fun draw()
 }
+
+
+class AttributeProperty(
+    val componentIndex: Int,
+    val componentCount: Int,
+    val stride: Int,
+    val dataOffset: Int
+)
+

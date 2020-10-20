@@ -2,6 +2,7 @@ package com.focus617.myopengldemo.objects.particles
 
 import android.graphics.Color
 import android.opengl.GLES31.*
+import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.VertexArray
 import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
 import com.focus617.myopengldemo.programs.particles.ParticleShaderProgram
@@ -56,9 +57,9 @@ class ParticleSystem(private val maxParticleCount: Int) {
 
     fun bindDataES3(particleProgram: ParticleShaderProgram) {
 
-        val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(
+        val attribPropertyList: List<AttributeProperty> = arrayListOf(
             // 顶点的位置属性
-            VertexBuffer.AttributeProperty(
+            AttributeProperty(
                 VERTEX_POS_INDEX,
                 POSITION_COMPONENT_COUNT,
                 VERTEX_STRIDE,
@@ -66,14 +67,14 @@ class ParticleSystem(private val maxParticleCount: Int) {
             ),
 
             // 顶点的颜色属性
-            VertexBuffer.AttributeProperty(
+            AttributeProperty(
                 VERTEX_COLOR_INDEX,
                 COLOR_COMPONENT_COUNT,
                 VERTEX_STRIDE,
                 VERTEX_COLOR_OFFSET
             ),
 
-            VertexBuffer.AttributeProperty(
+            AttributeProperty(
                 VERTEX_VECTOR_INDEX,
                 VECTOR_COMPONENT_COUNT,
                 VERTEX_STRIDE,
@@ -81,7 +82,7 @@ class ParticleSystem(private val maxParticleCount: Int) {
             ),
 
             // 顶点的颜色属性
-            VertexBuffer.AttributeProperty(
+            AttributeProperty(
                 VERTEX_PARTICLE_START_TIME_INDEX,
                 PARTICLE_START_TIME_COMPONENT_COUNT,
                 VERTEX_STRIDE,

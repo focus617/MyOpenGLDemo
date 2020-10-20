@@ -1,6 +1,7 @@
 package com.focus617.myopengldemo.base
 
 import android.opengl.GLES31.*
+import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.program.ShaderProgram
 import com.focus617.myopengldemo.xuscene.base.XuMesh
 import timber.log.Timber
@@ -277,13 +278,6 @@ class Mesh private constructor() {
 
             return mesh
         }
-
-        class AttributeProperty(
-            val componentIndex: Int,
-            val componentCount: Int,
-            val stride: Int,
-            val dataOffset: Int
-        )
 
         // 顶点坐标的每个属性的Index
         private const val VERTEX_POS_INDEX = 0

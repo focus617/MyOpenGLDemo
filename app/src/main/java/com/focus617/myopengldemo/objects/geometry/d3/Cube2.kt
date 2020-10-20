@@ -2,8 +2,11 @@ package com.focus617.myopengldemo.objects.geometry.d3
 
 import com.focus617.myopengldemo.base.objectbuilder.DrawingObject
 import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
-import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer.AttributeProperty
+import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 
+/**
+ * Compare with Cube, Cube2 has different normal for vertex, hasn't element
+ */
 class Cube2 : DrawingObject {
 
     private val vertexBuffer = VertexBuffer.build(vertices, VERTEX_COUNT)

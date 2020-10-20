@@ -1,38 +1,13 @@
 package com.focus617.myopengldemo.objects.geometry.d3
 
 import android.content.Context
-import android.opengl.GLES31.*
-import com.focus617.myopengldemo.base.objectbuilder.VertexArray
-import com.focus617.myopengldemo.base.objectbuilder.ElementArray
-import com.focus617.myopengldemo.base.objectbuilder.MeshObject
-import com.focus617.myopengldemo.base.objectbuilder.MeshObject.Companion.AttributeProperty
-import timber.log.Timber
+import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
+import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 
-class Cube(context: Context): MeshObject(context) {
-
-    init {
-        //调用初始化顶点数据的initVertexArray方法
-        initVertexArray()
-
-        //调用初始化着色器的intShader方法
-        initShader()
-    }
+class Cube(context: Context): IndexMeshObject(context) {
 
     override fun initVertexArray() {
-
-        numVertices = VERTEX_COUNT
-        Timber.d("initVertexArray(): vertex number = $numVertices")
-
-        //顶点数据的初始化
-        mVertexArray = VertexArray(vertices)
-        // 将顶点数据存入缓冲区
-        setupVertices()
-
-        numElements = indices.size
-        Timber.d("initVertexArray(): element number = $numElements")
-
-        mElementArray = ElementArray(indices)
-        setupElements()
+        build(vertices, VERTEX_COUNT, indices)
     }
 
     override fun initShader() {
@@ -59,52 +34,7 @@ class Cube(context: Context): MeshObject(context) {
                 VERTEX_COLOR_OFFSET
             )
         )
-
-        mProgram.use()
-
-        // Bind the VAO and then set up the vertex attributes
-        glBindVertexArray(mVaoId)
-        // Bind VBO buffer
-        glBindBuffer(GL_ARRAY_BUFFER, mVertexId)
-
-        for (attrib in attribPropertyList) {
-            // 设置顶点属性
-            glVertexAttribPointer(
-                attrib.componentIndex,
-                attrib.componentCount,
-                GL_FLOAT,
-                false,
-                attrib.stride,
-                attrib.dataOffset
-            )
-            // 启用顶点属性
-            glEnableVertexAttribArray(attrib.componentIndex)
-        }
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mElementId)
-
-        // Reset to the default VAO
-        glBindVertexArray(0)
-    }
-
-    override fun draw() {
-        // 将程序添加到OpenGL ES环境
-        mProgram.use()
-
-        // Bind the VAO and then draw with VAO settings
-        glBindVertexArray(mVaoId)
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mElementId)
-
-        // 图元装配，绘制三角形
-        glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
-
-        // Reset to the default VAO
-        glBindVertexArray(0)
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
-
+        super.bindData(attribPropertyList)
     }
 
     fun updateShaderUniforms(

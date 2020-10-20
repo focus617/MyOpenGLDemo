@@ -2,20 +2,21 @@ package com.focus617.myopengldemo.objects.airhockey
 
 import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
 import com.focus617.myopengldemo.base.objectbuilder.DrawingObject
+import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 
 class Table : DrawingObject {
 
     private val vertexBuffer = VertexBuffer.build(vertices, VERTEX_COUNT, indices)
 
     override fun bindData() {
-        val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(
-            VertexBuffer.AttributeProperty(
+        val attribPropertyList: List<AttributeProperty> = arrayListOf(
+            AttributeProperty(
                 VERTEX_POS_INDEX,
                 VERTEX_POS_COMPONENT_COUNT,
                 VERTEX_STRIDE,
                 VERTEX_POS_OFFSET
             ),
-            VertexBuffer.AttributeProperty(
+            AttributeProperty(
                 VERTEX_TEXCOORDO_INDEX,
                 VERTEX_TEXCOORDO_COMPONENT_COUNT,
                 VERTEX_STRIDE,

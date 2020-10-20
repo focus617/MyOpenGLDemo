@@ -1,5 +1,6 @@
 package com.focus617.myopengldemo.objects.particles
 
+import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
 import com.focus617.myopengldemo.programs.particles.SkyboxShaderProgram
 
@@ -8,9 +9,9 @@ class Skybox {
     private val vertexBuffer = VertexBuffer.build(vertices, VERTEX_COUNT, indices)
 
     fun bindDataES3(skyboxProgram: SkyboxShaderProgram) {
-        val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(
+        val attribPropertyList: List<AttributeProperty> = arrayListOf(
             // 链接顶点属性，告诉OpenGL该如何解析顶点数据
-            VertexBuffer.AttributeProperty(
+            AttributeProperty(
                 VERTEX_POS_INDEX,
                 VERTEX_POS_COMPONENT_COUNT,
                 VERTEX_STRIDE,

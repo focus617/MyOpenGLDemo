@@ -3,6 +3,7 @@ package com.focus617.myopengldemo.objects.airhockey
 import android.opengl.GLES31
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.base.objectbuilder.DrawingObject
+import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder.Companion.DrawCommand
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder.Companion.GeneratedData
@@ -24,8 +25,8 @@ class Mallet(val radius: Float, val height: Float, numPointsAroundMallet: Int): 
     private val drawList: List<DrawCommand> = generatedData.drawList
 
     override fun bindData() {
-        val attribPropertyList: List<VertexBuffer.AttributeProperty> = arrayListOf(
-            VertexBuffer.AttributeProperty(
+        val attribPropertyList: List<AttributeProperty> = arrayListOf(
+            AttributeProperty(
                 VERTEX_POS_INDEX,
                 VERTEX_POS_COMPONENT_COUNT,
                 VERTEX_STRIDE,

@@ -100,13 +100,6 @@ class VertexBuffer private constructor() {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
-    class AttributeProperty(
-        val componentIndex: Int,
-        val componentCount: Int,
-        val stride: Int,
-        val dataOffset: Int
-    )
-
     fun bindData(attribProperties: List<AttributeProperty>) {
         // Bind the VAO and then set up the vertex attributes
         glBindVertexArray(mVaoId)

@@ -11,35 +11,35 @@ import kotlin.properties.Delegates
 
 /**
  * 本对象负责将顶点属性和索引加载到 GPU，并执行显示操作
+ *  VertexBuffer 类的升级
  */
-abstract class MeshObject(val context: Context): NewDrawingObject {
+abstract class IndexMeshObject(val context: Context) : NewDrawingObject {
 
     //自定义渲染管线程序
     protected lateinit var mProgram: ShaderProgram
+
     // 创建缓存，并绑定缓存类型
     private val mVAOBuf: IntBuffer = IntBuffer.allocate(1)   // 顶点数组对象
-    private val mVBOBuf: IntBuffer = IntBuffer.allocate(5)   // 顶点缓存对象
+    private val mVBOBuf: IntBuffer = IntBuffer.allocate(4)   // 顶点缓存对象
 
     // OpenGL对象的句柄
     var mVaoId by Delegates.notNull<Int>()
     protected var mElementId by Delegates.notNull<Int>()
-
     protected var mVertexId by Delegates.notNull<Int>()
     protected var mNormalId by Delegates.notNull<Int>()
     protected var mTextureId by Delegates.notNull<Int>()
-    protected var mColorId by Delegates.notNull<Int>()
 
     protected var numVertices: Int = 0    // 顶点的数目
     protected var numElements: Int = 0    // 索引的数目
 
     // 网格数据: 包含内存中的Buffer对象，用以动态更新顶点和索引数据（updateBuffer()）
     // 调用setupVertices和setupElements重新写入GPU
-    lateinit var mVertexArray: VertexArray
-    lateinit var mColorArray: VertexArray
-    lateinit var mElementArray: ElementArray
+    protected lateinit var mVertexArray: VertexArray
+    protected lateinit var mElementArray: ElementArray
 
     // 保存本对象的模型矩阵
     val mModelMatrix = FloatArray(16)
+
     // 本对象的基准位置
     var mPosition: Vector = Vector(0.0f, 0.0f, 0.0f)
 
@@ -69,15 +69,35 @@ abstract class MeshObject(val context: Context): NewDrawingObject {
         mNormalId = mVBOBuf.get(2)
         // mVBOIds[3] - used to store vertex texture attribute data
         mTextureId = mVBOBuf.get(3)
-        // mVBOIds[4] - used to store vertex color attribute data
-        mColorId = mVBOBuf.get(4)
+
+        //调用初始化顶点数据的initVertexArray方法
+        initVertexArray()
+
+        //调用初始化着色器的intShader方法
+        initShader()
     }
 
     // 销毁纹理和缓冲区对象
-    fun destroy(){
+    fun destroy() {
         glDeleteBuffers(5, mVBOBuf)
         glDeleteVertexArrays(1, mVAOBuf)
     }
+
+    fun build(vertices: FloatArray, numVertex: Int, indices: ShortArray) {
+        Timber.d("build(): vertices size=$numVertex")
+
+        // Transfer data to native memory.
+        mVertexArray = VertexArray(vertices)
+        setupVertices()
+        numVertices = numVertex
+
+        Timber.d("build(): indices size=${indices.size}")
+        // Transfer data to native memory.
+        mElementArray = ElementArray(indices)
+        setupElements()
+        numElements = indices.size
+    }
+
 
     private fun positionObjectInScene(x: Float, y: Float, z: Float) {
         // 初始化模型矩阵
@@ -89,12 +109,12 @@ abstract class MeshObject(val context: Context): NewDrawingObject {
         positionObjectInScene(mPosition.x, mPosition.y, mPosition.z)
     }
 
-    fun moveTo(position: Vector){
+    fun moveTo(position: Vector) {
         mPosition = position
         positionObjectInScene()
     }
 
-    fun move(vector: Vector){
+    fun move(vector: Vector) {
         mPosition = mPosition.plus(vector)
         positionObjectInScene()
     }
@@ -148,7 +168,7 @@ abstract class MeshObject(val context: Context): NewDrawingObject {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
     }
 
-    override fun bindData() {
+    fun bindData(attribPropertyList: List<AttributeProperty>) {
         // Bind the VAO and then set up the vertex attributes
         glBindVertexArray(mVaoId)
         // Bind VBO buffer
@@ -168,63 +188,28 @@ abstract class MeshObject(val context: Context): NewDrawingObject {
             glEnableVertexAttribArray(attrib.componentIndex)
         }
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mElementId)
-
         // Reset to the default VAO
         glBindVertexArray(0)
     }
 
+    override fun draw() {
+        // 将程序添加到OpenGL ES环境
+        mProgram.use()
 
-    companion object {
-        // 顶点坐标的每个属性的Index
-        private const val VERTEX_POS_INDEX = 0
-        private const val VERTEX_NORMAL_INDEX = 1
-        private const val VERTEX_TEXCOORDO_INDEX = 2
+        // Bind the VAO and then draw with VAO settings
+        glBindVertexArray(mVaoId)
 
-        // 顶点坐标的每个属性的Size
-        private const val VERTEX_POS_SIZE = 3            //x,y,z
-        private const val VERTEX_NORMAL_SIZE = 3         //Nx, Ny, Nz
-        private const val VERTEX_TEXCOORDO_SIZE = 3      //s, t and w
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mElementId)
 
-        // the following 4 defines are used to determine the locations
-        // of various attributes if vertex data are stored as an array
-        //of structures
-        private const val VERTEX_POS_OFFSET = 0
-        private const val VERTEX_NORMAL_OFFSET = VERTEX_POS_SIZE * Float.SIZE_BYTES
-        private const val VERTEX_TEX_COORDO_OFFSET =
-            (VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE) * Float.SIZE_BYTES
+        // 图元装配，绘制三角形
+        glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
 
-        private const val VERTEX_COMPONENT_COUNT =
-            VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE + VERTEX_TEXCOORDO_SIZE
+        // Reset to the default VAO
+        glBindVertexArray(0)
 
-        // 连续的顶点属性组之间的间隔
-        internal const val VERTEX_STRIDE = VERTEX_COMPONENT_COUNT * Float.SIZE_BYTES
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
 
-        private val attribPropertyList: List<AttributeProperty> = arrayListOf(
-            // 顶点的位置属性
-            AttributeProperty(
-                VERTEX_POS_INDEX,
-                VERTEX_POS_SIZE,
-                VERTEX_STRIDE,
-                VERTEX_POS_OFFSET
-            ),
-
-            // 顶点的法线
-            AttributeProperty(
-                VERTEX_NORMAL_INDEX,
-                VERTEX_NORMAL_SIZE,
-                VERTEX_STRIDE,
-                VERTEX_NORMAL_OFFSET
-            ),
-
-            // 顶点的纹理坐标
-            AttributeProperty(
-                VERTEX_TEXCOORDO_INDEX,
-                VERTEX_TEXCOORDO_SIZE,
-                VERTEX_STRIDE,
-                VERTEX_TEX_COORDO_OFFSET
-            )
-        )
     }
 }
 
