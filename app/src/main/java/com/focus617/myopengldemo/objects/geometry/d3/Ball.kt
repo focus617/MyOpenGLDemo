@@ -4,6 +4,7 @@ import android.content.Context
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2
+import com.focus617.myopengldemo.util.Geometry
 import timber.log.Timber
 
 class Ball(
@@ -24,7 +25,6 @@ class Ball(
     override fun initVertexArray() {
         Timber.d("initVertexArray(radius=$radius)")
         initVertices(radius)      //初始化顶点坐标
-//        initColors()              //初始化顶点颜色
     }
 
     //初始化顶点坐标
@@ -46,12 +46,15 @@ class Ball(
     fun updateShaderUniforms(
         modelMatrix: FloatArray,
         viewMatrix: FloatArray,
-        projectionMatrix: FloatArray) {
+        projectionMatrix: FloatArray,
+        viewPosition: Geometry.Companion.Vector,
+    ) {
         mProgram.use()
         (mProgram as BallShaderProgram).setUniforms(
             modelMatrix,
             viewMatrix,
             projectionMatrix,
+            viewPosition,
             radius * UNIT_SIZE
         )
     }
@@ -63,6 +66,14 @@ class Ball(
                 VERTEX_POS_SIZE,
                 VERTEX_STRIDE,
                 VERTEX_POS_OFFSET
+            ),
+
+            // 顶点的法线
+            AttributeProperty(
+                VERTEX_NORMAL_INDEX,
+                VERTEX_NORMAL_SIZE,
+                VERTEX_STRIDE,
+                VERTEX_NORMAL_OFFSET
             )
         )
         super.bindData(attribPropertyList)
@@ -74,19 +85,19 @@ class Ball(
 
         // 顶点坐标的每个属性的Index
         private const val VERTEX_POS_INDEX = 0
-        private const val VERTEX_COLOR_INDEX = 1
+        private const val VERTEX_NORMAL_INDEX = 1
 
         // 顶点坐标的每个属性的Size
         private const val VERTEX_POS_SIZE = 3            //x,y,z
-        private const val VERTEX_COLOR_SIZE = 3          //r,g,b
+        private const val VERTEX_NORMAL_SIZE = 3         //NX, NY, NZ
 
         // the following 4 defines are used to determine the locations
         // of various attributes if vertex data are stored as an array
         //of structures
         private const val VERTEX_POS_OFFSET = 0
-        private const val VERTEX_COLOR_OFFSET = VERTEX_POS_SIZE * Float.SIZE_BYTES
+        private const val VERTEX_NORMAL_OFFSET = VERTEX_POS_SIZE * Float.SIZE_BYTES
 
-        private const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE
+        private const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE
 
         // 连续的顶点属性组之间的间隔
         private const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES

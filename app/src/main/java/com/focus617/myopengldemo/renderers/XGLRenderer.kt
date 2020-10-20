@@ -116,7 +116,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     private fun drawBall() {
         mBall.positionObjectInScene()
-        mBall.updateShaderUniforms(mBall.mModelMatrix, mViewMatrix, mProjectionMatrix)
+        mBall.updateShaderUniforms(mBall.mModelMatrix, mViewMatrix, mProjectionMatrix, Camera.Position)
         mBall.draw()
     }
 

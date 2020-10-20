@@ -98,7 +98,7 @@ abstract class IndexMeshObject(val context: Context) : NewDrawingObject {
     }
 
     fun build(data: ObjectBuilder2.Companion.GeneratedData){
-        build(data.vertexArray, data.vertexArray.size/3, data.indexArray)
+        build(data.vertexArray, data.numVertices, data.indexArray)
     }
 
 
