@@ -57,7 +57,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         glEnable(GL_CULL_FACE)
 
         mLight = Cube(context)
-//
+//        mLight.mPosition = PointLight.position
+        Timber.d("${mLight.mPosition}")
+
 //        mCubeProgram = CubeShaderProgram(context)
 //        mCube = Cube2()
 //        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
@@ -68,7 +70,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
 //        mTriangle = Triangle(context)
 //        mSquare = Square(context)
-        mStar = Star(context, 0.4f, 1.0f, -0.3f )
+        mStar = Star(context, 0.4f, 1.0f, -0.3f)
 
     }
 
@@ -110,11 +112,8 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawLightCube() {
-        mLight.move(PointLight.position)
-
-        mLight.updateShaderUniforms(
-            mLight.mModelMatrix, mViewMatrix, mProjectionMatrix
-        )
+        mLight.moveTo(PointLight.position)
+        mLight.updateShaderUniforms(mLight.mModelMatrix, mViewMatrix, mProjectionMatrix)
         mLight.draw()
     }
 
@@ -145,7 +144,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         mSquare.draw()
     }
 
-    private fun drawStar(){
+    private fun drawStar() {
         mStar.positionObjectInScene()
         mStar.updateShaderUniforms(mStar.mModelMatrix, mViewMatrix, mProjectionMatrix)
         mStar.draw()
