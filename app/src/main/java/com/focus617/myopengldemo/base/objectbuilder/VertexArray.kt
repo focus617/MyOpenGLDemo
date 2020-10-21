@@ -36,19 +36,19 @@ class VertexArray(vertices: FloatArray) {
         floatBuffer.position(0)
     }
 
-    fun dump() {
+    fun dump(count: Int = 8) {
         Timber.d("VertexArray dump:")
         val buffSize = floatBuffer.capacity()
         Timber.d("VertexArray float buffer Size: $buffSize")
 
-        if (buffSize < 6) {
+        if (buffSize <= count) {
             for (i in 0..buffSize)
                 Timber.d("Vertex[$i]: ${floatBuffer[i]}")
         } else {
-            for (i in 0..5)
+            for (i in 0..count)
                 Timber.d("Vertex[$i]: ${floatBuffer[i]}")
             Timber.d("...")
-            for (i in (buffSize - 6) until buffSize)
+            for (i in (buffSize - count) until buffSize)
                 Timber.d("Vertex[$i]: ${floatBuffer[i]}")
         }
     }

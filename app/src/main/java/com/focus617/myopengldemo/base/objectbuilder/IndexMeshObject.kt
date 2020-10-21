@@ -83,7 +83,7 @@ abstract class IndexMeshObject(val context: Context) : NewDrawingObject {
 
         // Transfer data to native memory.
         mVertexArray = VertexArray(vertices)
-        mVertexArray.dump()
+//        mVertexArray.dump()
 
         setupVertices()
         numVertices = numVertex
@@ -91,7 +91,7 @@ abstract class IndexMeshObject(val context: Context) : NewDrawingObject {
         Timber.d("build(): indices size=${indices.size}")
         // Transfer data to native memory.
         mElementArray = ElementArray(indices)
-        mElementArray.dump()
+//        mElementArray.dump()
 
         setupElements()
         numElements = indices.size

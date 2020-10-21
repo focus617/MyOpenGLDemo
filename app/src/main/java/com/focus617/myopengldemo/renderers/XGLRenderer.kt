@@ -14,6 +14,7 @@ import com.focus617.myopengldemo.objects.geometry.d3.Cube
 import com.focus617.myopengldemo.objects.geometry.d3.Cube2
 import com.focus617.myopengldemo.objects.geometry.d2.Triangle
 import com.focus617.myopengldemo.objects.geometry.d3.Ball
+import com.focus617.myopengldemo.objects.geometry.d3.Earth
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.util.MatrixHelper
 import com.focus617.myopengldemo.util.TextureHelper
@@ -35,7 +36,11 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private var boxTexture = 0
 
     private lateinit var mLightCube: Cube
-    private lateinit var mBall: Ball
+    private lateinit var mLightBall: Ball
+
+    private lateinit var mEarth: Earth
+    private var earthDayTexture = 0
+    private var earthNightTexture = 0
 
     private lateinit var mModel: Model
 
@@ -56,15 +61,19 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         //打开背面剪裁
         glEnable(GL_CULL_FACE)
 
-        mLightCube = Cube(context)
-        mBall = Ball(context, 1.0f)
+//        mLightCube = Cube(context)
+        mLightBall = Ball(context, 1.0f)
 
-        mCube = Cube2(context)
-        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
+        mEarth = Earth(context, 1.0f)
+        earthDayTexture =TextureHelper.loadTexture(context, R.drawable.earth)
+        earthNightTexture =TextureHelper.loadTexture(context, R.drawable.earthn)
 
-        mTriangle = Triangle(context)
-        mSquare = Square(context)
-        mStar = Star(context, 0.4f, 1.0f, -0.3f)
+//        mCube = Cube2(context)
+//        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
+//
+//        mTriangle = Triangle(context)
+//        mSquare = Square(context)
+//        mStar = Star(context, 0.4f, 1.0f, -0.3f)
 
 
 //        // build model
@@ -101,13 +110,15 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         placeCamera()
 
-        drawLightCube()
-        drawCube()
+//        drawLightCube()
+        drawLightBall()
 
-        drawBall()
-        drawTriangle()
-        drawSquare()
-        drawStar()
+        drawEarth()
+
+//        drawCube()
+//        drawTriangle()
+//        drawSquare()
+//        drawStar()
     }
 
     private fun drawLightCube() {
@@ -116,10 +127,18 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         mLightCube.draw()
     }
 
-    private fun drawBall() {
-        mBall.positionObjectInScene(-3.0f, 0f, 0f)
-        mBall.updateShaderUniforms(mBall.mModelMatrix, mViewMatrix, mProjectionMatrix, Camera.Position)
-        mBall.draw()
+    private fun drawLightBall() {
+        mLightBall.moveTo(PointLight.position)
+        mLightBall.updateShaderUniforms(mLightBall.mModelMatrix, mViewMatrix, mProjectionMatrix)
+        mLightBall.draw()
+    }
+
+    private fun drawEarth() {
+        mEarth.positionObjectInScene()
+        mEarth.updateShaderUniforms(
+            mEarth.mModelMatrix, mViewMatrix, mProjectionMatrix,
+            Camera.Position, earthDayTexture, earthNightTexture)
+        mEarth.draw()
     }
 
     private fun drawCube() {
