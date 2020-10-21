@@ -1,5 +1,6 @@
 package com.focus617.myopengldemo.base.objectbuilder
 
+import android.opengl.GLES31
 import timber.log.Timber
 import kotlin.math.cos
 import kotlin.math.sin
@@ -9,13 +10,13 @@ class ObjectBuilder2 {
     private val indexList = ArrayList<Short>()
     private var index: Short = 0    // Vertex index
 
-    fun appendCircle(radius: Float, numPoints: Int, UNIT_SIZE: Float = 1f) {
+    fun appendTexturedCircle(radius: Float, numPoints: Int, y: Float = 0f, UNIT_SIZE: Float = 1f) {
 
         var startVertexIndex = index
 
         // 第一个点: 圆面中心点的x、y、z坐标
         vertexList.add(0f)
-        vertexList.add(0f)
+        vertexList.add(y)
         vertexList.add(0f)
         // XZ平面的法线向量等于（0，1，0）
         vertexList.add(0f)
@@ -34,9 +35,8 @@ class ObjectBuilder2 {
             var angleInRadians =
                 (Math.PI.toFloat() * 2f) * (i.toFloat() / numPoints.toFloat())
             vertexList.add(radius * UNIT_SIZE * cos(angleInRadians))
-            vertexList.add(0f)
-            vertexList.add(radius * UNIT_SIZE * sin(angleInRadians))
-
+            vertexList.add(y)
+            vertexList.add(-radius * UNIT_SIZE * sin(angleInRadians))
             // XZ平面的法线向量等于（0，1，0）
             vertexList.add(0f)
             vertexList.add(1f)
@@ -54,9 +54,79 @@ class ObjectBuilder2 {
             indexList.add((startVertexIndex + i).toShort())
             indexList.add((startVertexIndex + i + 1).toShort())
         }
+        // 最后一个特殊三角形，需要循环引用第2个顶点
         indexList.add(startVertexIndex)    // 中心点
         indexList.add((startVertexIndex + numPoints - 1).toShort())
         indexList.add((startVertexIndex + 1).toShort())
+    }
+
+    fun appendTexturedOpenCylinder(
+        radius: Float,
+        height: Float,
+        numPoints: Int,
+        UNIT_SIZE: Float = 1f
+    ) {
+        val startVertexIndex = index
+
+        val yStart: Float = -height / 2f
+        val yEnd: Float = height / 2f
+        val sizew = 1.0f / numPoints    // 纹理水平方向步进值
+
+        // Generate strip around center point. <= is used because we want to
+        // generate the points at the starting angle twice, to complete the
+        // strip.
+        for (i in 0..numPoints) {
+            val angleInRadians =
+                (Math.PI.toFloat() * 2f) * (i.toFloat() / numPoints.toFloat())
+
+            val xPosition: Float = radius * UNIT_SIZE * cos(angleInRadians)
+            val zPosition: Float = radius * UNIT_SIZE * sin(angleInRadians)
+
+            // 第1个点
+            vertexList.add(xPosition)
+            vertexList.add(yStart)
+            vertexList.add(zPosition)
+            // 法线向量等于（x，0，z）
+            vertexList.add(xPosition)
+            vertexList.add(0f)
+            vertexList.add(zPosition)
+            //圆面中心点的顶点纹理坐标
+            vertexList.add(i * sizew)    //st坐标
+            vertexList.add(0f)
+            index++
+
+            // 第2个点
+            vertexList.add(xPosition)
+            vertexList.add(yEnd)
+            vertexList.add(zPosition)
+            vertexList.add(xPosition)
+            vertexList.add(0f)
+            vertexList.add(zPosition)
+            vertexList.add(i * sizew)    //st坐标
+            vertexList.add(1f)
+            index++
+        }
+
+        // 构造索引
+        for (i in 0 until numPoints) {
+            // 第一个三角形
+            indexList.add((startVertexIndex + 2 * i).toShort())
+            indexList.add((startVertexIndex + 2 * i + 1).toShort())
+            indexList.add((startVertexIndex + 2 * i + 2).toShort())
+            // 第二个三角形
+            indexList.add((startVertexIndex + 2 * i + 2).toShort())
+            indexList.add((startVertexIndex + 2 * i + 1).toShort())
+            indexList.add((startVertexIndex + 2 * i + 3).toShort())
+        }
+        // 最后2个特殊三角形，需要循环引用第1,2个顶点
+        indexList.add((startVertexIndex + 2 * numPoints - 2).toShort())
+        indexList.add((startVertexIndex + 2 * numPoints - 1).toShort())
+        indexList.add(startVertexIndex)
+
+        indexList.add(startVertexIndex)
+        indexList.add((startVertexIndex + 2 * numPoints - 1).toShort())
+        indexList.add((startVertexIndex + 1).toShort())
+
     }
 
     fun appendStar(
@@ -319,34 +389,34 @@ class ObjectBuilder2 {
     //对矩形自动切分纹理产生纹理数组的方法
     //bw:列数
     //bh:行数
-    fun generateTexCoor(bw: Int, bh: Int): FloatArray {
-        val result = FloatArray(bw * bh * 6 * 2)
-        val sizew = 1.0f / bw
-        val sizeh = 1.0f / bh
-        var c = 0
-        for (i in 0 until bh) {
-            for (j in 0 until bw) {
-                //每行列一个矩形，由两个三角形构成，共六个点，12个纹理坐标
-                val s = j * sizew
-                val t = i * sizeh               //得到i行j列小矩形的左上点的纹理坐标值
-                result[c++] = s
-                result[c++] = t                       //该矩形左上点纹理坐标值
-                result[c++] = s
-                result[c++] = t + sizeh               //该矩形左下点纹理坐标值
-                result[c++] = s + sizew
-                result[c++] = t                       //该矩形右上点纹理坐标值
-                result[c++] = s + sizew
-                result[c++] = t                       //该矩形右上点纹理坐标值
-                result[c++] = s
-                result[c++] = t + sizeh               //该矩形左下点纹理坐标值
-                result[c++] = s + sizew
-                result[c++] = t + sizeh               //该矩形右下点纹理坐标值
-            }
-        }
-        return result
-    }
-
-    fun generateBallTexCoor(): FloatArray = generateTexCoor(360 / angleSpan, 180 / angleSpan)
+//    fun generateTexCoor(bw: Int, bh: Int): FloatArray {
+//        val result = FloatArray(bw * bh * 6 * 2)
+//        val sizew = 1.0f / bw
+//        val sizeh = 1.0f / bh
+//        var c = 0
+//        for (i in 0 until bh) {
+//            for (j in 0 until bw) {
+//                //每行列一个矩形，由两个三角形构成，共六个点，12个纹理坐标
+//                val s = j * sizew
+//                val t = i * sizeh               //得到i行j列小矩形的左上点的纹理坐标值
+//                result[c++] = s
+//                result[c++] = t                       //该矩形左上点纹理坐标值
+//                result[c++] = s
+//                result[c++] = t + sizeh               //该矩形左下点纹理坐标值
+//                result[c++] = s + sizew
+//                result[c++] = t                       //该矩形右上点纹理坐标值
+//                result[c++] = s + sizew
+//                result[c++] = t                       //该矩形右上点纹理坐标值
+//                result[c++] = s
+//                result[c++] = t + sizeh               //该矩形左下点纹理坐标值
+//                result[c++] = s + sizew
+//                result[c++] = t + sizeh               //该矩形右下点纹理坐标值
+//            }
+//        }
+//        return result
+//    }
+//
+//    fun generateBallTexCoor(): FloatArray = generateTexCoor(360 / angleSpan, 180 / angleSpan)
 
     fun buildTexturedData(): GeneratedData {
 

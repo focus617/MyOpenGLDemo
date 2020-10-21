@@ -36,7 +36,8 @@ class Circle(
     private fun initVertices(radius: Float) {
         Timber.d("initVertices(radius=$radius)")
         val builder = ObjectBuilder2()
-        builder.appendCircle(radius, numPoints)
+        builder.appendTexturedCircle(radius, numPoints, 1f)
+        builder.appendTexturedOpenCylinder(radius, 2f, numPoints)
 
         //顶点坐标数据的初始化
         build(builder.buildTexturedData())
