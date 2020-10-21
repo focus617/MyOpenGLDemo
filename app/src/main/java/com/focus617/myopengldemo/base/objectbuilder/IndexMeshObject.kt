@@ -6,7 +6,7 @@ import android.opengl.Matrix
 import com.focus617.myopengldemo.base.program.ShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import timber.log.Timber
-import java.nio.*
+import java.nio.IntBuffer
 import kotlin.properties.Delegates
 
 /**
@@ -97,7 +97,7 @@ abstract class IndexMeshObject(val context: Context) : NewDrawingObject {
         numElements = indices.size
     }
 
-    fun build(data: ObjectBuilder2.Companion.GeneratedData){
+    fun build(data: ObjectBuilder2.Companion.GeneratedData) {
         build(data.vertexArray, data.numVertices, data.indexArray)
     }
 
@@ -113,13 +113,23 @@ abstract class IndexMeshObject(val context: Context) : NewDrawingObject {
     }
 
     fun moveTo(position: Vector) {
+        Matrix.translateM(
+            mModelMatrix, 0,
+            position.x - mPosition.x,
+            position.y - mPosition.y,
+            position.z - mPosition.z
+        )
         mPosition = position
-        positionObjectInScene()
     }
 
     fun move(vector: Vector) {
         mPosition = mPosition.plus(vector)
-        positionObjectInScene()
+        Matrix.translateM(mModelMatrix, 0, vector.x, vector.y, vector.z)
+    }
+
+    fun rotate(angle: Float, x: Float, y: Float, z: Float) //设置绕xyz轴移动
+    {
+        Matrix.rotateM(mModelMatrix, 0, angle, x, y, z)
     }
 
     protected fun setupVertices() {

@@ -8,8 +8,8 @@ import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.base.Model
 import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.basic.PointLight
-import com.focus617.myopengldemo.objects.geometry.d2.Star
 import com.focus617.myopengldemo.objects.geometry.d2.Square
+import com.focus617.myopengldemo.objects.geometry.d2.Star
 import com.focus617.myopengldemo.objects.geometry.d2.Triangle
 import com.focus617.myopengldemo.objects.geometry.d3.*
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
@@ -33,7 +33,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private var boxTexture = 0
 
     private lateinit var mLightCube: Cube
-    private lateinit var mLightBall: Ball
+    private lateinit var mSun: Ball
 
     private lateinit var mEarth: Earth
     private var earthDayTexture = 0
@@ -41,6 +41,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
     private lateinit var mMoon: Moon
     private var moonTexture = 0
+
+    var eAngle = 0f //地球自转角度
+    var cAngle = 0f //月球自转的角度
 
     private lateinit var mModel: Model
 
@@ -62,7 +65,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         glEnable(GL_CULL_FACE)
 
 //        mLightCube = Cube(context)
-        mLightBall = Ball(context, 1.0f)
+        mSun = Ball(context, 1.0f)
 
         mEarth = Earth(context, 1.0f)
         earthDayTexture =TextureHelper.loadTexture(context, R.drawable.earth)
@@ -105,6 +108,23 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 //        )
         MatrixHelper.perspectiveM(mProjectionMatrix, yFovInDegrees, aspect, 0.1f, 100f)
 
+
+        //启动一个线程定时旋转地球、月球
+        object : Thread() {
+            override fun run() {
+                while (true) {
+                    //地球自转角度
+                    eAngle = (eAngle + 2) % 360
+                    //天球自转角度
+                    cAngle = (cAngle + 0.2f) % 360
+                    try {
+                        sleep(100)
+                    } catch (e: InterruptedException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }.start()
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -114,10 +134,10 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         placeCamera()
 
 //        drawLightCube()
-        drawLightBall()
+        drawSun()
 
         drawEarth()
-        
+
         drawMoon()
 
 //        drawCube()
@@ -132,25 +152,36 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         mLightCube.draw()
     }
 
-    private fun drawLightBall() {
-        mLightBall.moveTo(PointLight.position)
-        mLightBall.updateShaderUniforms(mLightBall.mModelMatrix, mViewMatrix, mProjectionMatrix)
-        mLightBall.draw()
+    private fun drawSun() {
+        mSun.positionObjectInScene()
+        mSun.moveTo(PointLight.position)
+        mSun.updateShaderUniforms(mSun.mModelMatrix, mViewMatrix, mProjectionMatrix)
+        mSun.draw()
     }
 
     private fun drawEarth() {
         mEarth.positionObjectInScene()
+        //地球自转
+        mEarth.rotate(eAngle, 0f, 1f, 0f)
+
         mEarth.updateShaderUniforms(
             mEarth.mModelMatrix, mViewMatrix, mProjectionMatrix,
-            Camera.Position, earthDayTexture, earthNightTexture)
+            Camera.Position, earthDayTexture, earthNightTexture
+        )
         mEarth.draw()
     }
 
     private fun drawMoon() {
-        mMoon.positionObjectInScene(-2.0f, -3.0f, -3.0f)
+        mMoon.positionObjectInScene()
+        mMoon.moveTo(Vector(-2.0f, 0.0f, -3.0f))
+        //地球自转
+        mMoon.rotate(eAngle, 0f, 1f, 0f)
+        mMoon.rotate(cAngle, 0f, 1f, 0f)
+
         mMoon.updateShaderUniforms(
             mMoon.mModelMatrix, mViewMatrix, mProjectionMatrix,
-            Camera.Position, moonTexture)
+            Camera.Position, moonTexture
+        )
         mMoon.draw()
     }
 
