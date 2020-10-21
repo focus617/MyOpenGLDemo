@@ -257,7 +257,7 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
             )
 
             // Now test if mallet has struck the puck.
-            val distance = Geometry.vectorBetween(blueMalletPosition, puckPosition).length()
+            val distance = Geometry.vectorBetween(blueMalletPosition, puckPosition).module()
             if (distance < puck.radius + mallet.radius) {
                 // The mallet has struck the puck. Now send the puck flying
                 // based on the mallet velocity.

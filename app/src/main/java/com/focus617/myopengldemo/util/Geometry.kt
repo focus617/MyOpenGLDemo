@@ -47,15 +47,20 @@ class Geometry {
         class Vector(var x: Float, var y: Float, var z: Float) {
 
             constructor(from: Point, to: Point) :
-                    this((to.x-from.x), (to.y-from.y),(to.z-from.z))
+                    this((to.x - from.x), (to.y - from.y), (to.z - from.z))
 
             constructor(from: Vector, to: Vector) :
-                    this((to.x-from.x), (to.y-from.y),(to.z-from.z))
+                    this((to.x - from.x), (to.y - from.y), (to.z - from.z))
 
             override fun toString(): String = "($x, $y, $z)"
 
-            fun length(): Float = kotlin.math.sqrt(x * x + y * y + z * z)
+            //求向量的模的方法
+            fun module(): Float = kotlin.math.sqrt(x * x + y * y + z * z)
 
+            //向量规格化的方法
+            fun normalize(): Vector = scale(1f / module())
+
+            //求向量叉积的方法
             // http://en.wikipedia.org/wiki/Cross_product
             fun crossProduct(other: Vector) = Vector(
                 y * other.z - z * other.y,
@@ -77,8 +82,6 @@ class Geometry {
                 y * f,
                 z * f
             )
-
-            fun normalize(): Vector = scale(1f / length())
         }
 
         fun vectorBetween(from: Point, to: Point): Vector {
@@ -106,8 +109,8 @@ class Geometry {
             // thought of as consisting of two triangles, so this is the same as
             // twice the area of the triangle defined by the two vectors.
             // http://en.wikipedia.org/wiki/Cross_product#Geometric_meaning
-            val areaOfTriangleTimesTwo = p1ToPoint.crossProduct(p2ToPoint).length()
-            val lengthOfBase = ray.vector.length()
+            val areaOfTriangleTimesTwo = p1ToPoint.crossProduct(p2ToPoint).module()
+            val lengthOfBase = ray.vector.module()
 
             // The area of a triangle is also equal to (base * height) / 2. In
             // other words, the height is equal to (area * 2) / base. The height
@@ -126,7 +129,6 @@ class Geometry {
 
             return ray.point.translate(ray.vector.scale(scaleFactor))
         }
-
 
     }
 }
