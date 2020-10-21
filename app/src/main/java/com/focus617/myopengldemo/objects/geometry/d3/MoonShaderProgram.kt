@@ -42,9 +42,9 @@ class MoonShaderProgram(context: Context) : ShaderProgram(
         setFloat(ShaderConstants.U_POINT_LIGHT_LINEAR, PointLight.Linear)
         setFloat(ShaderConstants.U_POINT_LIGHT_QUADRATIC, PointLight.Quadratic)
 
-        GLES31.glActiveTexture(GLES31.GL_TEXTURE2)
+        GLES31.glActiveTexture(GLES31.GL_TEXTURE0)
         GLES31.glBindTexture(GLES31.GL_TEXTURE_2D, moonTextureId)
-        setTexture(ShaderConstants.U_TEXTURE_UNIT,2)// The 2 means "GL_TEXTURE2"
+        setTexture(ShaderConstants.U_TEXTURE_UNIT,0)// The 0 means "GL_TEXTURE0", or the first texture unit.
 
     }
 }

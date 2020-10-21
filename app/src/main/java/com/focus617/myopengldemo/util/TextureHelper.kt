@@ -8,6 +8,21 @@ import android.opengl.GLUtils
 import timber.log.Timber
 
 object TextureHelper {
+
+    private var samplers = IntArray(1) //存放Samplers id的成员变量数组
+
+    init{
+        initSampler()
+    }
+
+    private fun initSampler() {        //初始化Sampler对象的方法
+        glGenSamplers(1, samplers, 0) //生成Samplers id
+        glSamplerParameterf(samplers[0], GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR.toFloat()) //设置MIN采样方式
+        glSamplerParameterf(samplers[0], GL_TEXTURE_MAG_FILTER, GL_LINEAR.toFloat()) //设置MAG采样方式
+        glSamplerParameterf(samplers[0], GL_TEXTURE_WRAP_S, GL_REPEAT.toFloat()) //设置S轴拉伸方式
+        glSamplerParameterf(samplers[0], GL_TEXTURE_WRAP_T, GL_REPEAT.toFloat()) //设置T轴拉伸方式
+    }
+
     /**
      * Loads a texture from a resource ID, returning the OpenGL ID for that
      * texture. Returns 0 if the load failed.
@@ -41,9 +56,11 @@ object TextureHelper {
         // Bind to the texture in OpenGL
         glBindTexture(GL_TEXTURE_2D, textureObjectIds[0])
 
+        //绑定纹理单元与sampler
+        glBindSampler(0, samplers[0])
         // Set filtering: a default must be set, or the texture will be black.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
 
         // Load the bitmap into the bound texture.
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0)
@@ -147,7 +164,7 @@ object TextureHelper {
             }
         }
 
-        when(filterMode){
+        when (filterMode) {
             FilterMode.NEAREST_NEIGHBOUR -> {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
