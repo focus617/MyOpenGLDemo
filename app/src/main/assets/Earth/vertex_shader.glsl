@@ -10,8 +10,6 @@ uniform mat4 u_ProjectionMatrix;
 
 uniform vec3 u_ViewPos;
 
-out  vec3 v_Position;//用于传递给片元着色器的变量
-
 out vec3 v_worldSpacePos;
 out vec3 v_worldSpaceViewPos;
 out vec3 v_Normal;
@@ -21,9 +19,6 @@ void main()
 {
     //根据总变换矩阵计算此次绘制此顶点位置
     gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_ModelMatrix * vec4(a_Position, 1.0);
-
-    //将原始顶点位置传递给片元着色器
-    v_Position = a_Position;
 
     // 将着色点和摄像机转换到世界坐标空间
     v_worldSpacePos = vec3(u_ModelMatrix * vec4(a_Position, 1.0));

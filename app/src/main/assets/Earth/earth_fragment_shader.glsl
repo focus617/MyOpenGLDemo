@@ -8,9 +8,6 @@ precision mediump float;
 uniform sampler2D u_TextureUnit1;
 uniform sampler2D u_TextureUnit2;
 
-uniform float uR;
-in vec3 v_Position;//接收从顶点着色器过来的参数
-
 in vec3 v_worldSpacePos;
 in vec3 v_worldSpaceViewPos;
 in vec3 v_Normal;
@@ -32,8 +29,6 @@ struct Light {
 
 uniform Light light;
 
-vec3 material;
-
 vec3 norm;
 vec3 lightDir;
 float lightDistance;
@@ -41,7 +36,6 @@ float lightDistance;
 vec3 viewDir;
 vec3 reflectDir;
 
-vec3 getMaterialColor();
 vec3 getAmbientLighting();
 vec3 getDiffuseLighting();
 vec3 getSpecularLighting();
@@ -104,7 +98,7 @@ vec3 getAmbientLighting()
 // 漫反射
 vec3 getDiffuseLighting()
 {
-    float adjustParam = 5.0;
+    float adjustParam = 8.0;
     float cosine = max(dot(norm, lightDir), 0.0);
     float attenuation = 1.0 / (light.constant + light.linear * lightDistance +
     light.quadratic * (pow(lightDistance, 2.0)));

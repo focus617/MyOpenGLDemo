@@ -10,11 +10,8 @@ import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.basic.PointLight
 import com.focus617.myopengldemo.objects.geometry.d2.Star
 import com.focus617.myopengldemo.objects.geometry.d2.Square
-import com.focus617.myopengldemo.objects.geometry.d3.Cube
-import com.focus617.myopengldemo.objects.geometry.d3.Cube2
 import com.focus617.myopengldemo.objects.geometry.d2.Triangle
-import com.focus617.myopengldemo.objects.geometry.d3.Ball
-import com.focus617.myopengldemo.objects.geometry.d3.Earth
+import com.focus617.myopengldemo.objects.geometry.d3.*
 import com.focus617.myopengldemo.util.Geometry.Companion.Vector
 import com.focus617.myopengldemo.util.MatrixHelper
 import com.focus617.myopengldemo.util.TextureHelper
@@ -42,6 +39,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private var earthDayTexture = 0
     private var earthNightTexture = 0
 
+    private lateinit var mMoon: Moon
+    private var moonTexture = 0
+
     private lateinit var mModel: Model
 
     private lateinit var mTriangle: Triangle
@@ -67,6 +67,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         mEarth = Earth(context, 1.0f)
         earthDayTexture =TextureHelper.loadTexture(context, R.drawable.earth)
         earthNightTexture =TextureHelper.loadTexture(context, R.drawable.earthn)
+
+        mMoon = Moon(context, 0.5f)
+        moonTexture =TextureHelper.loadTexture(context, R.drawable.moon)
 
 //        mCube = Cube2(context)
 //        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
@@ -114,6 +117,8 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         drawLightBall()
 
         drawEarth()
+        
+        drawMoon()
 
 //        drawCube()
 //        drawTriangle()
@@ -139,6 +144,14 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
             mEarth.mModelMatrix, mViewMatrix, mProjectionMatrix,
             Camera.Position, earthDayTexture, earthNightTexture)
         mEarth.draw()
+    }
+
+    private fun drawMoon() {
+        mMoon.positionObjectInScene(-2.0f, -3.0f, -3.0f)
+        mMoon.updateShaderUniforms(
+            mMoon.mModelMatrix, mViewMatrix, mProjectionMatrix,
+            Camera.Position, moonTexture)
+        mMoon.draw()
     }
 
     private fun drawCube() {

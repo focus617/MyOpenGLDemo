@@ -10,7 +10,7 @@ import timber.log.Timber
 /**
  * 表示地球的类，采用多重纹理
  */
-class Earth(
+class Moon(
     context: Context,
     val radius: Float
 ) : IndexMeshObject(context) {
@@ -43,7 +43,7 @@ class Earth(
 
     override fun initShader() {
         //自定义渲染管线程序
-        mProgram = EarthShaderProgram(context)
+        mProgram = MoonShaderProgram(context)
         bindData()
     }
 
@@ -52,17 +52,15 @@ class Earth(
         viewMatrix: FloatArray,
         projectionMatrix: FloatArray,
         viewPosition: Geometry.Companion.Vector,
-        earthDayTextureId: Int,
-        earthNightTextureId: Int
+        moonTextureId: Int
     ) {
         mProgram.use()
-        (mProgram as EarthShaderProgram).setUniforms(
+        (mProgram as MoonShaderProgram).setUniforms(
             modelMatrix,
             viewMatrix,
             projectionMatrix,
             viewPosition,
-            earthDayTextureId,
-            earthNightTextureId,
+            moonTextureId
         )
     }
 

@@ -16,7 +16,7 @@ import kotlin.properties.Delegates
 abstract class IndexMeshObject(val context: Context) : NewDrawingObject {
 
     //自定义渲染管线程序
-    protected lateinit var mProgram: ShaderProgram
+    lateinit var mProgram: ShaderProgram
 
     // 创建缓存，并绑定缓存类型
     private val mVAOBuf: IntBuffer = IntBuffer.allocate(1)   // 顶点数组对象
