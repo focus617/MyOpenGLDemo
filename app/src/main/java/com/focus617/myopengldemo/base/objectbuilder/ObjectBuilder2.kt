@@ -11,44 +11,52 @@ class ObjectBuilder2 {
 
     fun appendCircle(radius: Float, numPoints: Int, UNIT_SIZE: Float = 1f) {
 
+        var startVertexIndex = index
+
+        // 第一个点: 圆面中心点的x、y、z坐标
+        vertexList.add(0f)
+        vertexList.add(0f)
+        vertexList.add(0f)
+        // XZ平面的法线向量等于（0，1，0）
+        vertexList.add(0f)
+        vertexList.add(1f)
+        vertexList.add(0f)
+        //圆面中心点的顶点纹理坐标
+        vertexList.add(0.5f)    //st坐标
+        vertexList.add(0.5f)
+        index++
+
         // Fan around center point. <= is used because we want to generate
         // the point at the starting angle twice to complete the fan.
-        for (i in 0..numPoints) {
+        for (i in 0 until numPoints) {
 
-            // 第一个点的x、y、z坐标: Center point of fan
-            vertexList.add(0f)
-            vertexList.add(0f)
-            vertexList.add(0f)
-            // XZ平面的法线向量等于（0，1，0）
-            vertexList.add(0f)
-            vertexList.add(1f)
-            vertexList.add(0f)
-            indexList.add(index++)
-
-            // 第二个点的x、y、z坐标:
+            // 第二个点开始，顶点都在圆周上，其x、y、z坐标:
             var angleInRadians =
                 (Math.PI.toFloat() * 2f) * (i.toFloat() / numPoints.toFloat())
             vertexList.add(radius * UNIT_SIZE * cos(angleInRadians))
             vertexList.add(0f)
             vertexList.add(radius * UNIT_SIZE * sin(angleInRadians))
-            // XZ平面的法线向量等于（0，1，0）
-            vertexList.add(0f)
-            vertexList.add(1f)
-            vertexList.add(0f)
-            indexList.add(index++)
 
-            //第三个点的x、y、z坐标
-            angleInRadians =
-                (Math.PI.toFloat() * 2f) * ((i + 1).toFloat() / numPoints.toFloat())
-            vertexList.add(radius * UNIT_SIZE * cos(angleInRadians))
-            vertexList.add(0f)
-            vertexList.add(radius * UNIT_SIZE * sin(angleInRadians))
             // XZ平面的法线向量等于（0，1，0）
             vertexList.add(0f)
             vertexList.add(1f)
             vertexList.add(0f)
-            indexList.add(index++)
+            //当前弧度对应的边缘顶点纹理坐标
+            vertexList.add(0.5f - 0.5f * cos(angleInRadians))//st坐标
+            vertexList.add(0.5f - 0.5f * sin(angleInRadians))
+
+            index++
         }
+
+        // 构造索引
+        for (i in 1 until numPoints - 1) {
+            indexList.add(startVertexIndex)    // 中心点
+            indexList.add((startVertexIndex + i).toShort())
+            indexList.add((startVertexIndex + i + 1).toShort())
+        }
+        indexList.add(startVertexIndex)    // 中心点
+        indexList.add((startVertexIndex + numPoints - 1).toShort())
+        indexList.add((startVertexIndex + 1).toShort())
     }
 
     fun appendStar(
@@ -308,7 +316,7 @@ class ObjectBuilder2 {
         }
     }
 
-    //自动切分纹理产生纹理数组的方法
+    //对矩形自动切分纹理产生纹理数组的方法
     //bw:列数
     //bh:行数
     fun generateTexCoor(bw: Int, bh: Int): FloatArray {
@@ -340,29 +348,31 @@ class ObjectBuilder2 {
 
     fun generateBallTexCoor(): FloatArray = generateTexCoor(360 / angleSpan, 180 / angleSpan)
 
-    fun buildTexturedBallData(): GeneratedData {
+    fun buildTexturedData(): GeneratedData {
 
-        val numVertices = vertexList.size / TEXTURE_BALL_VERTEX_ATTRIBUTE_SIZE
+        val numVertices = vertexList.size / TEXTURE_VERTEX_ATTRIBUTE_SIZE
 
-        val vertexArray = FloatArray(numVertices * TEXTURE_BALL_VERTEX_ATTRIBUTE_SIZE)
+        val vertexArray = FloatArray(numVertices * TEXTURE_VERTEX_ATTRIBUTE_SIZE)
         val indexArray = ShortArray(indexList.size)
 
         Timber.d(
             "buildTexturedBallData(): Size - V:${vertexArray.size}, I:${indexArray.size}}"
         )
 
-        // 将构造的顶点列表转存为顶点数组和顶点索引数组
-
+        // 将构造的顶点列表转存为顶点数组
         for (i in 0 until numVertices) {
             // copy vertex and normal
-            for (j in 0 until TEXTURE_BALL_VERTEX_ATTRIBUTE_SIZE) {
-                vertexArray[i * TEXTURE_BALL_VERTEX_ATTRIBUTE_SIZE + j] =
-                    vertexList[i * TEXTURE_BALL_VERTEX_ATTRIBUTE_SIZE + j]
+            for (j in 0 until TEXTURE_VERTEX_ATTRIBUTE_SIZE) {
+                vertexArray[i * TEXTURE_VERTEX_ATTRIBUTE_SIZE + j] =
+                    vertexList[i * TEXTURE_VERTEX_ATTRIBUTE_SIZE + j]
             }
+        }
 
-            // copy index
+        // 将构造的顶点列表转存为顶点索引数组
+        for (i in 0 until indexList.size) {
             indexArray[i] = indexList[i]
         }
+
         return GeneratedData(numVertices, vertexArray, indexArray)
     }
 
@@ -407,7 +417,7 @@ class ObjectBuilder2 {
         private const val VERTEX_ATTRIBUTE_SIZE =
             VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE
 
-        private const val TEXTURE_BALL_VERTEX_ATTRIBUTE_SIZE =
+        private const val TEXTURE_VERTEX_ATTRIBUTE_SIZE =
             VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE + VERTEX_TEXCOORDO_SIZE
     }
 }

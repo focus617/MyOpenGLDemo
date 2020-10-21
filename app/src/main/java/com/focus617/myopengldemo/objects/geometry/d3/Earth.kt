@@ -37,8 +37,8 @@ class Earth(
         builder.appendTexturedBall(radius)
 
         //顶点坐标数据的初始化
-        build(builder.buildTexturedBallData())
-        mVertexArray.dump(16)
+        build(builder.buildTexturedData())
+//        mVertexArray.dump(16)
     }
 
     override fun initShader() {

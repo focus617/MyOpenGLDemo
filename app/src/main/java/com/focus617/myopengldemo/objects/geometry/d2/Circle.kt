@@ -1,18 +1,20 @@
-package com.focus617.myopengldemo.objects.geometry.d3
+package com.focus617.myopengldemo.objects.geometry.d2
 
 import android.content.Context
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2
+import com.focus617.myopengldemo.objects.geometry.d3.EarthShaderProgram
 import com.focus617.myopengldemo.util.Geometry
 import timber.log.Timber
 
 /**
  * 表示地球的类，采用多重纹理
  */
-class Moon(
+class Circle(
     context: Context,
-    val radius: Float
+    val radius: Float,
+    val numPoints: Int = 40
 ) : IndexMeshObject(context) {
 
     val UNIT_SIZE: Float = 1f
@@ -34,16 +36,17 @@ class Moon(
     private fun initVertices(radius: Float) {
         Timber.d("initVertices(radius=$radius)")
         val builder = ObjectBuilder2()
-        builder.appendTexturedBall(radius)
+        builder.appendCircle(radius, numPoints)
 
         //顶点坐标数据的初始化
         build(builder.buildTexturedData())
 //        mVertexArray.dump(16)
+        mElementArray.dump(40)
     }
 
     override fun initShader() {
         //自定义渲染管线程序
-        mProgram = MoonShaderProgram(context)
+        mProgram = EarthShaderProgram(context)
         bindData()
     }
 
@@ -52,15 +55,17 @@ class Moon(
         viewMatrix: FloatArray,
         projectionMatrix: FloatArray,
         viewPosition: Geometry.Companion.Vector,
-        moonTextureId: Int
+        earthDayTextureId: Int,
+        earthNightTextureId: Int
     ) {
         mProgram.use()
-        (mProgram as MoonShaderProgram).setUniforms(
+        (mProgram as EarthShaderProgram).setUniforms(
             modelMatrix,
             viewMatrix,
             projectionMatrix,
             viewPosition,
-            moonTextureId
+            earthDayTextureId,
+            earthNightTextureId,
         )
     }
 

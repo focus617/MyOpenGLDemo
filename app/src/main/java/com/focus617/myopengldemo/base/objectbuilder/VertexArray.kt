@@ -81,19 +81,19 @@ class ElementArray(indices: ShortArray) {
         shortBuffer.position(0)
     }
 
-    fun dump() {
+    fun dump(count: Int = 9) {
         Timber.d("ElementArray dump:")
         val buffSize = shortBuffer.capacity()
         Timber.d("ElementArray short buffer Size: $buffSize")
 
-        if (buffSize < 6) {
+        if (buffSize < count) {
             for (i in 0..buffSize)
                 Timber.d("Element[$i]: ${shortBuffer[i]}")
         } else {
-            for (i in 0..2)
+            for (i in 0..count)
                 Timber.d("Element[$i]: ${shortBuffer[i]}")
             Timber.d("...")
-            for (i in (buffSize - 3) until buffSize)
+            for (i in (buffSize - count) until buffSize)
                 Timber.d("Element[$i]: ${shortBuffer[i]}")
         }
     }

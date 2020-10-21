@@ -8,6 +8,7 @@ import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.base.Model
 import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.basic.PointLight
+import com.focus617.myopengldemo.objects.geometry.d2.Circle
 import com.focus617.myopengldemo.objects.geometry.d2.Square
 import com.focus617.myopengldemo.objects.geometry.d2.Star
 import com.focus617.myopengldemo.objects.geometry.d2.Triangle
@@ -29,7 +30,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private val it_modelViewMatrix = FloatArray(16)
 
     private lateinit var mCube: Cube2
-    private val mCubePos: Vector = Vector(0.0f, 0.0f, 0.0f)
+    private val mCubePos: Vector = Vector(2.0f, 0.0f, -3.0f)
     private var boxTexture = 0
 
     private lateinit var mLightCube: Cube
@@ -50,6 +51,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     private lateinit var mTriangle: Triangle
     private lateinit var mSquare: Square
     private lateinit var mStar: Star
+    private lateinit var mCircle: Circle
 
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
@@ -65,21 +67,22 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         glEnable(GL_CULL_FACE)
 
 //        mLightCube = Cube(context)
-        mSun = Ball(context, 1.0f)
+//        mSun = Ball(context, 1.0f)
 
-        mEarth = Earth(context, 1.0f)
+//        mEarth = Earth(context, 1.0f)
         earthDayTexture =TextureHelper.loadTexture(context, R.drawable.earth)
         earthNightTexture =TextureHelper.loadTexture(context, R.drawable.earthn)
 
-        mMoon = Moon(context, 0.5f)
-        moonTexture =TextureHelper.loadTexture(context, R.drawable.moon)
+//        mMoon = Moon(context, 0.5f)
+//        moonTexture =TextureHelper.loadTexture(context, R.drawable.moon)
 
 //        mCube = Cube2(context)
 //        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
-//
+
 //        mTriangle = Triangle(context)
 //        mSquare = Square(context)
 //        mStar = Star(context, 0.4f, 1.0f, -0.3f)
+        mCircle = Circle(context, 1f)
 
 
 //        // build model
@@ -134,19 +137,21 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         placeCamera()
 
 //        drawLightCube()
-        drawSun()
+//        drawSun()
 
-        drawEarth()
+//        drawEarth()
 
-        drawMoon()
+//        drawMoon()
 
 //        drawCube()
+
 //        drawTriangle()
 //        drawSquare()
-//        drawStar()
+        drawStar()
     }
 
     private fun drawLightCube() {
+        mLightCube.positionObjectInScene()
         mLightCube.moveTo(PointLight.position)
         mLightCube.updateShaderUniforms(mLightCube.mModelMatrix, mViewMatrix, mProjectionMatrix)
         mLightCube.draw()
@@ -186,6 +191,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawCube() {
+        mCube.positionObjectInScene()
         mCube.moveTo(mCubePos)
 //        updateItModelViewMatrix()
 
@@ -210,9 +216,16 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
     }
 
     private fun drawStar() {
-        mStar.positionObjectInScene(-2.0f, -3.0f, -7.0f)
-        mStar.updateShaderUniforms(mStar.mModelMatrix, mViewMatrix, mProjectionMatrix)
-        mStar.draw()
+//        mStar.positionObjectInScene(-2.0f, -3.0f, -7.0f)
+//        mStar.updateShaderUniforms(mStar.mModelMatrix, mViewMatrix, mProjectionMatrix)
+//        mStar.draw()
+
+        mCircle.positionObjectInScene()
+        mCircle.updateShaderUniforms(
+            mCircle.mModelMatrix, mViewMatrix, mProjectionMatrix,
+            Camera.Position, earthDayTexture, earthNightTexture
+        )
+        mCircle.draw()
     }
 
     private fun updateItModelViewMatrix() {
