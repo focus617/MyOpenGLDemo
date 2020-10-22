@@ -225,6 +225,28 @@ abstract class IndexMeshObject(val context: Context) : NewDrawingObject {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
 
     }
+
+    fun drawLine() {
+        // 将程序添加到OpenGL ES环境
+        mProgram.use()
+
+        // Bind the VAO and then draw with VAO settings
+        glBindVertexArray(mVaoId)
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mElementId)
+
+        glLineWidth(2f)
+
+        // 图元装配，绘制边框线
+        glDrawElements(GL_LINE_STRIP, numElements, GL_UNSIGNED_SHORT, 0)
+
+        // Reset to the default VAO
+        glBindVertexArray(0)
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
+
+    }
 }
 
 

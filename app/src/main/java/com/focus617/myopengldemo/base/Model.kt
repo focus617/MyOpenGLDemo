@@ -1,6 +1,7 @@
 package com.focus617.myopengldemo.base
 
 import android.content.Context
+import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 import com.focus617.myopengldemo.base.program.ShaderProgram
 import com.focus617.myopengldemo.xuscene.base.XuMesh
 import com.focus617.myopengldemo.xuscene.data.XuScene
@@ -8,17 +9,12 @@ import com.focus617.myopengldemo.xuscene.data.XuScene
 class Model(val context: Context, path: String) {
 
     //模型所包含的Mesh集合
-    private val meshes = mutableListOf<Mesh>()
+    private val meshes = mutableListOf<IndexMeshObject>()
 
     //模型文件所在目录
     private var directory: String =
         if (path.contains('/')) path.substring(0, path.lastIndexOf('/'))
         else "."
-
-    init {
-        loadModel(path)
-    }
-
 
     //加载模型
     private fun loadModel(path: String) {
@@ -40,7 +36,7 @@ class Model(val context: Context, path: String) {
     //渲染模型，即依次渲染各个网格
     fun draw(shaderProgram: ShaderProgram) {
         for (mesh in meshes)
-            mesh.draw(shaderProgram);
+            mesh.draw();
     }
 
     /**

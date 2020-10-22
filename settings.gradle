@@ -1,2 +1,3 @@
+include ':bezier'
 include ':app'
 rootProject.name = "MyOpenGLDemo"

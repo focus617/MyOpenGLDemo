@@ -226,7 +226,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
             Camera.Position, earthDayTexture, earthNightTexture
         )
 
-        mObject.draw()
+        mObject.drawLine()
     }
 
     private fun updateItModelViewMatrix() {

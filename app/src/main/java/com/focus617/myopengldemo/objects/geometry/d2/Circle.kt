@@ -37,12 +37,9 @@ class Circle(
         Timber.d("initVertices(radius=$radius)")
         val builder = ObjectBuilder2()
         builder.appendCircle(radius, numPoints, 0f)
-        builder.appendCone(radius, 2f, numPoints)
 
         //顶点坐标数据的初始化
         build(builder.buildData())
-//        mVertexArray.dump(16)
-        mElementArray.dump(40)
     }
 
     override fun initShader() {
