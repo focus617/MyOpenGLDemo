@@ -2,12 +2,11 @@ package com.focus617.myopengldemo.xuscene.utils
 
 import android.content.Context
 import android.text.TextUtils
-import com.focus617.myopengldemo.xuscene.base.Face
-import com.focus617.myopengldemo.xuscene.base.FaceElement
-import com.focus617.myopengldemo.xuscene.base.XuMesh
+import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2.Companion.GeneratedData
 import com.focus617.myopengldemo.util.clamp
 import timber.log.Timber
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -15,23 +14,54 @@ import java.util.*
  */
 object ObjLoader {
 
-    private lateinit var mesh: XuMesh
+    private const val DEFAULT_GROUP_NAME = "Default"
 
-    private var currentMaterialName: String = ""     // 存放解析出来的face当前使用的texture
-    private var currentFaceList: ArrayList<Face>? = null
+    private lateinit var mObjInfo: ObjInfo
+
+    private var currentMaterialName: String = DEFAULT_GROUP_NAME     // 存放解析出来的face当前使用的texture
+    private var currentIndexList: ArrayList<Int>? = null
+    private var currentVertexList: ArrayList<Float>? = null
     private var hasFace = false
 
+    fun dumpObjInfo() {
+        Timber.d("dumpMesh()")
+        mObjInfo.dump()
+        mObjInfo.dumpVertices()
+        mObjInfo.dumpNormals()
+        mObjInfo.dumpTextureCoords()
+        mObjInfo.dumpFaces()
+        mObjInfo.dumpMaterials()
+    }
 
-    fun load(context: Context, objFileName: String): XuMesh {
+    /**
+     * 加载并分析Obj文件，构造 Meshes 和 Materials
+     * @param context   Context
+     * @param objFilePathName assets的obj文件路径
+     * @return
+     */
+    fun loadFromObjFile(context: Context, objFilePathName: String)
+            : HashMap<String, GeneratedData> {
 
-        Timber.d("loadFromObjFile(): $objFileName")
-        mesh = XuMesh()
-        mesh.name = objFileName
+        Timber.d("loadFromObjFile() from $objFilePathName")
+
+        if (objFilePathName.isEmpty() or TextUtils.isEmpty(objFilePathName)) {
+            Timber.w("Obj File doesn't exist")
+        }
+        val objInfo = load(context, objFilePathName)
+        objInfo.dump()
+
+        return objInfo.parse()
+    }
+
+    private fun load(context: Context, objFilePathName: String): ObjInfo {
+
+        mObjInfo = ObjInfo()
+        mObjInfo.name = objFilePathName
 
         try {
-            val scanner = Scanner(context.assets.open(objFileName))
+            val scanner = Scanner(context.assets.open(objFilePathName))
             while (scanner.hasNextLine()) {
-                val line = scanner.nextLine()
+                val line = scanner.nextLine().trim()
 
                 when {
                     line.isEmpty() -> continue
@@ -40,8 +70,8 @@ object ObjLoader {
 
                     line.startsWith(MTLLIB) -> {
                         fillMtlLib(line)
-                        if (mesh.mMtlFileName != null)
-                            MtlLoader.load(context, mesh.mMtlFileName!!, mesh.mMaterials)
+                        if (mObjInfo.mMtlFileName != null)
+                            MtlLoader.load(context, mObjInfo.mMtlFileName!!, mObjInfo.mMaterials)
                     }
                     line.startsWith(O) -> {
                         fillObjName(line)
@@ -70,14 +100,15 @@ object ObjLoader {
         } catch (ex: Exception) {
             Timber.e(ex.message.toString())
         }
-        return mesh
+        return mObjInfo
     }
+
 
     // 对象名称
     private fun fillObjName(line: String) {
         val items = line.split(DELIMITER).toTypedArray()
         if (items.size != 2) return
-        mesh.name = items[1]
+        mObjInfo.name = items[1]
     }
 
     // 材质
@@ -85,12 +116,12 @@ object ObjLoader {
         val items = line.split(DELIMITER).toTypedArray()
         if (items.size != 2) return
         if (!TextUtils.isEmpty(items[1])) {
-            mesh.mMtlFileName = items[1]
+            mObjInfo.mMtlFileName = items[1]
         }
     }
 
     /**
-     * build [XuMesh.mVertices] based on line from OBJ containing vertex data
+     * build [ObjInfo.mVertices] based on line from OBJ containing vertex data
      */
     private fun fillVertexList(line: String) {
         val coordinates = line.split(DELIMITER)
@@ -99,11 +130,11 @@ object ObjLoader {
         val x = coordinates[1].toFloat()
         val y = coordinates[2].toFloat()
         val z = coordinates[3].toFloat()
-        mesh.mVertices.add(ObjVertex(x, y, z))
+        mObjInfo.mVertices.add(ObjVertex(x, y, z))
     }
 
     /**
-     * build [XuMesh.mNormals] based on line from OBJ containing vertex data
+     * build [ObjInfo.mNormals] based on line from OBJ containing vertex data
      */
     private fun fillNormalList(line: String) {
         val vectors = line.split(DELIMITER)
@@ -112,19 +143,19 @@ object ObjLoader {
         val x = vectors[1].toFloat()
         val y = vectors[2].toFloat()
         val z = vectors[3].toFloat()
-        mesh.mNormals.add(ObjNormal(x, y, z))
+        mObjInfo.mNormals.add(ObjNormal(x, y, z))
     }
 
     /**
-     * build [XuMesh.mTextureCoords] based on line from OBJ containing vertex data
+     * build [ObjInfo.mTextureCoords] based on line from OBJ containing vertex data
      *
      * 这里纹理的Y值，需要(Y = 1-Y0),原因是openGl的纹理坐标系与android的坐标系存在Y值镜像的状态
      */
     private fun fillTextureCoordList(line: String) {
         val coordinates = line.split(DELIMITER)
         when (coordinates.size) {
-            3 -> mesh.textureDimension = 2
-            4 -> mesh.textureDimension = 3
+            3 -> mObjInfo.textureDimension = 2
+            4 -> mObjInfo.textureDimension = 3
             !in 3..4 -> return
         }
 
@@ -137,7 +168,7 @@ object ObjLoader {
         if (coordinates.size == 4) {
             objTexture.put(2, coordinates[3].toFloat())
         }
-        mesh.mTextureCoords.add(objTexture)
+        mObjInfo.mTextureCoords.add(objTexture)
     }
 
     private fun switchUseMtl(line: String) {
@@ -145,49 +176,68 @@ object ObjLoader {
         if (textureName.size != 2) return
 
         // TODO: Need save old faceList to HashMap?
-//        mesh.mFaces[currentMaterialName] = currentFaceList!!
 
         // Get new material name
         currentMaterialName = textureName[1]
         Timber.d("switchUseMtl(): $currentMaterialName")
 
-        if (mesh.mFaces.containsKey(currentMaterialName)) {
+        if (mObjInfo.mIndices.containsKey(currentMaterialName)) {
             // switch to old FaceList based on switched material name
-            currentFaceList = mesh.mFaces[currentMaterialName]
-            Timber.d("switchUseMtl(): Reuse FaceList $currentMaterialName")
-            Timber.d("switchUseMtl(): size = ${currentFaceList!!.size}")
+            currentIndexList = mObjInfo.mIndices[currentMaterialName]
+            currentVertexList = mObjInfo.mFinalVertices[currentMaterialName]
+            Timber.d("switchUseMtl(): Reuse existing FaceList '$currentMaterialName'")
+            Timber.d("switchUseMtl(): size = ${currentIndexList!!.size}")
 
         } else {
             // create a new FaceList
-            currentFaceList = ArrayList<Face>()
-            mesh.mFaces[currentMaterialName] = currentFaceList!!
-            Timber.d("switchUseMtl(): Create new FaceList $currentMaterialName")
+            currentIndexList = ArrayList<Int>()
+            currentVertexList = ArrayList<Float>()
+            mObjInfo.mIndices[currentMaterialName] = currentIndexList!!
+            mObjInfo.mFinalVertices[currentMaterialName] = currentVertexList!!
+            Timber.d(
+                "switchUseMtl(): Create new IndexList and VertexList for '$currentMaterialName'")
         }
     }
 
     /**
-     * build [XuMesh.mFaces] based on line from OBJ containing vertex data
+     * build [ObjInfo.mIndices] based on line from OBJ containing vertex data
      */
     private fun fillFaceList(line: String) {
-        val vertexIndices = line.split(DELIMITER).toTypedArray()
+        if(currentIndexList == null){
+            Timber.d("fillFaceList(): this Obj hasn't 'USEMTL'! ")
 
-        val face = Face()
+            // create a new FaceList
+            currentIndexList = ArrayList<Int>()
+            currentVertexList = ArrayList<Float>()
+            currentMaterialName = DEFAULT_GROUP_NAME
+            mObjInfo.mIndices[currentMaterialName] = currentIndexList!!
+            mObjInfo.mFinalVertices[currentMaterialName] = currentVertexList!!
+            Timber.d(
+                "fillFaceList(): Create new IndexList and VertexList for '$currentMaterialName'")
+        }
+
+        val vertexIndices = line.split(DELIMITER).toTypedArray()
 
         if (!(vertexIndices[1].contains("/"))) {
             // vertexIndices[] format: "f vertexIndex1 vertexIndex2 vertexIndex3"
-            mesh.hasNormalInFace = false
-            mesh.hasTextureInFace = false
+            mObjInfo.hasNormalInFace = false
+            mObjInfo.hasTextureInFace = false
 
             for (i in 1 until clamp(vertexIndices.size + 1, 2, 4)) {
-                face.add(
-                    FaceElement(Integer.valueOf(vertexIndices[i]) - 1, 0, 0)
-                )
+                val vertexIndex = Integer.valueOf(vertexIndices[i]) - 1
+                val lastIndex = currentIndexList!!.size
+
+                currentVertexList!!.add(mObjInfo.mVertices[vertexIndex].x)
+                currentVertexList!!.add(mObjInfo.mVertices[vertexIndex].y)
+                currentVertexList!!.add(mObjInfo.mVertices[vertexIndex].z)
+
+                currentIndexList!!.add(lastIndex+1)
             }
 
         } else {
             // vertexIndices[] format: "f vertexIndex/textureIndex/normalIndex .."
-            mesh.hasNormalInFace = true
-            mesh.hasTextureInFace = true
+            mObjInfo.hasNormalInFace = true
+            mObjInfo.hasTextureInFace = true
 
             for (i in 1 until clamp(vertexIndices.size + 1, 2, 4)) {
                 val indices = vertexIndices[i].split("/").toTypedArray()
@@ -201,11 +251,26 @@ object ObjLoader {
                 val normalIndex =
                     if (indices[2].isNotEmpty()) Integer.valueOf(indices[2]) - 1 else 0
 
-                face.add(FaceElement(vertexIndex, textureIndex, normalIndex))
+                val lastIndex = currentIndexList!!.size
+
+                currentVertexList!!.add(mObjInfo.mVertices[vertexIndex].x)
+                currentVertexList!!.add(mObjInfo.mVertices[vertexIndex].y)
+                currentVertexList!!.add(mObjInfo.mVertices[vertexIndex].z)
+
+                currentVertexList!!.add(mObjInfo.mNormals[normalIndex].x)
+                currentVertexList!!.add(mObjInfo.mNormals[normalIndex].y)
+                currentVertexList!!.add(mObjInfo.mNormals[normalIndex].z)
+
+                currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].s)
+                currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].t)
+                if(mObjInfo.textureDimension == 3){
+                    currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].w)
+                }
+
+                currentIndexList!!.add(lastIndex+1)
             }
 
         }
-        currentFaceList?.add(face)
         hasFace = true
     }
 
@@ -231,28 +296,8 @@ object ObjLoader {
 
     private const val F = "f"   // v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3(索引起始于1)
 
-    private const val DELIMITER = " "    // 分隔符
+    private val DELIMITER = Regex("[ ]+")    // 分隔符
 
-    class ObjVertex(var x: Float, var y: Float, var z: Float) {
-        override fun toString() = "($x, $y, $z)"
-    }
-
-    class ObjNormal(var x: Float, var y: Float, var z: Float) {
-        override fun toString() = "($x, $y, $z)"
-    }
-
-    class ObjTexture(var s: Float, var t: Float, var w: Float) {
-        fun put(index: Int, value: Float) =
-            when (index) {
-                0 -> s = value
-                1 -> t = value
-                2 -> w = value
-                else -> {
-                }
-            }
-
-        override fun toString() = "($s, $t, $w)"
-    }
 
 }
 

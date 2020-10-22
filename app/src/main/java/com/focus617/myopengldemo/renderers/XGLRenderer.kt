@@ -70,28 +70,28 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         //打开背面剪裁
         glEnable(GL_CULL_FACE)
 
-        mSun = Sun(context, 1.0f)
+//        mSun = Sun(context, 1.0f)
 
-        mEarth = Earth(context, 1.0f)
-        earthDayTexture =TextureHelper.loadTexture(context, R.drawable.earth)
-        earthNightTexture =TextureHelper.loadTexture(context, R.drawable.earthn)
+//        mEarth = Earth(context, 1.0f)
+//        earthDayTexture =TextureHelper.loadTexture(context, R.drawable.earth)
+//        earthNightTexture =TextureHelper.loadTexture(context, R.drawable.earthn)
 
-        mMoon = Moon(context, 0.5f)
-        moonTexture =TextureHelper.loadTexture(context, R.drawable.moon)
+//        mMoon = Moon(context, 0.5f)
+//        moonTexture =TextureHelper.loadTexture(context, R.drawable.moon)
 
 //        mCube = Cube(context)
 //        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
 
 //        mTriangle = Triangle(context)
 //        mSquare = Square(context)
-        mStar = Star(context, 0.4f, 1.0f, -0.3f)
+//        mStar = Star(context, 0.4f, 1.0f, -0.3f)
         
-        mObject = Circle(context, 1f)
+//        mObject = Circle(context, 1f)
 
 
 //        // build model
-//        mModel = Model(context, "sculpt.obj")
-//        // build shader program
+        mModel = Model()
+        mModel.load(context, "3dModel/teapot/teapot.obj")
 
 
     }
@@ -140,19 +140,19 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         placeCamera()
 
-        drawSun()
-
-//        drawEarth()
-
-        drawMoon()
-
-        drawStar()
-
-//        drawCube()
-//        drawTriangle()
-//        drawSquare()
-
-        draw()
+//        drawSun()
+//
+////        drawEarth()
+//
+//        drawMoon()
+//
+//        drawStar()
+//
+////        drawCube()
+////        drawTriangle()
+////        drawSquare()
+//
+//        draw()
     }
 
 

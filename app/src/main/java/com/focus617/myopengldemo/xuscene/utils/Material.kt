@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.xuscene.base
+package com.focus617.myopengldemo.xuscene.utils
 
 import timber.log.Timber
 
