@@ -4,7 +4,7 @@ import android.opengl.Matrix
 import com.focus617.myopengldemo.util.Vector
 
 object Camera {
-    private const val defaultDistance: Float = 30.0F
+    private const val defaultDistance: Float = 130.0F
     private val WorldUp = Vector(0.0f, 1.0f, 0.0f)
 
     var Position: Vector= Vector(0.0f, 0.0f, defaultDistance)

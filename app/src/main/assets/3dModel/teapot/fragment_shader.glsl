@@ -103,17 +103,19 @@ vec3 getSpecularLighting()
 
 vec3 getMaterialColor()
 {
-    vec3 bColor=vec3(0.678, 0.231, 0.129);//条纹的颜色(深红色)
+//    vec3 bColor=vec3(0.678, 0.231, 0.129);//条纹的颜色(深红色)
     vec3 mColor=vec3(0.763, 0.657, 0.614);//间隔区域的颜色(淡红色)
 
-    float y=v_Position.y;//提取顶点的y坐标值
+    return mColor;//设置片元颜色为间隔区域的颜色
 
-    y=mod((y+100.0)*4.0, 4.0);//折算出区间值
-
-    if (y>1.8) { //当区间值大于指定值时
-        return bColor;//设置片元颜色为条纹的颜色
-
-    } else { //当区间值不大于指定值时
-        return mColor;//设置片元颜色为间隔区域的颜色
-    }
+//    float y=v_Position.y;//提取顶点的y坐标值
+//
+//    y=mod((y+100.0)*4.0, 4.0);//折算出区间值
+//
+//    if (y>1.8) { //当区间值大于指定值时
+//        return bColor;//设置片元颜色为条纹的颜色
+//
+//    } else { //当区间值不大于指定值时
+//        return mColor;//设置片元颜色为间隔区域的颜色
+//    }
 }

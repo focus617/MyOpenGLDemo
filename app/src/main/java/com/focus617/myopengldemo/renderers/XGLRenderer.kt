@@ -70,7 +70,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         //打开背面剪裁
         glEnable(GL_CULL_FACE)
 
-//        mSun = Sun(context, 1.0f)
+        mSun = Sun(context, 1.0f)
 
 //        mEarth = Earth(context, 1.0f)
 //        earthDayTexture =TextureHelper.loadTexture(context, R.drawable.earth)
@@ -92,8 +92,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 //        // build model
         mModel = Model()
 //        mModel.load(context, "3dModel/statueOfPharaoh/sculpt.obj")
-        mModel.load(context, "3dModel/teapot/teapot.obj")
-
+        mModel.load(context, "3dModel/teapot/teapot_t.obj")
 
     }
 
@@ -114,7 +113,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 //            -aspect, aspect, -1f, 1f,
 //            2f, 50f
 //        )
-        MatrixHelper.perspectiveM(mProjectionMatrix, yFovInDegrees, aspect, 0.1f, 100f)
+        MatrixHelper.perspectiveM(mProjectionMatrix, yFovInDegrees, aspect, 0.1f, 500f)
 
 
         //启动一个线程定时旋转地球、月球
@@ -141,7 +140,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         placeCamera()
 
-//        drawSun()
+        drawSun()
 //
 ////        drawEarth()
 //
@@ -149,9 +148,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 //
 //        drawStar()
 //
-////        drawCube()
-////        drawTriangle()
-////        drawSquare()
+//        drawCube()
+//        drawTriangle()
+//        drawSquare()
 //
 //        draw()
 
