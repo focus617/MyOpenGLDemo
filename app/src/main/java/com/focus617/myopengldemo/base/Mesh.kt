@@ -5,6 +5,8 @@ import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2
 import com.focus617.myopengldemo.objects.geometry.d3.ball.Ball
+import com.focus617.myopengldemo.objects.geometry.d3.ball.MoonShaderProgram
+import com.focus617.myopengldemo.util.Vector
 
 
 enum class TextureType {
@@ -51,12 +53,14 @@ class Mesh(
         modelMatrix: FloatArray,
         viewMatrix: FloatArray,
         projectionMatrix: FloatArray,
+        viewPosition: Vector
     ) {
         mProgram.use()
         (mProgram as MeshShaderProgram).setUniforms(
             modelMatrix,
             viewMatrix,
-            projectionMatrix
+            projectionMatrix,
+            viewPosition
         )
     }
 
