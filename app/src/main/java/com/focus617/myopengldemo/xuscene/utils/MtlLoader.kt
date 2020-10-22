@@ -22,7 +22,7 @@ object MtlLoader {
      */
     fun load(context: Context, mtlFileName: String, mMtlMap: HashMap<String, Material>) {
 
-        Timber.d("load() From Mtl File: $mtlFileName")
+        Timber.d("load from Mtl File: $mtlFileName")
         if (mtlFileName.isEmpty() or TextUtils.isEmpty(mtlFileName)) {
             Timber.w("Mtl File doesn't exist")
             return

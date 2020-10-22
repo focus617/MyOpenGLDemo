@@ -12,7 +12,7 @@ class Model() {
 
     //模型所包含的Mesh集合
 //    private val meshes = mutableListOf<IndexMeshObject>()
-    private val meshes = HashMap<String, Mesh>()
+    val meshes = HashMap<String, Mesh>()
 
     //模型文件所在目录
     private lateinit var directory: String
@@ -44,7 +44,7 @@ class Model() {
     fun destroy() {}
 
     //渲染模型，即依次渲染各个网格
-    fun draw(shaderProgram: ShaderProgram) {
+    fun draw() {
         for ((key, mesh) in meshes)
             mesh.draw()
     }

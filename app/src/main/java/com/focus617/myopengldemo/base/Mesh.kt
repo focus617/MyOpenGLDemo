@@ -1,18 +1,10 @@
 package com.focus617.myopengldemo.base
 
 import android.content.Context
-import android.opengl.GLES31.*
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
-import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2
-import com.focus617.myopengldemo.base.program.ShaderProgram
-import com.focus617.myopengldemo.objects.geometry.d3.cube.Cube
-import com.focus617.myopengldemo.objects.geometry.d3.cube.LightCubeShaderProgram
-import com.focus617.myopengldemo.xuscene.utils.ObjInfo
-import timber.log.Timber
-import java.nio.*
-import kotlin.properties.Delegates
+
 
 enum class TextureType {
     TextureDiffuse,        // 漫反射纹理
@@ -44,11 +36,13 @@ class Mesh(
     override fun initVertexArray() {
         //顶点坐标数据的初始化
         build(data)
+        mVertexArray.dump()
+        mElementArray.dump()
     }
 
     override fun initShader() {
         //自定义渲染管线程序
-        mProgram = LightCubeShaderProgram(context)
+        mProgram = MeshShaderProgram(context)
         bindData()
     }
 
@@ -58,7 +52,7 @@ class Mesh(
         projectionMatrix: FloatArray,
     ) {
         mProgram.use()
-        (mProgram as LightCubeShaderProgram).setUniforms(
+        (mProgram as MeshShaderProgram).setUniforms(
             modelMatrix,
             viewMatrix,
             projectionMatrix
@@ -69,27 +63,12 @@ class Mesh(
         val attribPropertyList: List<AttributeProperty> = arrayListOf(
             // 顶点的位置属性
             AttributeProperty(
-                Cube.VERTEX_POS_INDEX,
-                Cube.VERTEX_POS_SIZE,
-                Cube.VERTEX_STRIDE,
-                Cube.VERTEX_POS_OFFSET
-            ),
-
-            // 顶点的法线
-            AttributeProperty(
-                Cube.VERTEX_NORMAL_INDEX,
-                Cube.VERTEX_NORMAL_SIZE,
-                Cube.VERTEX_STRIDE,
-                Cube.VERTEX_NORMAL_OFFSET
-            ),
-
-            // 顶点的纹理坐标
-            AttributeProperty(
-                Cube.VERTEX_TEXCOORDO_INDEX,
-                Cube.VERTEX_TEXCOORDO_SIZE,
-                Cube.VERTEX_STRIDE,
-                Cube.VERTEX_TEX_COORDO_OFFSET
+                VERTEX_POS_INDEX,
+                VERTEX_POS_SIZE,
+                VERTEX_STRIDE,
+                VERTEX_POS_OFFSET
             )
+
         )
         super.bindData(attribPropertyList)
     }
@@ -132,36 +111,9 @@ class Mesh(
 //        glActiveTexture(GL_TEXTURE0);
 //    }
 
-//    fun draw(shaderProgram: ShaderProgram) {
-//
-//        shaderProgram.use()
-//
-//        // TODO: pass parameter to GPU
-//        // shaderProgram.setUniforms()
-//
-////        setTextures(shaderProgram)
-//
-//        // Bind the VAO and then draw with VAO settings
-//        glBindVertexArray(mVaoId)
-//
-//        glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0)
-//
-//        // Reset to the default VAO
-//        glBindVertexArray(0)
-//
-//        glBindBuffer(GL_ARRAY_BUFFER, 0)
-//        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0)
-//    }
 
-    // 销毁纹理和缓冲区对象
-//    fun destroy(){
-//        for (texture in textures) {
-//            glDeleteTextures(1, texture.id);
-//        }
-//        glDeleteBuffers(1, mElementId)
-//        glDeleteBuffers(1, numVertices)
-//        glDeleteVertexArrays(1,mVaoId)
-//    }
+
+
 
     companion object {
 
@@ -183,8 +135,7 @@ class Mesh(
         internal const val VERTEX_TEX_COORDO_OFFSET =
             (VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE) * Float.SIZE_BYTES
 
-        internal const val VERTEX_ATTRIBUTE_SIZE =
-            VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE + VERTEX_TEXCOORDO_SIZE
+        internal const val VERTEX_ATTRIBUTE_SIZE =  VERTEX_POS_SIZE
 
         // 连续的顶点属性组之间的间隔
         internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES

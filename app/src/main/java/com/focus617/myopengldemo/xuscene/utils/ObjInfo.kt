@@ -78,7 +78,7 @@ class ObjInfo {
     var hasTextureInFace = false
     var textureDimension = 2
 
-    fun clear(){
+    fun clear() {
         name = "def"
         mMtlFileName = null
         mVertices.clear()
@@ -99,9 +99,9 @@ class ObjInfo {
             val vertices = mFinalVertices[key] ?: continue
 
             var vertexSize = 3
-            if(hasNormalInFace) vertexSize +=3
-            if(hasTextureInFace){
-                when(textureDimension){
+            if (hasNormalInFace) vertexSize += 3
+            if (hasTextureInFace) {
+                when (textureDimension) {
                     2 -> vertexSize += 2
                     3 -> vertexSize += 3
                 }
@@ -113,7 +113,7 @@ class ObjInfo {
             val vertexArray = FloatArray(vertices.size)
 
             Timber.d(
-                "parseObjInfo(): Size - V:${vertexArray.size}, I:${indexArray.size}}"
+                "parse(): Size - V:${vertexArray.size}, I:${indexArray.size}"
             )
             // 将构造的顶点列表转存为顶点数组
             for (i in 0 until numVertices) {
@@ -151,49 +151,65 @@ class ObjInfo {
         val verticesSize = mVertices.size
         Timber.d("Vertex Size: $verticesSize")
 
-        if (verticesSize < 4) {
-            for (i in 0..verticesSize)
-                Timber.d("Vertex[$i]: ${mNormals[i]}")
-        } else {
-            for (i in 0..2)
-                Timber.d("Vertex[$i]: ${mVertices[i]}")
-            Timber.d("...")
-            for (i in (verticesSize - 3) until verticesSize)
-                Timber.d("Vertex[$i]: ${mVertices[i]}")
+        when (verticesSize) {
+            0 -> return
+            in 1..4 -> {
+                for (i in 0..verticesSize)
+                    Timber.d("Vertex[$i]: ${mNormals[i]}")
+            }
+            else -> {
+                for (i in 0..2)
+                    Timber.d("Vertex[$i]: ${mVertices[i]}")
+                Timber.d("...")
+                for (i in (verticesSize - 3) until verticesSize)
+                    Timber.d("Vertex[$i]: ${mVertices[i]}")
+            }
         }
     }
 
     fun dumpNormals() {
+        Timber.d("hasNormalInFace is $hasNormalInFace")
+
         Timber.d("mNormalList dump:")
         val normalArraySize = mNormals.size
         Timber.d("Normal Array Size: $normalArraySize")
 
-        if (normalArraySize < 4) {
-            for (i in 0..normalArraySize)
-                Timber.d("Normal[$i]: ${mNormals[i]}")
-        } else {
-            for (i in 0..2)
-                Timber.d("Normal[$i]: ${mNormals[i]}")
-            Timber.d("...")
-            for (i in (normalArraySize - 3) until normalArraySize)
-                Timber.d("Normal[$i]: ${mNormals[i]}")
+        when (normalArraySize) {
+            0 -> return
+            in 1..4 -> {
+                for (i in 0 until normalArraySize)
+                    Timber.d("Normal[$i]: ${mNormals[i]}")
+            }
+            else -> {
+                for (i in 0..2)
+                    Timber.d("Normal[$i]: ${mNormals[i]}")
+                Timber.d("...")
+                for (i in (normalArraySize - 3) until normalArraySize)
+                    Timber.d("Normal[$i]: ${mNormals[i]}")
+            }
         }
     }
 
     fun dumpTextureCoords() {
+        Timber.d("hasTextureInFace is $hasTextureInFace")
+        Timber.d("textureDimension = $textureDimension")
+
         Timber.d("mTextureArrayList dump:")
         val textureArraySize = mTextureCoords.size
         Timber.d("Texture Array Size: $textureArraySize")
 
-        if (textureArraySize < 4) {
-            for (i in 0..textureArraySize)
-                Timber.d("Texture[$i]: ${mTextureCoords[i]}")
-        } else {
-            for (i in 0..2)
-                Timber.d("Texture[$i]: ${mTextureCoords[i]}")
-            Timber.d("...")
-            for (i in (textureArraySize - 3) until textureArraySize)
-                Timber.d("Texture[$i]: ${mTextureCoords[i]}")
+        when (textureArraySize) {
+            0 -> return
+            in 1..4 -> {
+                for (i in 0..textureArraySize)
+                    Timber.d("Texture[$i]: ${mTextureCoords[i]}")
+            }
+            else -> {
+                for (i in 0..2) Timber.d("Texture[$i]: ${mTextureCoords[i]}")
+                Timber.d("...")
+                for (i in (textureArraySize - 3) until textureArraySize)
+                    Timber.d("Texture[$i]: ${mTextureCoords[i]}")
+            }
         }
     }
 
@@ -203,7 +219,7 @@ class ObjInfo {
 
         for ((key, faceList) in mIndices) {
 
-            Timber.d("FaceList for $key: size=${faceList.size}")
+            Timber.d("FaceList for '$key': size=${faceList.size}")
 
             if (faceList.size < 4) {
                 for (i in 0..faceList.size)

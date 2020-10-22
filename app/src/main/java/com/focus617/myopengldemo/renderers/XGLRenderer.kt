@@ -85,12 +85,13 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 //        mTriangle = Triangle(context)
 //        mSquare = Square(context)
 //        mStar = Star(context, 0.4f, 1.0f, -0.3f)
-        
+
 //        mObject = Circle(context, 1f)
 
 
 //        // build model
         mModel = Model()
+//        mModel.load(context, "3dModel/statueOfPharaoh/sculpt.obj")
         mModel.load(context, "3dModel/teapot/teapot.obj")
 
 
@@ -153,8 +154,17 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 ////        drawSquare()
 //
 //        draw()
+
+        drawModel()
     }
 
+    private fun drawModel() {
+        for ((key, mesh) in mModel.meshes) {
+            mesh.positionObjectInScene()
+            mesh.updateShaderUniforms(mesh.mModelMatrix, mViewMatrix, mProjectionMatrix)
+            mesh.drawLine()
+        }
+    }
 
     private fun drawSun() {
         mSun.positionObjectInScene()
@@ -218,7 +228,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         mStar.draw()
     }
 
-    private fun draw(){
+    private fun draw() {
         mObject.positionObjectInScene()
 
         (mObject as Circle).updateShaderUniforms(

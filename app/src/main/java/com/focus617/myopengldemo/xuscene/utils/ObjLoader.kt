@@ -14,6 +14,9 @@ import kotlin.collections.ArrayList
  */
 object ObjLoader {
 
+    //模型文件所在目录
+    private lateinit var directory: String
+
     private const val DEFAULT_GROUP_NAME = "Default"
 
     private lateinit var mObjInfo: ObjInfo
@@ -24,7 +27,7 @@ object ObjLoader {
     private var hasFace = false
 
     fun dumpObjInfo() {
-        Timber.d("dumpMesh()")
+        Timber.d("dumpObjInfo()")
         mObjInfo.dump()
         mObjInfo.dumpVertices()
         mObjInfo.dumpNormals()
@@ -47,10 +50,16 @@ object ObjLoader {
         if (objFilePathName.isEmpty() or TextUtils.isEmpty(objFilePathName)) {
             Timber.w("Obj File doesn't exist")
         }
-        val objInfo = load(context, objFilePathName)
-        objInfo.dump()
 
-        return objInfo.parse()
+        directory =
+            if (objFilePathName.contains('/'))
+                objFilePathName.substring(0, objFilePathName.lastIndexOf('/'))
+            else "."
+
+        load(context, objFilePathName)
+        dumpObjInfo()
+
+        return mObjInfo.parse()
     }
 
     private fun load(context: Context, objFilePathName: String): ObjInfo {
@@ -70,8 +79,9 @@ object ObjLoader {
 
                     line.startsWith(MTLLIB) -> {
                         fillMtlLib(line)
-                        if (mObjInfo.mMtlFileName != null)
+                        if (mObjInfo.mMtlFileName != null) {
                             MtlLoader.load(context, mObjInfo.mMtlFileName!!, mObjInfo.mMaterials)
+                        }
                     }
                     line.startsWith(O) -> {
                         fillObjName(line)
@@ -116,7 +126,7 @@ object ObjLoader {
         val items = line.split(DELIMITER).toTypedArray()
         if (items.size != 2) return
         if (!TextUtils.isEmpty(items[1])) {
-            mObjInfo.mMtlFileName = items[1]
+            mObjInfo.mMtlFileName = "$directory/${items[1]}"
         }
     }
 
@@ -165,7 +175,7 @@ object ObjLoader {
         // 纹理的Y值，需要(Y = 1-Y0)
         objTexture.put(1, 1f - coordinates[2].toFloat())
 
-        if (coordinates.size == 4) {
+        if (mObjInfo.textureDimension == 3) {
             objTexture.put(2, coordinates[3].toFloat())
         }
         mObjInfo.mTextureCoords.add(objTexture)
@@ -195,7 +205,8 @@ object ObjLoader {
             mObjInfo.mIndices[currentMaterialName] = currentIndexList!!
             mObjInfo.mFinalVertices[currentMaterialName] = currentVertexList!!
             Timber.d(
-                "switchUseMtl(): Create new IndexList and VertexList for '$currentMaterialName'")
+                "switchUseMtl(): Create new IndexList and VertexList for '$currentMaterialName'"
+            )
         }
     }
 
@@ -203,7 +214,7 @@ object ObjLoader {
      * build [ObjInfo.mIndices] based on line from OBJ containing vertex data
      */
     private fun fillFaceList(line: String) {
-        if(currentIndexList == null){
+        if (currentIndexList == null) {
             Timber.d("fillFaceList(): this Obj hasn't 'USEMTL'! ")
 
             // create a new FaceList
@@ -213,7 +224,8 @@ object ObjLoader {
             mObjInfo.mIndices[currentMaterialName] = currentIndexList!!
             mObjInfo.mFinalVertices[currentMaterialName] = currentVertexList!!
             Timber.d(
-                "fillFaceList(): Create new IndexList and VertexList for '$currentMaterialName'")
+                "fillFaceList(): Create new IndexList and VertexList for '$currentMaterialName'"
+            )
         }
 
         val vertexIndices = line.split(DELIMITER).toTypedArray()
@@ -231,7 +243,7 @@ object ObjLoader {
                 currentVertexList!!.add(mObjInfo.mVertices[vertexIndex].y)
                 currentVertexList!!.add(mObjInfo.mVertices[vertexIndex].z)
 
-                currentIndexList!!.add(lastIndex+1)
+                currentIndexList!!.add(lastIndex)
             }
 
         } else {
@@ -263,11 +275,11 @@ object ObjLoader {
 
                 currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].s)
                 currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].t)
-                if(mObjInfo.textureDimension == 3){
+                if (mObjInfo.textureDimension == 3) {
                     currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].w)
                 }
 
-                currentIndexList!!.add(lastIndex+1)
+                currentIndexList!!.add(lastIndex + 1)
             }
 
         }
