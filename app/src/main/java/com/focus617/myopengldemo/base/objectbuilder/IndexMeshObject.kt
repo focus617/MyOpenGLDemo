@@ -4,7 +4,7 @@ import android.content.Context
 import android.opengl.GLES31.*
 import android.opengl.Matrix
 import com.focus617.myopengldemo.base.program.ShaderProgram
-import com.focus617.myopengldemo.util.Geometry.Companion.Vector
+import com.focus617.myopengldemo.util.Vector
 import timber.log.Timber
 import java.nio.IntBuffer
 import kotlin.properties.Delegates

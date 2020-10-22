@@ -6,7 +6,7 @@ import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.programs.particles.HeightmapShaderProgram
 import com.focus617.myopengldemo.util.Geometry
-import com.focus617.myopengldemo.util.Geometry.Companion.Vector
+import com.focus617.myopengldemo.util.Vector
 import com.focus617.myopengldemo.util.Geometry.Point
 import timber.log.Timber
 
@@ -78,8 +78,8 @@ class Heightmap(bitmap: Bitmap) {
                 val right: Point = getPoint(pixels, row, col + 1)
                 val bottom: Point = getPoint(pixels, row + 1, col)
 
-                val rightToLeft: Vector = Geometry.vectorBetween(right, left)
-                val topToBottom: Vector = Geometry.vectorBetween(top, bottom)
+                val rightToLeft: Vector = Vector.vectorBetween(right, left)
+                val topToBottom: Vector = Vector.vectorBetween(top, bottom)
                 val normal: Vector = rightToLeft.crossProduct(topToBottom).normalize()
 
                 heightmapVertices[offset++] = normal.x

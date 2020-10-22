@@ -4,6 +4,7 @@ import android.content.Context
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2
+import com.focus617.myopengldemo.objects.geometry.d3.ball.Ball
 
 
 enum class TextureType {
@@ -67,6 +68,22 @@ class Mesh(
                 VERTEX_POS_SIZE,
                 VERTEX_STRIDE,
                 VERTEX_POS_OFFSET
+            ),
+
+            // 顶点的法线
+            AttributeProperty(
+                VERTEX_NORMAL_INDEX,
+                VERTEX_NORMAL_SIZE,
+                VERTEX_STRIDE,
+                VERTEX_NORMAL_OFFSET
+            ),
+
+            // 顶点的纹理坐标
+            AttributeProperty(
+                VERTEX_TEXCOORDO_INDEX,
+                VERTEX_TEXCOORDO_SIZE,
+                VERTEX_STRIDE,
+                VERTEX_TEX_COORDO_OFFSET
             )
 
         )
@@ -111,10 +128,6 @@ class Mesh(
 //        glActiveTexture(GL_TEXTURE0);
 //    }
 
-
-
-
-
     companion object {
 
         // 顶点坐标的每个属性的Index
@@ -135,7 +148,8 @@ class Mesh(
         internal const val VERTEX_TEX_COORDO_OFFSET =
             (VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE) * Float.SIZE_BYTES
 
-        internal const val VERTEX_ATTRIBUTE_SIZE =  VERTEX_POS_SIZE
+        internal const val VERTEX_ATTRIBUTE_SIZE =
+            VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE + VERTEX_TEXCOORDO_SIZE
 
         // 连续的顶点属性组之间的间隔
         internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES

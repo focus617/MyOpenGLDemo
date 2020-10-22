@@ -14,7 +14,7 @@ import com.focus617.myopengldemo.programs.particles.SkeyCubeShaderProgram
 import com.focus617.myopengldemo.programs.particles.HeightmapShaderProgram
 import com.focus617.myopengldemo.programs.particles.ParticleShaderProgram
 import com.focus617.myopengldemo.programs.particles.SkyboxShaderProgram
-import com.focus617.myopengldemo.util.Geometry.Companion.Vector
+import com.focus617.myopengldemo.util.Vector
 import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.MatrixHelper
 import com.focus617.myopengldemo.util.TextureHelper

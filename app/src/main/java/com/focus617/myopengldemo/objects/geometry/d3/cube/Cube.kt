@@ -4,6 +4,7 @@ import android.content.Context
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 import com.focus617.myopengldemo.util.Geometry
+import com.focus617.myopengldemo.util.Vector
 
 open class Cube(context: Context): IndexMeshObject(context) {
 
@@ -31,7 +32,7 @@ open class Cube(context: Context): IndexMeshObject(context) {
         projectionMatrix: FloatArray,
         it_mvMatrix: FloatArray,
 
-        viewPosition: Geometry.Companion.Vector,
+        viewPosition: Vector,
         boxTextureId: Int
     ) {
         mProgram.use()

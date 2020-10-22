@@ -8,7 +8,7 @@ import com.focus617.myopengldemo.base.program.ShaderConstants.U_MODEL_MATRIX
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_PROJECT_MATRIX
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_R
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_VIEW_MATRIX
-import com.focus617.myopengldemo.util.Geometry
+import com.focus617.myopengldemo.util.Vector
 
 const val BALL_PATH = "Ball"
 const val BALL_VERTEX_FILE = "vertex_shader.glsl"
@@ -26,7 +26,7 @@ class BallShaderProgram(context: Context) : ShaderProgram(
         viewMatrix: FloatArray,
         projectionMatrix: FloatArray,
 
-        viewPosition: Geometry.Companion.Vector,
+        viewPosition: Vector,
         uR: Float
     ){
         setMatrix4fv(U_MODEL_MATRIX, modelMatrix)

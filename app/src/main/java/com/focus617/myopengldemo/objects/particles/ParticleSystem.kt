@@ -7,7 +7,7 @@ import com.focus617.myopengldemo.base.objectbuilder.VertexArray
 import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
 import com.focus617.myopengldemo.programs.particles.ParticleShaderProgram
 import com.focus617.myopengldemo.util.Geometry.Point
-import com.focus617.myopengldemo.util.Geometry.Companion.Vector
+import com.focus617.myopengldemo.util.Vector
 import timber.log.Timber
 
 class ParticleSystem(private val maxParticleCount: Int) {

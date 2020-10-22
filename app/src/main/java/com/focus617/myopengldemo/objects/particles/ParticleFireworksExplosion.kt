@@ -3,7 +3,7 @@ package com.focus617.myopengldemo.objects.particles
 import android.graphics.Color
 import android.opengl.Matrix
 import com.focus617.myopengldemo.util.Geometry.Point
-import com.focus617.myopengldemo.util.Geometry.Companion.Vector
+import com.focus617.myopengldemo.util.Vector
 import java.util.*
 
 class ParticleFireworksExplosion {

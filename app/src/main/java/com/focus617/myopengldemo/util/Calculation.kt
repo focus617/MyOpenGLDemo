@@ -7,3 +7,4 @@ fun clamp(value: Int, min: Int, max: Int): Int {
 fun clamp(value: Float, min: Float, max: Float): Float {
     return kotlin.math.max(min, kotlin.math.min(max, value))
 }
+

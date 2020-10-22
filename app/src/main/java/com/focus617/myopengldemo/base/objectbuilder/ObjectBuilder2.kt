@@ -1,6 +1,6 @@
 package com.focus617.myopengldemo.base.objectbuilder
 
-import com.focus617.myopengldemo.util.Geometry.Companion.Vector
+import com.focus617.myopengldemo.util.Vector.Companion.calConeNormal
 import timber.log.Timber
 import kotlin.math.cos
 import kotlin.math.sin
@@ -195,23 +195,6 @@ class ObjectBuilder2 {
         indexList.add(startVertexIndex)    // 中心点
         indexList.add((startVertexIndex + numPoints - 1).toShort())
         indexList.add((startVertexIndex + 1).toShort())
-    }
-
-    //计算圆锥面指定棱顶点法向量的方法
-    private fun calConeNormal(
-        x0: Float, y0: Float, z0: Float,  //A，中心点(底面圆的圆心)
-        x1: Float, y1: Float, z1: Float,  //B，底面圆上的某一点
-        x2: Float, y2: Float, z2: Float   //C，圆锥中心最高点
-    ): Vector {
-        val a = Vector(x1 - x0, y1 - y0, z1 - z0) //向量AB
-        val b = Vector(x2 - x0, y2 - y0, z2 - z0) //向量AC
-        val c = Vector(x2 - x1, y2 - y1, z2 - z1) //向量BC
-        //先求平面ABC的法向量k
-        val k = a.crossProduct(b)
-        //将c和k做叉乘，得出所求向量d
-        val d = c.crossProduct(k)
-        //返回规格化后的法向量
-        return d.normalize()
     }
 
     private val angleSpan = 10      // 将球进行单位切分的角度

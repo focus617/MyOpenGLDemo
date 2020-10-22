@@ -1,7 +1,7 @@
 package com.focus617.myopengldemo.objects.geometry.d3.ball
 
 import android.content.Context
-import com.focus617.myopengldemo.util.Geometry
+import com.focus617.myopengldemo.util.Vector
 
 /**
  * 表示地球的类，采用多重纹理
@@ -29,7 +29,7 @@ class Earth(
         modelMatrix: FloatArray,
         viewMatrix: FloatArray,
         projectionMatrix: FloatArray,
-        viewPosition: Geometry.Companion.Vector,
+        viewPosition: Vector,
         earthDayTextureId: Int,
         earthNightTextureId: Int
     ) {

@@ -5,7 +5,7 @@ import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2
 import com.focus617.myopengldemo.objects.geometry.d3.ball.EarthShaderProgram
-import com.focus617.myopengldemo.util.Geometry
+import com.focus617.myopengldemo.util.Vector
 import timber.log.Timber
 
 /**
@@ -52,7 +52,7 @@ class Circle(
         modelMatrix: FloatArray,
         viewMatrix: FloatArray,
         projectionMatrix: FloatArray,
-        viewPosition: Geometry.Companion.Vector,
+        viewPosition: Vector,
         earthDayTextureId: Int,
         earthNightTextureId: Int
     ) {

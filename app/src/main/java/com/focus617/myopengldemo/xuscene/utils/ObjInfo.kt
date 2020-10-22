@@ -74,9 +74,9 @@ class ObjInfo {
     // 存放根据face信息解析的完整的顶点属性（包含法线和纹理）
     val mFinalVertices = HashMap<String, ArrayList<Float>>()
 
-    var hasNormalInFace = false
-    var hasTextureInFace = false
-    var textureDimension = 2
+//    var hasNormalInFace = false
+//    var hasTextureInFace = false
+//    var textureDimension = 2
 
     fun clear() {
         name = "def"
@@ -86,9 +86,9 @@ class ObjInfo {
         mTextureCoords.clear()
         mIndices.clear()
         mFinalVertices.clear()
-        hasNormalInFace = false
-        hasTextureInFace = false
-        textureDimension = 2
+//        hasNormalInFace = false
+//        hasTextureInFace = false
+//        textureDimension = 2
     }
 
     fun parse(): HashMap<String, GeneratedData> {
@@ -98,14 +98,14 @@ class ObjInfo {
         for ((key, indices) in mIndices) {
             val vertices = mFinalVertices[key] ?: continue
 
-            var vertexSize = 3
-            if (hasNormalInFace) vertexSize += 3
-            if (hasTextureInFace) {
-                when (textureDimension) {
-                    2 -> vertexSize += 2
-                    3 -> vertexSize += 3
-                }
-            }
+            var vertexSize = 3+3+2
+//            if (hasNormalInFace) vertexSize += 3
+//            if (hasTextureInFace) {
+//                when (textureDimension) {
+//                    2 -> vertexSize += 2
+//                    3 -> vertexSize += 3
+//                }
+//            }
             val numVertices = vertices.size / vertexSize
             Timber.d("parse():vertexSize=$vertexSize, numVertices=$numVertices")
 
@@ -142,8 +142,9 @@ class ObjInfo {
         Timber.d("Vertices Size: ${mVertices.size}")
         Timber.d("Normals Size: ${mNormals.size}")
         Timber.d("TextureCoords Size: ${mTextureCoords.size}")
-        Timber.d("Texture Dimension: $textureDimension")
         Timber.d("Faces Map Size: ${mIndices.size}")
+
+//        Timber.d("Texture Dimension: $textureDimension")
     }
 
     fun dumpVertices() {
@@ -168,7 +169,7 @@ class ObjInfo {
     }
 
     fun dumpNormals() {
-        Timber.d("hasNormalInFace is $hasNormalInFace")
+//        Timber.d("hasNormalInFace is $hasNormalInFace")
 
         Timber.d("mNormalList dump:")
         val normalArraySize = mNormals.size
@@ -191,8 +192,8 @@ class ObjInfo {
     }
 
     fun dumpTextureCoords() {
-        Timber.d("hasTextureInFace is $hasTextureInFace")
-        Timber.d("textureDimension = $textureDimension")
+//        Timber.d("hasTextureInFace is $hasTextureInFace")
+//        Timber.d("textureDimension = $textureDimension")
 
         Timber.d("mTextureArrayList dump:")
         val textureArraySize = mTextureCoords.size

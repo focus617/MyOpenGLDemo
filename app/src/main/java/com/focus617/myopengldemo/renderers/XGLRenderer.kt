@@ -17,7 +17,7 @@ import com.focus617.myopengldemo.objects.geometry.d3.ball.Earth
 import com.focus617.myopengldemo.objects.geometry.d3.ball.Moon
 import com.focus617.myopengldemo.objects.geometry.d3.ball.Sun
 import com.focus617.myopengldemo.objects.geometry.d3.cube.Cube
-import com.focus617.myopengldemo.util.Geometry.Companion.Vector
+import com.focus617.myopengldemo.util.Vector
 import com.focus617.myopengldemo.util.MatrixHelper
 import com.focus617.myopengldemo.util.TextureHelper
 import com.focus617.myopengldemo.util.clamp
@@ -162,7 +162,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         for ((key, mesh) in mModel.meshes) {
             mesh.positionObjectInScene()
             mesh.updateShaderUniforms(mesh.mModelMatrix, mViewMatrix, mProjectionMatrix)
-            mesh.drawLine()
+            mesh.draw()
         }
     }
 

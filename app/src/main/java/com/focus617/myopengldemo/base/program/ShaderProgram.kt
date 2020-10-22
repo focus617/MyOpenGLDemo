@@ -2,7 +2,7 @@ package com.focus617.myopengldemo.base.program
 
 import android.content.Context
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.util.Geometry.Companion.Vector
+import com.focus617.myopengldemo.util.Vector
 import com.focus617.myopengldemo.util.ShaderHelper
 import com.focus617.myopengldemo.util.TextResourceReader
 

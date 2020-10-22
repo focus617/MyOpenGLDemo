@@ -17,7 +17,7 @@ import com.focus617.myopengldemo.util.Geometry.Point
 import com.focus617.myopengldemo.util.Geometry.Ray
 import com.focus617.myopengldemo.util.Geometry.Sphere
 import com.focus617.myopengldemo.util.Geometry.Plane
-import com.focus617.myopengldemo.util.Geometry.Companion.Vector
+import com.focus617.myopengldemo.util.Vector
 import com.focus617.myopengldemo.util.TextureHelper
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
@@ -219,7 +219,7 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
         // If the ray intersects (if the user touched a part of the screen that
         // intersects the mallet's bounding sphere), then set malletPressed =
         // true.
-        malletPressed = Geometry.intersects(malletBoundingSphere, ray)
+        malletPressed = Vector.intersects(malletBoundingSphere, ray)
         Timber.d("handleTouchPress(): malletPressed = $malletPressed")
     }
 
@@ -235,7 +235,7 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
 
             // Find out where the touched point intersects the plane
             // representing our table. We'll move the mallet along this plane.
-            val touchedPoint = Geometry.intersectionPoint(ray, plane)
+            val touchedPoint = Vector.intersectionPoint(ray, plane)
 
             previousBlueMalletPosition = blueMalletPosition
 
@@ -257,11 +257,11 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
             )
 
             // Now test if mallet has struck the puck.
-            val distance = Geometry.vectorBetween(blueMalletPosition, puckPosition).module()
+            val distance = Vector.vectorBetween(blueMalletPosition, puckPosition).module()
             if (distance < puck.radius + mallet.radius) {
                 // The mallet has struck the puck. Now send the puck flying
                 // based on the mallet velocity.
-                puckVector = Geometry.vectorBetween(
+                puckVector = Vector.vectorBetween(
                     previousBlueMalletPosition, blueMalletPosition
                 )
             }
@@ -317,7 +317,7 @@ class AirHockeyRendererEs3(val context: Context) : GLSurfaceView.Renderer {
 
         return Ray(
             nearPointRay,
-            Geometry.vectorBetween(nearPointRay, farPointRay)
+            Vector.vectorBetween(nearPointRay, farPointRay)
         )
     }
 
