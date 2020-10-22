@@ -10,7 +10,7 @@ class ObjectBuilder2 {
     private val indexList = ArrayList<Short>()
     private var index: Short = 0    // Vertex index
 
-    fun appendTexturedCircle(radius: Float, numPoints: Int, y: Float = 0f, UNIT_SIZE: Float = 1f) {
+    fun appendCircle(radius: Float, numPoints: Int, y: Float = 0f, UNIT_SIZE: Float = 1f) {
 
         var startVertexIndex = index
 
@@ -60,7 +60,7 @@ class ObjectBuilder2 {
         indexList.add((startVertexIndex + 1).toShort())
     }
 
-    fun appendTexturedOpenCylinder(
+    fun appendOpenCylinder(
         radius: Float,
         height: Float,
         numPoints: Int,
@@ -130,7 +130,7 @@ class ObjectBuilder2 {
     }
 
     // 圆锥体
-    fun appendTexturedCone(
+    fun appendCone(
         radius: Float,
         height: Float,
         numPoints: Int,
@@ -214,8 +214,8 @@ class ObjectBuilder2 {
         return d.normalize()
     }
 
-
-    fun appendTexturedBall(radius: Float, UNIT_SIZE: Float = 1f) {
+    private val angleSpan = 10      // 将球进行单位切分的角度
+    fun appendBall(radius: Float, UNIT_SIZE: Float = 1f) {
 
         val sizew = 1.0f / (360 / angleSpan)    // 纹理水平方向步进值
         val sizeh = 1.0f / (180 / angleSpan)     // 纹理垂直方向步进值
@@ -320,37 +320,34 @@ class ObjectBuilder2 {
         }
     }
 
-    //对矩形自动切分纹理产生纹理数组的方法
-    //bw:列数
-    //bh:行数
-//    fun generateTexCoor(bw: Int, bh: Int): FloatArray {
-//        val result = FloatArray(bw * bh * 6 * 2)
-//        val sizew = 1.0f / bw
-//        val sizeh = 1.0f / bh
-//        var c = 0
-//        for (i in 0 until bh) {
-//            for (j in 0 until bw) {
-//                //每行列一个矩形，由两个三角形构成，共六个点，12个纹理坐标
-//                val s = j * sizew
-//                val t = i * sizeh               //得到i行j列小矩形的左上点的纹理坐标值
-//                result[c++] = s
-//                result[c++] = t                       //该矩形左上点纹理坐标值
-//                result[c++] = s
-//                result[c++] = t + sizeh               //该矩形左下点纹理坐标值
-//                result[c++] = s + sizew
-//                result[c++] = t                       //该矩形右上点纹理坐标值
-//                result[c++] = s + sizew
-//                result[c++] = t                       //该矩形右上点纹理坐标值
-//                result[c++] = s
-//                result[c++] = t + sizeh               //该矩形左下点纹理坐标值
-//                result[c++] = s + sizew
-//                result[c++] = t + sizeh               //该矩形右下点纹理坐标值
-//            }
-//        }
-//        return result
-//    }
-//
-//    fun generateBallTexCoor(): FloatArray = generateTexCoor(360 / angleSpan, 180 / angleSpan)
+    fun buildData(): GeneratedData {
+
+        val numVertices = vertexList.size / TEXTURE_VERTEX_ATTRIBUTE_SIZE
+
+        val vertexArray = FloatArray(numVertices * TEXTURE_VERTEX_ATTRIBUTE_SIZE)
+        val indexArray = ShortArray(indexList.size)
+
+        Timber.d(
+            "buildTexturedBallData(): Size - V:${vertexArray.size}, I:${indexArray.size}}"
+        )
+
+        // 将构造的顶点列表转存为顶点数组
+        for (i in 0 until numVertices) {
+            // copy vertex and normal
+            for (j in 0 until TEXTURE_VERTEX_ATTRIBUTE_SIZE) {
+                vertexArray[i * TEXTURE_VERTEX_ATTRIBUTE_SIZE + j] =
+                    vertexList[i * TEXTURE_VERTEX_ATTRIBUTE_SIZE + j]
+            }
+        }
+
+        // 将构造的顶点列表转存为顶点索引数组
+        for (i in 0 until indexList.size) {
+            indexArray[i] = indexList[i]
+        }
+
+        return GeneratedData(numVertices, vertexArray, indexArray)
+    }
+
 
     fun appendStar(
         angleNum: Int,  // 星形的锐角个数
@@ -418,120 +415,7 @@ class ObjectBuilder2 {
         }
     }
 
-    private val angleSpan = 10      // 将球进行单位切分的角度
-    fun appendBall(radius: Float, UNIT_SIZE: Float = 1f) {
-
-        for (vAngle in -90 until 90 step angleSpan) {
-            for (hAngle in 0..360 step angleSpan) {
-                // 纵向横向各到一个角度后计算对应的此点在球面上的坐标
-                var xozLength: Double = radius * UNIT_SIZE * cos(Math.toRadians(vAngle.toDouble()))
-                val x0 = (xozLength * cos(Math.toRadians(hAngle.toDouble()))).toFloat()
-                val y0 = (xozLength * sin(Math.toRadians(hAngle.toDouble()))).toFloat()
-                val z0 = (radius * UNIT_SIZE
-                        * sin(Math.toRadians(vAngle.toDouble()))).toFloat()
-
-                xozLength = radius * UNIT_SIZE * cos(Math.toRadians(vAngle.toDouble()))
-                val x1 = (xozLength * cos(Math.toRadians(hAngle + angleSpan.toDouble()))).toFloat()
-                val y1 = (xozLength * sin(Math.toRadians(hAngle + angleSpan.toDouble()))).toFloat()
-                val z1 = (radius * UNIT_SIZE
-                        * sin(Math.toRadians(vAngle.toDouble()))).toFloat()
-
-                xozLength = radius * UNIT_SIZE * cos(Math.toRadians(vAngle + angleSpan.toDouble()))
-                val x2 = (xozLength * cos(Math.toRadians(hAngle + angleSpan.toDouble()))).toFloat()
-                val y2 = (xozLength * sin(Math.toRadians(hAngle + angleSpan.toDouble()))).toFloat()
-                val z2 = (radius * UNIT_SIZE
-                        * sin(Math.toRadians(vAngle + angleSpan.toDouble()))).toFloat()
-
-                xozLength = radius * UNIT_SIZE * cos(Math.toRadians(vAngle + angleSpan.toDouble()))
-                val x3 = (xozLength * cos(Math.toRadians(hAngle.toDouble()))).toFloat()
-                val y3 = (xozLength * sin(Math.toRadians(hAngle.toDouble()))).toFloat()
-                val z3 = (radius * UNIT_SIZE
-                        * sin(Math.toRadians(vAngle + angleSpan.toDouble()))).toFloat()
-
-                // 将计算出来的XYZ坐标加入存放顶点坐标的ArrayList
-                // 球体的法线向量等同于其顶点坐标
-                //构建第一三角形
-                vertexList.add(x1)
-                vertexList.add(y1)
-                vertexList.add(z1)
-                vertexList.add(x1)
-                vertexList.add(y1)
-                vertexList.add(z1)
-                indexList.add(index++)
-
-                vertexList.add(x3)
-                vertexList.add(y3)
-                vertexList.add(z3)
-                vertexList.add(x3)
-                vertexList.add(y3)
-                vertexList.add(z3)
-                indexList.add(index++)
-
-                vertexList.add(x0)
-                vertexList.add(y0)
-                vertexList.add(z0)
-                vertexList.add(x0)
-                vertexList.add(y0)
-                vertexList.add(z0)
-                indexList.add(index++)
-
-                //构建第二三角形
-                vertexList.add(x1)
-                vertexList.add(y1)
-                vertexList.add(z1)
-                vertexList.add(x1)
-                vertexList.add(y1)
-                vertexList.add(z1)
-                indexList.add(index++)
-
-                vertexList.add(x2)
-                vertexList.add(y2)
-                vertexList.add(z2)
-                vertexList.add(x2)
-                vertexList.add(y2)
-                vertexList.add(z2)
-                indexList.add(index++)
-
-                vertexList.add(x3)
-                vertexList.add(y3)
-                vertexList.add(z3)
-                vertexList.add(x3)
-                vertexList.add(y3)
-                vertexList.add(z3)
-                indexList.add(index++)
-            }
-        }
-    }
-
-    fun buildTexturedData(): GeneratedData {
-
-        val numVertices = vertexList.size / TEXTURE_VERTEX_ATTRIBUTE_SIZE
-
-        val vertexArray = FloatArray(numVertices * TEXTURE_VERTEX_ATTRIBUTE_SIZE)
-        val indexArray = ShortArray(indexList.size)
-
-        Timber.d(
-            "buildTexturedBallData(): Size - V:${vertexArray.size}, I:${indexArray.size}}"
-        )
-
-        // 将构造的顶点列表转存为顶点数组
-        for (i in 0 until numVertices) {
-            // copy vertex and normal
-            for (j in 0 until TEXTURE_VERTEX_ATTRIBUTE_SIZE) {
-                vertexArray[i * TEXTURE_VERTEX_ATTRIBUTE_SIZE + j] =
-                    vertexList[i * TEXTURE_VERTEX_ATTRIBUTE_SIZE + j]
-            }
-        }
-
-        // 将构造的顶点列表转存为顶点索引数组
-        for (i in 0 until indexList.size) {
-            indexArray[i] = indexList[i]
-        }
-
-        return GeneratedData(numVertices, vertexArray, indexArray)
-    }
-
-    fun buildData(): GeneratedData {
+    fun buildNoneTexturedData(): GeneratedData {
 
         val vertexArray = FloatArray(vertexList.size)
         val indexArray = ShortArray(indexList.size)
@@ -574,5 +458,35 @@ class ObjectBuilder2 {
 
         private const val TEXTURE_VERTEX_ATTRIBUTE_SIZE =
             VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE + VERTEX_TEXCOORDO_SIZE
+    }
+
+    //对矩形自动切分纹理产生纹理数组的方法
+    //bw:列数
+    //bh:行数
+    fun generateTexCoor(bw: Int, bh: Int): FloatArray {
+        val result = FloatArray(bw * bh * 6 * 2)
+        val sizew = 1.0f / bw
+        val sizeh = 1.0f / bh
+        var c = 0
+        for (i in 0 until bh) {
+            for (j in 0 until bw) {
+                //每行列一个矩形，由两个三角形构成，共六个点，12个纹理坐标
+                val s = j * sizew
+                val t = i * sizeh               //得到i行j列小矩形的左上点的纹理坐标值
+                result[c++] = s
+                result[c++] = t                       //该矩形左上点纹理坐标值
+                result[c++] = s
+                result[c++] = t + sizeh               //该矩形左下点纹理坐标值
+                result[c++] = s + sizew
+                result[c++] = t                       //该矩形右上点纹理坐标值
+                result[c++] = s + sizew
+                result[c++] = t                       //该矩形右上点纹理坐标值
+                result[c++] = s
+                result[c++] = t + sizeh               //该矩形左下点纹理坐标值
+                result[c++] = s + sizew
+                result[c++] = t + sizeh               //该矩形右下点纹理坐标值
+            }
+        }
+        return result
     }
 }

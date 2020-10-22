@@ -1,9 +1,6 @@
-package com.focus617.myopengldemo.objects.geometry.d3
+package com.focus617.myopengldemo.objects.geometry.d3.ball
 
 import android.content.Context
-import android.opengl.GLES31
-import com.focus617.myopengldemo.R
-import com.focus617.myopengldemo.base.basic.Material
 import com.focus617.myopengldemo.base.basic.PointLight
 import com.focus617.myopengldemo.base.program.ShaderConstants
 import com.focus617.myopengldemo.base.program.ShaderProgram

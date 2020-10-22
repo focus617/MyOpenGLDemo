@@ -33,7 +33,7 @@ class Star(
         val builder = ObjectBuilder2()
         builder.appendStar(angleNum, radius, R, z)
 
-        val data = builder.buildData()
+        val data = builder.buildNoneTexturedData()
 
         //顶点坐标数据的初始化
         mVertexArray = VertexArray(data.vertexArray)

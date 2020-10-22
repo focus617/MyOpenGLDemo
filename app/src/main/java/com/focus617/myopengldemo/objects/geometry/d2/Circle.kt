@@ -4,7 +4,7 @@ import android.content.Context
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2
-import com.focus617.myopengldemo.objects.geometry.d3.EarthShaderProgram
+import com.focus617.myopengldemo.objects.geometry.d3.ball.EarthShaderProgram
 import com.focus617.myopengldemo.util.Geometry
 import timber.log.Timber
 
@@ -36,11 +36,11 @@ class Circle(
     private fun initVertices(radius: Float) {
         Timber.d("initVertices(radius=$radius)")
         val builder = ObjectBuilder2()
-        builder.appendTexturedCircle(radius, numPoints, 0f)
-        builder.appendTexturedCone(radius, 2f, numPoints)
+        builder.appendCircle(radius, numPoints, 0f)
+        builder.appendCone(radius, 2f, numPoints)
 
         //顶点坐标数据的初始化
-        build(builder.buildTexturedData())
+        build(builder.buildData())
 //        mVertexArray.dump(16)
         mElementArray.dump(40)
     }

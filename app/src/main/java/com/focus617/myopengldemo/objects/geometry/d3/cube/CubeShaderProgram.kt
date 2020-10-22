@@ -1,8 +1,7 @@
-package com.focus617.myopengldemo.objects.geometry.d3
+package com.focus617.myopengldemo.objects.geometry.d3.cube
 
 import android.content.Context
 import android.opengl.GLES31
-import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_IT_MV_MATRIX
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_MATERIAL_DIFFUSE
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_MATERIAL_SHININESS

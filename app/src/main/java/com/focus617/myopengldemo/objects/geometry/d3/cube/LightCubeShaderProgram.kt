@@ -1,7 +1,6 @@
-package com.focus617.myopengldemo.objects.geometry.d3
+package com.focus617.myopengldemo.objects.geometry.d3.cube
 
 import android.content.Context
-import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.base.program.ShaderProgram
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_MODEL_MATRIX
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_PROJECT_MATRIX

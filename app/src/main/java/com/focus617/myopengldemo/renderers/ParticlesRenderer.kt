@@ -8,7 +8,7 @@ import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import com.focus617.myopengldemo.R
-import com.focus617.myopengldemo.objects.geometry.d3.Cube
+import com.focus617.myopengldemo.objects.geometry.d3.cube.LightCube
 import com.focus617.myopengldemo.objects.particles.*
 import com.focus617.myopengldemo.programs.particles.SkeyCubeShaderProgram
 import com.focus617.myopengldemo.programs.particles.HeightmapShaderProgram
@@ -64,7 +64,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     private lateinit var particleFireworksExplosion: ParticleFireworksExplosion
 
     private lateinit var cubeProgram: SkeyCubeShaderProgram
-    private lateinit var cube: Cube
+    private lateinit var cube: LightCube
 
     private lateinit var skyBoxProgram: SkyboxShaderProgram
     private lateinit var skyBox: Skybox
@@ -124,7 +124,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         skyBox = Skybox()
 
 //        cubeProgram = SkeyCubeShaderProgram(context)
-        cube = Cube(context)
+        cube = LightCube(context)
 
         particleProgram = ParticleShaderProgram(context)
         particleSystem = ParticleSystem(10000)

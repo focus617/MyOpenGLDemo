@@ -1,11 +1,11 @@
-package com.focus617.myopengldemo.objects.geometry.d3
+package com.focus617.myopengldemo.objects.geometry.d3.cube
 
 import android.content.Context
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 import com.focus617.myopengldemo.util.Geometry
 
-class Cube2(context: Context): IndexMeshObject(context) {
+open class Cube(context: Context): IndexMeshObject(context) {
 
     init {
         //调用初始化顶点数据的initVertexArray方法

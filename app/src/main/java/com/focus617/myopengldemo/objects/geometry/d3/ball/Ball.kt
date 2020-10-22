@@ -1,13 +1,12 @@
-package com.focus617.myopengldemo.objects.geometry.d3
+package com.focus617.myopengldemo.objects.geometry.d3.ball
 
 import android.content.Context
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2
-import com.focus617.myopengldemo.util.Geometry
 import timber.log.Timber
 
-class Ball(
+abstract class Ball(
     context: Context,
     val radius: Float
 ): IndexMeshObject(context) {
@@ -37,34 +36,6 @@ class Ball(
         build(builder.buildData())
     }
 
-    override fun initShader() {
-        //自定义渲染管线程序
-//        mProgram = BallShaderProgram(context)
-        mProgram = LightBallShaderProgram(context)
-        bindData()
-    }
-
-    fun updateShaderUniforms(
-        modelMatrix: FloatArray,
-        viewMatrix: FloatArray,
-        projectionMatrix: FloatArray
-//        viewPosition: Geometry.Companion.Vector,
-    ) {
-        mProgram.use()
-//        (mProgram as BallShaderProgram).setUniforms(
-//            modelMatrix,
-//            viewMatrix,
-//            projectionMatrix,
-//            viewPosition,
-//            radius * UNIT_SIZE
-//        )
-        (mProgram as LightBallShaderProgram).setUniforms(
-            modelMatrix,
-            viewMatrix,
-            projectionMatrix
-        )
-    }
-
     override fun bindData() {
         val attribPropertyList: List<AttributeProperty> = arrayListOf(
             // 顶点的位置属性
@@ -81,6 +52,14 @@ class Ball(
                 VERTEX_NORMAL_SIZE,
                 VERTEX_STRIDE,
                 VERTEX_NORMAL_OFFSET
+            ),
+
+            // 顶点的纹理坐标
+            AttributeProperty(
+                VERTEX_TEXCOORDO_INDEX,
+                VERTEX_TEXCOORDO_SIZE,
+                VERTEX_STRIDE,
+                VERTEX_TEX_COORDO_OFFSET
             )
         )
         super.bindData(attribPropertyList)
@@ -93,18 +72,23 @@ class Ball(
         // 顶点坐标的每个属性的Index
         private const val VERTEX_POS_INDEX = 0
         private const val VERTEX_NORMAL_INDEX = 1
+        internal const val VERTEX_TEXCOORDO_INDEX = 2
 
         // 顶点坐标的每个属性的Size
         private const val VERTEX_POS_SIZE = 3            //x,y,z
         private const val VERTEX_NORMAL_SIZE = 3         //NX, NY, NZ
+        private const val VERTEX_TEXCOORDO_SIZE = 2      //s and t
 
         // the following 4 defines are used to determine the locations
         // of various attributes if vertex data are stored as an array
         //of structures
         private const val VERTEX_POS_OFFSET = 0
         private const val VERTEX_NORMAL_OFFSET = VERTEX_POS_SIZE * Float.SIZE_BYTES
+        private const val VERTEX_TEX_COORDO_OFFSET =
+            (VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE) * Float.SIZE_BYTES
 
-        private const val VERTEX_ATTRIBUTE_SIZE = VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE
+        private const val VERTEX_ATTRIBUTE_SIZE =
+            VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE + VERTEX_TEXCOORDO_SIZE
 
         // 连续的顶点属性组之间的间隔
         private const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
