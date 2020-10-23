@@ -90,8 +90,8 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
 //        // build model
         mModel = Model(context)
-        mModel.loadFromObj("3dModel/Aya/091_W_Aya_10K.obj")
-//        mModel.loadFromObj("3dModel/teapot/teapot_t.obj")
+//        mModel.loadFromObj("3dModel/Aya/091_W_Aya_10K.obj")
+        mModel.loadFromObj("3dModel/teapot/teapot_t.obj")
 
     }
 
@@ -112,7 +112,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 //            -aspect, aspect, -1f, 1f,
 //            2f, 50f
 //        )
-        MatrixHelper.perspectiveM(mProjectionMatrix, yFovInDegrees, aspect, 1f, 10000f)
+        MatrixHelper.perspectiveM(mProjectionMatrix, yFovInDegrees, aspect, 1f, 1000f)
 
 
         //启动一个线程定时旋转地球、月球
