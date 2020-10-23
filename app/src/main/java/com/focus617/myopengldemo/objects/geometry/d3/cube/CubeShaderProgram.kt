@@ -18,7 +18,7 @@ import com.focus617.myopengldemo.base.program.ShaderConstants.U_POINT_VIEW_POSIT
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_PROJECT_MATRIX
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_VIEW_MATRIX
 import com.focus617.myopengldemo.base.program.ShaderProgram
-import com.focus617.myopengldemo.util.Vector
+import com.focus617.myopengldemo.utils.Vector
 import com.focus617.myopengldemo.base.basic.PointLight
 import com.focus617.myopengldemo.base.basic.Material
 

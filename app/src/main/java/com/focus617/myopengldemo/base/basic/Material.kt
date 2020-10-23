@@ -1,6 +1,6 @@
 package com.focus617.myopengldemo.base.basic
 
-import com.focus617.myopengldemo.util.Vector
+import com.focus617.myopengldemo.utils.Vector
 
 object Material {
     var ambient: Vector = Vector(1.0f, 0.5f, 0.31f)

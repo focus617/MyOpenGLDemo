@@ -1,7 +1,7 @@
 package com.focus617.myopengldemo.base.basic
 
 import android.opengl.Matrix
-import com.focus617.myopengldemo.util.Vector
+import com.focus617.myopengldemo.utils.Vector
 
 object Camera {
     private const val defaultDistance: Float = 130.0F

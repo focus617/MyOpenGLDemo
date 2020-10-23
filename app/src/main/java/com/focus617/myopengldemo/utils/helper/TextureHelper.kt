@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.util
+package com.focus617.myopengldemo.utils.helper
 
 import android.content.Context
 import android.graphics.Bitmap

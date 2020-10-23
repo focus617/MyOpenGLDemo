@@ -1,10 +1,7 @@
 package com.focus617.myopengldemo.xuscene.data
 
 import android.content.Context
-import android.text.TextUtils
-import com.focus617.myopengldemo.xuscene.utils.ObjInfo
-import com.focus617.myopengldemo.xuscene.utils.ObjLoader
-import timber.log.Timber
+import com.focus617.myopengldemo.utils.objTools.ObjInfo
 
 /**
  * 场景类

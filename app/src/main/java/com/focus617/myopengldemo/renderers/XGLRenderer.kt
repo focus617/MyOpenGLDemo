@@ -4,7 +4,6 @@ import android.content.Context
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
-import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.base.Model
 import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.basic.PointLight
@@ -17,10 +16,9 @@ import com.focus617.myopengldemo.objects.geometry.d3.ball.Earth
 import com.focus617.myopengldemo.objects.geometry.d3.ball.Moon
 import com.focus617.myopengldemo.objects.geometry.d3.ball.Sun
 import com.focus617.myopengldemo.objects.geometry.d3.cube.Cube
-import com.focus617.myopengldemo.util.Vector
-import com.focus617.myopengldemo.util.MatrixHelper
-import com.focus617.myopengldemo.util.TextureHelper
-import com.focus617.myopengldemo.util.clamp
+import com.focus617.myopengldemo.utils.Vector
+import com.focus617.myopengldemo.utils.helper.MatrixHelper
+import com.focus617.myopengldemo.utils.clamp
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10

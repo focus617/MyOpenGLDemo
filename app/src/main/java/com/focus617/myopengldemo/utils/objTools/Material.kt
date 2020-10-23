@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.xuscene.utils
+package com.focus617.myopengldemo.utils.objTools
 
 import timber.log.Timber
 

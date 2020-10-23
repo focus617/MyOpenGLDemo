@@ -2,7 +2,7 @@ package com.focus617.myopengldemo.objects.airhockey
 
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder.Companion.GeneratedData
-import com.focus617.myopengldemo.util.Geometry
+import com.focus617.myopengldemo.utils.Geometry
 
 object AirHockeyObjectBuilder {
     /**

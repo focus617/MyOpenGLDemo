@@ -8,7 +8,7 @@ import com.focus617.myopengldemo.base.program.ShaderProgram
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_MODEL_MATRIX
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_PROJECT_MATRIX
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_VIEW_MATRIX
-import com.focus617.myopengldemo.util.Vector
+import com.focus617.myopengldemo.utils.Vector
 
 const val EARTH_PATH = "Earth"
 const val EARTH_VERTEX_FILE = "vertex_shader.glsl"

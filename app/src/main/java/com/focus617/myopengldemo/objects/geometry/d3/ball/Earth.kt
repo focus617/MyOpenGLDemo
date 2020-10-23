@@ -1,7 +1,7 @@
 package com.focus617.myopengldemo.objects.geometry.d3.ball
 
 import android.content.Context
-import com.focus617.myopengldemo.util.Vector
+import com.focus617.myopengldemo.utils.Vector
 
 /**
  * 表示地球的类，采用多重纹理

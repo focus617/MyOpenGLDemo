@@ -2,9 +2,9 @@ package com.focus617.myopengldemo.base.program
 
 import android.content.Context
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.util.Vector
-import com.focus617.myopengldemo.util.ShaderHelper
-import com.focus617.myopengldemo.util.TextResourceReader
+import com.focus617.myopengldemo.utils.Vector
+import com.focus617.myopengldemo.utils.helper.ShaderHelper
+import com.focus617.myopengldemo.utils.helper.TextResourceReader
 
 /**
  * 着色器类 ShaderProgram

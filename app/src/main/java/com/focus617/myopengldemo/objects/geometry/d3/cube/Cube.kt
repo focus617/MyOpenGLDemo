@@ -3,8 +3,7 @@ package com.focus617.myopengldemo.objects.geometry.d3.cube
 import android.content.Context
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
-import com.focus617.myopengldemo.util.Geometry
-import com.focus617.myopengldemo.util.Vector
+import com.focus617.myopengldemo.utils.Vector
 
 open class Cube(context: Context): IndexMeshObject(context) {
 

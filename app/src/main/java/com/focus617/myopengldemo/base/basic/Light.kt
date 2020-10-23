@@ -1,6 +1,6 @@
 package com.focus617.myopengldemo.base.basic
 
-import com.focus617.myopengldemo.util.Vector
+import com.focus617.myopengldemo.utils.Vector
 
 // 点光源
 object PointLight {

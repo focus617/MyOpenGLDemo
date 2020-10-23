@@ -1,8 +1,8 @@
 package com.focus617.myopengldemo.base.objectbuilder
 
 import android.opengl.GLES31.*
-import com.focus617.myopengldemo.util.Geometry.Circle
-import com.focus617.myopengldemo.util.Geometry.Cylinder
+import com.focus617.myopengldemo.utils.Geometry.Circle
+import com.focus617.myopengldemo.utils.Geometry.Cylinder
 
 class ObjectBuilder(private val sizeInVertices: Int) {
 

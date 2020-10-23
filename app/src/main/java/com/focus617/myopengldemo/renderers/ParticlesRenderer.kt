@@ -14,11 +14,11 @@ import com.focus617.myopengldemo.programs.particles.SkeyCubeShaderProgram
 import com.focus617.myopengldemo.programs.particles.HeightmapShaderProgram
 import com.focus617.myopengldemo.programs.particles.ParticleShaderProgram
 import com.focus617.myopengldemo.programs.particles.SkyboxShaderProgram
-import com.focus617.myopengldemo.util.Vector
-import com.focus617.myopengldemo.util.Geometry.Point
-import com.focus617.myopengldemo.util.MatrixHelper
-import com.focus617.myopengldemo.util.TextureHelper
-import com.focus617.myopengldemo.util.TextureHelper.FilterMode
+import com.focus617.myopengldemo.utils.Vector
+import com.focus617.myopengldemo.utils.Geometry.Point
+import com.focus617.myopengldemo.utils.helper.MatrixHelper
+import com.focus617.myopengldemo.utils.helper.TextureHelper
+import com.focus617.myopengldemo.utils.helper.TextureHelper.FilterMode
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10

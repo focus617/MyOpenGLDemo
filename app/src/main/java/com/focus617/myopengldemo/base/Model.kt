@@ -2,11 +2,7 @@ package com.focus617.myopengldemo.base
 
 import android.content.Context
 import com.focus617.myopengldemo.base.basic.Camera
-import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
-import com.focus617.myopengldemo.base.program.ShaderProgram
-import com.focus617.myopengldemo.xuscene.utils.ObjInfo
-import com.focus617.myopengldemo.xuscene.data.XuScene
-import com.focus617.myopengldemo.xuscene.utils.ObjLoader
+import com.focus617.myopengldemo.utils.objTools.ObjLoader
 import timber.log.Timber
 
 class Model() {
@@ -24,9 +20,9 @@ class Model() {
         else "."
         Timber.d("load(): directory = $directory")
 
-        val meshList = ObjLoader.loadFromObjFile(context, pathName)
+        val dataList = ObjLoader.loadFromObjFile(context, pathName)
 
-        for ((key, data) in meshList) {
+        for ((key, data) in dataList) {
             meshes[key] = Mesh(context, data)
         }
     }

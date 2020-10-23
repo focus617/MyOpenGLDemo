@@ -4,9 +4,7 @@ import android.content.Context
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2
-import com.focus617.myopengldemo.objects.geometry.d3.ball.Ball
-import com.focus617.myopengldemo.objects.geometry.d3.ball.MoonShaderProgram
-import com.focus617.myopengldemo.util.Vector
+import com.focus617.myopengldemo.utils.Vector
 
 
 enum class TextureType {

@@ -5,9 +5,8 @@ import android.graphics.Color
 import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.programs.particles.HeightmapShaderProgram
-import com.focus617.myopengldemo.util.Geometry
-import com.focus617.myopengldemo.util.Vector
-import com.focus617.myopengldemo.util.Geometry.Point
+import com.focus617.myopengldemo.utils.Vector
+import com.focus617.myopengldemo.utils.Geometry.Point
 import timber.log.Timber
 
 class Heightmap(bitmap: Bitmap) {

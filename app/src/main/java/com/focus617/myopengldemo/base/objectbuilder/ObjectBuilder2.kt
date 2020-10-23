@@ -1,6 +1,6 @@
 package com.focus617.myopengldemo.base.objectbuilder
 
-import com.focus617.myopengldemo.util.Vector.Companion.calConeNormal
+import com.focus617.myopengldemo.utils.Vector.Companion.calConeNormal
 import timber.log.Timber
 import kotlin.math.cos
 import kotlin.math.sin

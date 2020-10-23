@@ -4,8 +4,8 @@ import android.opengl.GLES31.*
 import com.focus617.myopengldemo.base.objectbuilder.DrawingObject
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
-import com.focus617.myopengldemo.util.Geometry.Point
-import com.focus617.myopengldemo.util.Geometry.Cylinder
+import com.focus617.myopengldemo.utils.Geometry.Point
+import com.focus617.myopengldemo.utils.Geometry.Cylinder
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder.Companion.DrawCommand
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder.Companion.GeneratedData
 

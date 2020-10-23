@@ -1,10 +1,9 @@
-package com.focus617.myopengldemo.xuscene.utils
+package com.focus617.myopengldemo.utils.objTools
 
 import android.content.Context
 import android.text.TextUtils
 import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2.Companion.GeneratedData
-import com.focus617.myopengldemo.util.Vector.Companion.calTriangleNormal
-import com.focus617.myopengldemo.util.clamp
+import com.focus617.myopengldemo.utils.Vector.Companion.calTriangleNormal
 import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList

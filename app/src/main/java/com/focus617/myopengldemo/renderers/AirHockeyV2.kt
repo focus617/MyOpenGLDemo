@@ -8,8 +8,8 @@ import com.focus617.myopengldemo.objects.airhockey.Mallet
 import com.focus617.myopengldemo.objects.airhockey.Table
 import com.focus617.myopengldemo.programs.airhockey.ColorShaderProgram
 import com.focus617.myopengldemo.programs.airhockey.TextureShaderProgram
-import com.focus617.myopengldemo.util.MatrixHelper
-import com.focus617.myopengldemo.util.TextureHelper
+import com.focus617.myopengldemo.utils.helper.MatrixHelper
+import com.focus617.myopengldemo.utils.helper.TextureHelper
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10

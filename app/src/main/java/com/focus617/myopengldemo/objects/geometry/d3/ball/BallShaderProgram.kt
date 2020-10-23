@@ -8,7 +8,7 @@ import com.focus617.myopengldemo.base.program.ShaderConstants.U_MODEL_MATRIX
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_PROJECT_MATRIX
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_R
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_VIEW_MATRIX
-import com.focus617.myopengldemo.util.Vector
+import com.focus617.myopengldemo.utils.Vector
 
 const val BALL_PATH = "Ball"
 const val BALL_VERTEX_FILE = "vertex_shader.glsl"

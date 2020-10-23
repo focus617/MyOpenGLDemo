@@ -16,7 +16,7 @@ import androidx.core.view.MotionEventCompat
 import com.focus617.myopengldemo.renderers.AirHockeyRendererEs3
 import com.focus617.myopengldemo.renderers.ParticlesRenderer
 import com.focus617.myopengldemo.renderers.XGLRenderer
-import com.focus617.myopengldemo.util.TextureHelper.FilterMode
+import com.focus617.myopengldemo.utils.helper.TextureHelper.FilterMode
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {

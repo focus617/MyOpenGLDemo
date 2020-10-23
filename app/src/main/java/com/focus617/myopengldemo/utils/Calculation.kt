@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.util
+package com.focus617.myopengldemo.utils
 
 fun clamp(value: Int, min: Int, max: Int): Int {
     return kotlin.math.max(min, kotlin.math.min(max, value))

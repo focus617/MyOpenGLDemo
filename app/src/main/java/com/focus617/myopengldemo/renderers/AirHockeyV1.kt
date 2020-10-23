@@ -3,8 +3,8 @@ package com.focus617.myopengldemo.renderers
 import android.content.Context
 import android.opengl.GLES31.*
 import com.focus617.myopengldemo.R
-import com.focus617.myopengldemo.util.ShaderHelper
-import com.focus617.myopengldemo.util.TextResourceReader
+import com.focus617.myopengldemo.utils.helper.ShaderHelper
+import com.focus617.myopengldemo.utils.helper.TextResourceReader
 import timber.log.Timber
 import java.nio.FloatBuffer
 import java.nio.IntBuffer

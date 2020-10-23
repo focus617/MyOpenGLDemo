@@ -2,8 +2,8 @@ package com.focus617.myopengldemo.objects.particles
 
 import java.util.*
 import android.opengl.Matrix
-import com.focus617.myopengldemo.util.Geometry.Point
-import com.focus617.myopengldemo.util.Vector
+import com.focus617.myopengldemo.utils.Geometry.Point
+import com.focus617.myopengldemo.utils.Vector
 
 /**
  * This class shoots particles in a particular direction.

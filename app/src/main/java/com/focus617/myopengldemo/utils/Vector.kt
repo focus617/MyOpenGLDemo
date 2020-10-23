@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.util
+package com.focus617.myopengldemo.utils
 
 class Vector(var x: Float, var y: Float, var z: Float) {
 
