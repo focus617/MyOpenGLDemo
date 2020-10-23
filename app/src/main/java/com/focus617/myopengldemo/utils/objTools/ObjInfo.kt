@@ -74,9 +74,9 @@ class ObjInfo {
     // 存放根据face信息解析的完整的顶点属性（包含法线和纹理）
     val mFinalVertices = HashMap<String, ArrayList<Float>>()
 
-//    var hasNormalInFace = false
-//    var hasTextureInFace = false
-//    var textureDimension = 2
+    var hasNormalInFace = false
+    var hasTextureInFace = false
+    var textureDimension = 2
 
     fun clear() {
         name = "def"
@@ -100,7 +100,7 @@ class ObjInfo {
             Timber.d("parse(): parsing key: $key")
             val vertices = mFinalVertices[key] ?: continue
 
-            var vertexSize = 3 + 3 + 2
+            var vertexSize = 3 + 3 + 3
 //            if (hasNormalInFace) vertexSize += 3
 //            if (hasTextureInFace) {
 //                when (textureDimension) {
@@ -118,11 +118,8 @@ class ObjInfo {
                 "parse(): Size - V:${vertexArray.size}, I:${indexArray.size}"
             )
             // 将构造的顶点列表转存为顶点数组
-            for (i in 0 until numVertices) {
-                // copy vertex and normal
-                for (j in 0 until vertexSize) {
-                    vertexArray[i * vertexSize + j] = vertices[i * vertexSize + j]
-                }
+            for (i in 0 until vertices.size) {
+                vertexArray[i] = vertices[i]
             }
 
             // 将构造的顶点列表转存为顶点索引数组

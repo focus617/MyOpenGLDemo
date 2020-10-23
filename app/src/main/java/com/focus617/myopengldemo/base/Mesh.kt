@@ -125,28 +125,28 @@ class Mesh(
     companion object {
 
         // 顶点坐标的每个属性的Index
-        internal const val VERTEX_POS_INDEX = 0
-        internal const val VERTEX_NORMAL_INDEX = 1
-        internal const val VERTEX_TEXCOORDO_INDEX = 2
+        private const val VERTEX_POS_INDEX = 0
+        private const val VERTEX_NORMAL_INDEX = 1
+        private const val VERTEX_TEXCOORDO_INDEX = 2
 
         // 顶点坐标的每个属性的Size
-        internal const val VERTEX_POS_SIZE = 3            //x,y,z
-        internal const val VERTEX_NORMAL_SIZE = 3         //NX, NY, NZ
-        internal const val VERTEX_TEXCOORDO_SIZE = 2      //s and t
+        private const val VERTEX_POS_SIZE = 3            //x,y,z
+        private const val VERTEX_NORMAL_SIZE = 3         //NX, NY, NZ
+        private const val VERTEX_TEXCOORDO_SIZE = 2      //s,t, w
 
         // the following 4 defines are used to determine the locations
         // of various attributes if vertex data are stored as an array
         //of structures
-        internal const val VERTEX_POS_OFFSET = 0
-        internal const val VERTEX_NORMAL_OFFSET = VERTEX_POS_SIZE * Float.SIZE_BYTES
-        internal const val VERTEX_TEX_COORDO_OFFSET =
+        private const val VERTEX_POS_OFFSET = 0
+        private const val VERTEX_NORMAL_OFFSET = VERTEX_POS_SIZE * Float.SIZE_BYTES
+        private const val VERTEX_TEX_COORDO_OFFSET =
             (VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE) * Float.SIZE_BYTES
 
-        internal const val VERTEX_ATTRIBUTE_SIZE =
-            VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE + VERTEX_TEXCOORDO_SIZE
+        private const val VERTEX_ATTRIBUTE_SIZE =
+            VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE + (VERTEX_TEXCOORDO_SIZE+1)
 
         // 连续的顶点属性组之间的间隔
-        internal const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
+        private const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES
 
     }
 

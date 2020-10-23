@@ -41,7 +41,7 @@ object ObjLoader {
      */
     fun load(context: Context, objFilePathName: String): ObjInfo {
 
-        Timber.d("loadFromObjFile() from $objFilePathName")
+        Timber.d("loadFromObjFile(): $objFilePathName")
 
         if (objFilePathName.isEmpty() or TextUtils.isEmpty(objFilePathName)) {
             Timber.w("Obj File doesn't exist")
@@ -160,12 +160,12 @@ object ObjLoader {
      */
     private fun fillTextureCoordList(line: String) {
         val coordinates = line.split(DELIMITER)
-        if (coordinates.size !in 3..4 )  return
-//        when (coordinates.size) {
-//            3 -> mObjInfo.textureDimension = 2
-//            4 -> mObjInfo.textureDimension = 3
-//            !in 3..4 -> return
-//        }
+//        if (coordinates.size !in 3..4 )  return
+        when (coordinates.size) {
+            3 -> mObjInfo.textureDimension = 2
+            4 -> mObjInfo.textureDimension = 3
+            !in 3..4 -> return
+        }
 
         val objTexture = ObjTexture(0f, 0f, 0f)
         objTexture.put(0, coordinates[1].toFloat())
@@ -232,7 +232,8 @@ object ObjLoader {
 
         if (!(vertexIndices[1].contains("/"))) {
             // vertexIndices[] format: "f vertexIndex1 vertexIndex2 vertexIndex3"
-//            mObjInfo.hasTextureInFace = false
+            mObjInfo.hasNormalInFace = false
+            mObjInfo.hasTextureInFace = false
 
             var vertexIndex = Integer.valueOf(vertexIndices[1]) - 1
             val x0 = mObjInfo.mVertices[vertexIndex].x
@@ -314,17 +315,31 @@ object ObjLoader {
                 currentVertexList!!.add(mObjInfo.mVertices[vertexIndex].y)
                 currentVertexList!!.add(mObjInfo.mVertices[vertexIndex].z)
 
-                currentVertexList!!.add(mObjInfo.mNormals[normalIndex].x)
-                currentVertexList!!.add(mObjInfo.mNormals[normalIndex].y)
-                currentVertexList!!.add(mObjInfo.mNormals[normalIndex].z)
+                if(normalIndex == 0){
+                    currentVertexList!!.add(0f)
+                    currentVertexList!!.add(0f)
+                    currentVertexList!!.add(0f)
+                }
+                else {
+                    currentVertexList!!.add(mObjInfo.mNormals[normalIndex].x)
+                    currentVertexList!!.add(mObjInfo.mNormals[normalIndex].y)
+                    currentVertexList!!.add(mObjInfo.mNormals[normalIndex].z)
+                }
 
-                currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].s)
-                currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].t)
-//                if (mObjInfo.textureDimension == 3) {
-//                    currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].w)
-//                } else{
-//                    currentVertexList!!.add(0f)
-//                }
+                if(textureIndex == 0){
+                    currentVertexList!!.add(0f)
+                    currentVertexList!!.add(0f)
+                    currentVertexList!!.add(0f)
+                }
+                else {
+                    currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].s)
+                    currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].t)
+                    if (mObjInfo.textureDimension == 3) {
+                        currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].w)
+                    } else {
+                        currentVertexList!!.add(0f)
+                    }
+                }
 
                 val lastIndex = currentIndexList!!.size
                 currentIndexList!!.add(lastIndex)

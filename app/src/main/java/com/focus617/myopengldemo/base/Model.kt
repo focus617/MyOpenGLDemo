@@ -3,10 +3,7 @@ package com.focus617.myopengldemo.base
 import android.content.Context
 import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.utils.helper.TextureHelper
-import com.focus617.myopengldemo.utils.objTools.DEFAULT_GROUP_NAME
-import com.focus617.myopengldemo.utils.objTools.Material
-import com.focus617.myopengldemo.utils.objTools.ObjLoader
-import com.focus617.myopengldemo.utils.objTools.defaultTextureId
+import com.focus617.myopengldemo.utils.objTools.*
 import timber.log.Timber
 
 
@@ -30,6 +27,12 @@ class Model(val context: Context) {
     //模型所包含的Material集合
     private val mMaterials = HashMap<String, Texture>()
 
+    //销毁模型及其所有Mesh
+    fun destroy() {
+        mMeshes.clear()
+        mMaterials.clear()
+    }
+
     //模型文件所在目录
     private lateinit var directory: String
 
@@ -41,7 +44,12 @@ class Model(val context: Context) {
 
         val objInfo = ObjLoader.load(context, pathName)
 
-        initMaterial(objInfo.mMaterials)
+        loadMaterialTextures(objInfo.mMaterials)
+        processMesh(objInfo)
+    }
+
+    //生成网格
+    private fun processMesh(objInfo: ObjInfo) {
 
         val dataList = objInfo.translate()
         objInfo.clear()
@@ -51,7 +59,8 @@ class Model(val context: Context) {
         }
     }
 
-    private fun initMaterial(mMaterialMap: HashMap<String, Material>) {
+    //创建纹理并加载图像数据
+    private fun loadMaterialTextures(mMaterialMap: HashMap<String, Material>) {
         if (mMaterialMap.size == 0) {
             val defaultTextureId = TextureHelper.loadTexture(context, defaultTextureId)
             mMaterials[DEFAULT_GROUP_NAME]=
@@ -76,8 +85,7 @@ class Model(val context: Context) {
 //            processMesh(scene.mMesh!!)
     }
 
-    //销毁模型及其所有Mesh
-    fun destroy() {}
+
 
     //渲染模型，即依次渲染各个网格
     fun draw(
@@ -107,8 +115,3 @@ class Model(val context: Context) {
  */
 //    fun processNode(node: Node, scene: XuScene){}
 
-//生成网格
-//    private fun processMesh(mesh: ObjInfo): Mesh = Mesh.build(mesh)
-
-//创建纹理并加载图像数据
-//    fun loadMaterialTextures(mat: aiMaterial, type: aiTextureType, typeName: String): vector<Texture>
