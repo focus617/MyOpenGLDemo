@@ -142,7 +142,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
         drawSun()
 //
-////        drawEarth()
+//        drawEarth()
 //
 //        drawMoon()
 //
@@ -154,17 +154,14 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 //
 //        draw()
 
-        drawModel()
+        drawModel(mViewMatrix, mProjectionMatrix)
     }
 
-    private fun drawModel() {
-        for ((key, mesh) in mModel.meshes) {
-            mesh.positionObjectInScene()
-            mesh.updateShaderUniforms(
-                mesh.mModelMatrix, mViewMatrix, mProjectionMatrix,
-                Camera.Position)
-            mesh.draw()
-        }
+    private fun drawModel(
+        viewMatrix: FloatArray,
+        projectionMatrix: FloatArray
+    ) {
+        mModel.draw(viewMatrix, projectionMatrix)
     }
 
     private fun drawSun() {

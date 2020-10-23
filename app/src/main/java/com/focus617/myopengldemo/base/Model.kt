@@ -1,6 +1,7 @@
 package com.focus617.myopengldemo.base
 
 import android.content.Context
+import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
 import com.focus617.myopengldemo.base.program.ShaderProgram
 import com.focus617.myopengldemo.xuscene.utils.ObjInfo
@@ -44,9 +45,17 @@ class Model() {
     fun destroy() {}
 
     //渲染模型，即依次渲染各个网格
-    fun draw() {
-        for ((key, mesh) in meshes)
+    fun draw(
+        viewMatrix: FloatArray,
+        projectionMatrix: FloatArray
+    ) {
+        for ((key, mesh) in meshes) {
+            mesh.positionObjectInScene()
+            mesh.updateShaderUniforms(
+                mesh.mModelMatrix, viewMatrix, projectionMatrix,
+                Camera.Position)
             mesh.draw()
+        }
     }
 }
 

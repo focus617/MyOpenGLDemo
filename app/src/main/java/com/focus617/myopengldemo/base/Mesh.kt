@@ -21,7 +21,7 @@ data class Texture(
 )
 
 /**
- * 本对象负责将顶点属性和索引加载到 GPU，并执行显示操作
+ * 本对象表示具备顶点坐标，法向和纹理的最小绘制单位
  */
 class Mesh(
     context: Context,
