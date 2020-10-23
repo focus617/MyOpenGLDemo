@@ -66,7 +66,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         glEnable(GL_DEPTH_TEST)
 
         //打开背面剪裁
-        glEnable(GL_CULL_FACE)
+//        glEnable(GL_CULL_FACE)
 
         mSun = Sun(context, 1.0f)
 
@@ -90,7 +90,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 //        // build model
         mModel = Model(context)
 //        mModel.load(context, "3dModel/statueOfPharaoh/sculpt.obj")
-        mModel.load("3dModel/teapot/teapot_t.obj")
+        mModel.loadFromObj("3dModel/teapot/teapot_t.obj")
 
     }
 

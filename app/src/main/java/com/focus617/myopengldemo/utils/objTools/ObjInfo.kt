@@ -92,7 +92,7 @@ class ObjInfo {
 //        textureDimension = 2
     }
 
-    fun parse(): HashMap<String, GeneratedData> {
+    fun translate(): HashMap<String, GeneratedData> {
 
         val meshList = HashMap<String, GeneratedData>()
 

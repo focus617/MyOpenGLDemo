@@ -2,7 +2,6 @@ package com.focus617.myopengldemo.utils.objTools
 
 import android.content.Context
 import android.text.TextUtils
-import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2.Companion.GeneratedData
 import com.focus617.myopengldemo.utils.Vector.Companion.calTriangleNormal
 import timber.log.Timber
 import java.util.*
@@ -40,7 +39,7 @@ object ObjLoader {
      * @param objFilePathName assets的obj文件路径
      * @return
      */
-    fun loadFromObjFile(context: Context, objFilePathName: String): ObjInfo {
+    fun load(context: Context, objFilePathName: String): ObjInfo {
 
         Timber.d("loadFromObjFile() from $objFilePathName")
 
@@ -53,14 +52,14 @@ object ObjLoader {
                 objFilePathName.substring(0, objFilePathName.lastIndexOf('/'))
             else "."
 
-        load(context, objFilePathName)
+        parse(context, objFilePathName)
 
         dumpObjInfo()
 
         return mObjInfo
     }
 
-    private fun load(context: Context, objFilePathName: String): ObjInfo {
+    private fun parse(context: Context, objFilePathName: String): ObjInfo {
 
         mObjInfo = ObjInfo()
         mObjInfo.name = objFilePathName

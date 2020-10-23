@@ -1,7 +1,6 @@
 package com.focus617.myopengldemo.base
 
 import android.content.Context
-import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.utils.helper.TextureHelper
 import com.focus617.myopengldemo.utils.objTools.DEFAULT_GROUP_NAME
@@ -35,16 +34,17 @@ class Model(val context: Context) {
     private lateinit var directory: String
 
     //加载模型
-    fun load(pathName: String) {
+    fun loadFromObj(pathName: String) {
         directory = if (pathName.contains('/')) pathName.substring(0, pathName.lastIndexOf('/'))
         else "."
         Timber.d("load(): directory = $directory")
 
-        val objInfo = ObjLoader.loadFromObjFile(context, pathName)
+        val objInfo = ObjLoader.load(context, pathName)
 
         initMaterial(objInfo.mMaterials)
 
-        val dataList = objInfo.parse()
+        val dataList = objInfo.translate()
+        objInfo.clear()
 
         for ((key, data) in dataList) {
             mMeshes[key] = Mesh(context, key, data)
@@ -55,7 +55,7 @@ class Model(val context: Context) {
         if (mMaterialMap.size == 0) {
             val defaultTextureId = TextureHelper.loadTexture(context, defaultTextureId)
             mMaterials[DEFAULT_GROUP_NAME]=
-                Texture(defaultTextureId, TextureType.TextureDiffuse, "qhc.png")
+                Texture(defaultTextureId, TextureType.TextureDiffuse, "qhc.ghxp")
         }
 //        else {
 //            for ((key, material) in mMaterialMap) {
