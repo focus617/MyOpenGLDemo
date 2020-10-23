@@ -1,4 +1,4 @@
-package com.focus617.bezier;//������
+package com.focus617.bezier;
 
 //贝塞尔曲线上点的类
 

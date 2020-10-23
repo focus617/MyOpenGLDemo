@@ -1,6 +1,7 @@
-package com.focus617.bezier;//包声明
 
-import java.util.ArrayList;//相关类的引入
+package com.focus617.bezier;  //包声明
+
+import java.util.ArrayList;   //相关类的引入
 
 public class BezierUtil 
 {
