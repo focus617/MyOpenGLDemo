@@ -1,30 +1,69 @@
 package com.focus617.myopengldemo.base
 
 import android.content.Context
+import com.focus617.myopengldemo.R
 import com.focus617.myopengldemo.base.basic.Camera
+import com.focus617.myopengldemo.utils.helper.TextureHelper
+import com.focus617.myopengldemo.utils.objTools.DEFAULT_GROUP_NAME
+import com.focus617.myopengldemo.utils.objTools.Material
 import com.focus617.myopengldemo.utils.objTools.ObjLoader
+import com.focus617.myopengldemo.utils.objTools.defaultTextureId
 import timber.log.Timber
 
-class Model() {
+
+enum class TextureType {
+    TextureDiffuse,        // 漫反射纹理
+    TextureSpecular        // 镜面光纹理
+}
+
+data class Texture(
+    var id: Int,
+    var type: TextureType,
+    var fileName: String
+)
+
+class Model(val context: Context) {
 
     //模型所包含的Mesh集合
-//    private val meshes = mutableListOf<IndexMeshObject>()
-    val meshes = HashMap<String, Mesh>()
+//    private val meshes = ArrayList<Mesh>()
+    private val mMeshes = HashMap<String, Mesh>()
+
+    //模型所包含的Material集合
+    private val mMaterials = HashMap<String, Texture>()
 
     //模型文件所在目录
     private lateinit var directory: String
 
     //加载模型
-    fun load(context: Context, pathName: String) {
+    fun load(pathName: String) {
         directory = if (pathName.contains('/')) pathName.substring(0, pathName.lastIndexOf('/'))
         else "."
         Timber.d("load(): directory = $directory")
 
-        val dataList = ObjLoader.loadFromObjFile(context, pathName)
+        val objInfo = ObjLoader.loadFromObjFile(context, pathName)
+
+        initMaterial(objInfo.mMaterials)
+
+        val dataList = objInfo.parse()
 
         for ((key, data) in dataList) {
-            meshes[key] = Mesh(context, data)
+            mMeshes[key] = Mesh(context, key, data)
         }
+    }
+
+    private fun initMaterial(mMaterialMap: HashMap<String, Material>) {
+        if (mMaterialMap.size == 0) {
+            val defaultTextureId = TextureHelper.loadTexture(context, defaultTextureId)
+            mMaterials[DEFAULT_GROUP_NAME]=
+                Texture(defaultTextureId, TextureType.TextureDiffuse, "qhc.png")
+        }
+//        else {
+//            for ((key, material) in mMaterialMap) {
+//                val textureId = TextureHelper.loadTexture(context, material.Kd_Texture)
+//                mMaterials[textureId]= Texture(textureId, TextureType.TextureDiffuse, "ghxp.png")
+//            }
+//        }
+
     }
 
 
@@ -45,11 +84,13 @@ class Model() {
         viewMatrix: FloatArray,
         projectionMatrix: FloatArray
     ) {
-        for ((key, mesh) in meshes) {
+        for ((key, mesh) in mMeshes) {
             mesh.positionObjectInScene()
             mesh.updateShaderUniforms(
                 mesh.mModelMatrix, viewMatrix, projectionMatrix,
-                Camera.Position)
+                Camera.Position,
+                mMaterials[mesh.materialKey]!!.id
+            )
             mesh.draw()
         }
     }

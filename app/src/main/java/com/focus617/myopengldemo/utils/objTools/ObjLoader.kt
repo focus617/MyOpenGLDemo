@@ -17,8 +17,6 @@ object ObjLoader {
     //模型文件所在目录
     private lateinit var directory: String
 
-    private const val DEFAULT_GROUP_NAME = "Default"
-
     private lateinit var mObjInfo: ObjInfo
 
     private var currentMaterialName: String = DEFAULT_GROUP_NAME     // 存放解析出来的face当前使用的texture
@@ -42,8 +40,7 @@ object ObjLoader {
      * @param objFilePathName assets的obj文件路径
      * @return
      */
-    fun loadFromObjFile(context: Context, objFilePathName: String)
-            : HashMap<String, GeneratedData> {
+    fun loadFromObjFile(context: Context, objFilePathName: String): ObjInfo {
 
         Timber.d("loadFromObjFile() from $objFilePathName")
 
@@ -57,9 +54,10 @@ object ObjLoader {
             else "."
 
         load(context, objFilePathName)
+
         dumpObjInfo()
 
-        return mObjInfo.parse()
+        return mObjInfo
     }
 
     private fun load(context: Context, objFilePathName: String): ObjInfo {
@@ -313,8 +311,6 @@ object ObjLoader {
                 val normalIndex =
                     if (indices[2].isNotEmpty()) Integer.valueOf(indices[2]) - 1 else 0
 
-                val lastIndex = currentIndexList!!.size
-
                 currentVertexList!!.add(mObjInfo.mVertices[vertexIndex].x)
                 currentVertexList!!.add(mObjInfo.mVertices[vertexIndex].y)
                 currentVertexList!!.add(mObjInfo.mVertices[vertexIndex].z)
@@ -331,6 +327,7 @@ object ObjLoader {
 //                    currentVertexList!!.add(0f)
 //                }
 
+                val lastIndex = currentIndexList!!.size
                 currentIndexList!!.add(lastIndex)
             }
 

@@ -87,4 +87,14 @@ class Material {
         if(alphaTexture!=null) Timber.d("alphaTexture: $alphaTexture")
         if(bumpTexture!=null) Timber.d("bumpTexture: $bumpTexture")
     }
+
+    companion object{
+        fun getDefault(kdTexture: String): Material{
+            val material = Material()
+            material.name = "Default"
+            material.Kd_Texture = kdTexture
+
+            return  material
+        }
+    }
 }

@@ -81,6 +81,7 @@ class ObjInfo {
     fun clear() {
         name = "def"
         mMtlFileName = null
+        mMaterials.clear()
         mVertices.clear()
         mNormals.clear()
         mTextureCoords.clear()
@@ -96,9 +97,10 @@ class ObjInfo {
         val meshList = HashMap<String, GeneratedData>()
 
         for ((key, indices) in mIndices) {
+            Timber.d("parse(): parsing key: $key")
             val vertices = mFinalVertices[key] ?: continue
 
-            var vertexSize = 3+3+2
+            var vertexSize = 3 + 3 + 2
 //            if (hasNormalInFace) vertexSize += 3
 //            if (hasTextureInFace) {
 //                when (textureDimension) {

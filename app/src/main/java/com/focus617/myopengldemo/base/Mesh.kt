@@ -7,22 +7,12 @@ import com.focus617.myopengldemo.base.objectbuilder.ObjectBuilder2
 import com.focus617.myopengldemo.utils.Vector
 
 
-enum class TextureType {
-    TextureDiffuse,        // 漫反射纹理
-    TextureSpecular        // 镜面光纹理
-}
-
-data class Texture(
-    var id: Int,
-    var type: TextureType,
-    var fileName: String
-)
-
 /**
  * 本对象表示具备顶点坐标，法向和纹理的最小绘制单位
  */
 class Mesh(
     context: Context,
+    val materialKey: String,
     val data: ObjectBuilder2.Companion.GeneratedData
 ): IndexMeshObject(context) {
 
@@ -51,14 +41,16 @@ class Mesh(
         modelMatrix: FloatArray,
         viewMatrix: FloatArray,
         projectionMatrix: FloatArray,
-        viewPosition: Vector
+        viewPosition: Vector,
+        textureId: Int
     ) {
         mProgram.use()
         (mProgram as MeshShaderProgram).setUniforms(
             modelMatrix,
             viewMatrix,
             projectionMatrix,
-            viewPosition
+            viewPosition,
+            textureId
         )
     }
 

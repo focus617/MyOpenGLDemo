@@ -1,6 +1,7 @@
 package com.focus617.myopengldemo.base
 
 import android.content.Context
+import android.opengl.GLES31
 import com.focus617.myopengldemo.base.basic.PointLight
 import com.focus617.myopengldemo.base.program.ShaderConstants
 import com.focus617.myopengldemo.base.program.ShaderProgram
@@ -24,7 +25,8 @@ class MeshShaderProgram(context: Context) : ShaderProgram(
         modelMatrix: FloatArray,
         viewMatrix: FloatArray,
         projectionMatrix: FloatArray,
-        viewPosition: Vector
+        viewPosition: Vector,
+        textureId: Int
     ) {
         setMatrix4fv(U_MODEL_MATRIX, modelMatrix)
         setMatrix4fv(U_VIEW_MATRIX, viewMatrix)
@@ -39,5 +41,9 @@ class MeshShaderProgram(context: Context) : ShaderProgram(
         setFloat(ShaderConstants.U_POINT_LIGHT_CONSTANT, PointLight.Constant)
         setFloat(ShaderConstants.U_POINT_LIGHT_LINEAR, PointLight.Linear)
         setFloat(ShaderConstants.U_POINT_LIGHT_QUADRATIC, PointLight.Quadratic)
+
+        GLES31.glActiveTexture(GLES31.GL_TEXTURE0)
+        GLES31.glBindTexture(GLES31.GL_TEXTURE_2D, textureId)
+        setTexture(ShaderConstants.U_TEXTURE_UNIT,0)// The 0 means "GL_TEXTURE0", or the first texture unit.
     }
 }

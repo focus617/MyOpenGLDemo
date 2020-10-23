@@ -5,7 +5,7 @@ precision highp float;
 precision mediump float;
 #endif
 
-//uniform sampler2D u_TextureUnit;
+uniform sampler2D u_TextureUnit;
 
 in vec3 v_worldSpacePos;
 in vec3 v_worldSpaceViewPos;
@@ -60,7 +60,7 @@ void main()
     vec3 specular = getSpecularLighting();
 
     //纹理采样颜色值
-    vec3 materialColor = getMaterialColor();
+    vec3 materialColor = vec3(texture(u_TextureUnit, v_TexCoords));
 
     vec3 result = ambient*materialColor + diffuse*materialColor + specular*materialColor;
 

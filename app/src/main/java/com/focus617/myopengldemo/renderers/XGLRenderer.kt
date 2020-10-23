@@ -88,9 +88,9 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
 
 //        // build model
-        mModel = Model()
+        mModel = Model(context)
 //        mModel.load(context, "3dModel/statueOfPharaoh/sculpt.obj")
-        mModel.load(context, "3dModel/teapot/teapot_t.obj")
+        mModel.load("3dModel/teapot/teapot_t.obj")
 
     }
 
