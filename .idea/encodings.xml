@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/3dModel/Aya/091_W_Aya_10K.mtl" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/3dModel/Aya/091_W_Aya_10K.obj" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/assets/3dModel/teapot/fragment_shader.glsl" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/assets/3dModel/teapot/teapot_t.obj" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/assets/3dModel/teapot/vertex_shader.glsl" charset="UTF-8" />

@@ -1,15 +1,12 @@
 package com.focus617.myopengldemo.utils.helper
 
 import android.content.Context
-import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.opengl.GLES31.*
 import android.opengl.GLUtils
 import timber.log.Timber
-import java.io.BufferedReader
 import java.io.IOException
-import java.io.InputStreamReader
 
 
 object TextureHelper {

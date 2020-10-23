@@ -7,14 +7,14 @@ import com.focus617.myopengldemo.utils.objTools.*
 import timber.log.Timber
 
 
-data class Texture(
-    var id: Int,
-    var fileName: String  // 我们储存纹理的路径用于与其它纹理进行比较
-)
+//data class Texture(
+//    var id: Int,
+//    var fileName: String  // 我们储存纹理的路径用于与其它纹理进行比较
+//)
 
 data class TextureGroup(
-    var TextureDiffuse: Texture,
-    var TextureSpecular: Texture
+    var TextureDiffuse: Int,
+    var TextureSpecular: Int
 )
 
 class Model(val context: Context) {
@@ -25,6 +25,9 @@ class Model(val context: Context) {
 
     //模型所包含的Material集合
     private val mMaterials = HashMap<String, TextureGroup>()
+
+    // 对所有加载过的纹理全局储存，防止重复加载
+    private val textures_loaded = HashMap<String, Int>()
 
     //销毁模型及其所有Mesh
     fun destroy() {
@@ -61,31 +64,37 @@ class Model(val context: Context) {
     //创建纹理并加载图像数据
     private fun loadMaterialTextures(mMaterialMap: HashMap<String, Material>) {
         if (mMaterialMap.size == 0) {
+            val defaultPath = "$directory/$defaultTextureFile"
             val defaultTextureId =
-                TextureHelper.loadTextureFromFile(context, "$directory/$defaultTextureFile")
+                TextureHelper.loadTextureFromFile(context, defaultPath)
 
-            mMaterials[DEFAULT_GROUP_NAME] = TextureGroup(
-                Texture(defaultTextureId, defaultTextureFile),
-                Texture(0, "")
-            )
+            textures_loaded[defaultPath] = defaultTextureId
+            mMaterials[DEFAULT_GROUP_NAME] = TextureGroup(defaultTextureId,0)
+
         } else {
             for ((key, material) in mMaterialMap) {
-                var textureDiffuse = Texture(0, "")
-                var textureSpecular = Texture(0, "")
-                if (material.Kd_Texture != null) {
-                    val fileName = "$directory/$material.Kd_Texture"
-                    val textureId = TextureHelper.loadTextureFromFile(context, fileName)
-                    textureDiffuse = Texture(textureId, fileName)
-                }
-                if (material.Ks_ColorTexture != null) {
-                    val fileName = "$directory/$material.Ks_ColorTexture"
-                    val textureId = TextureHelper.loadTextureFromFile(context, fileName)
-                    textureSpecular = Texture(textureId, fileName)
-                }
+
+                val textureDiffuse =
+                    if (material.Kd_Texture != null) getTexture("$directory/${material.Kd_Texture}")
+                    else 0
+
+                val textureSpecular =
+                    if (material.Ks_ColorTexture != null)
+                        getTexture("$directory/${material.Ks_ColorTexture}")
+                    else 0
+
                 mMaterials[key] = TextureGroup(textureDiffuse, textureSpecular)
             }
         }
 
+    }
+
+    private fun getTexture(filePath: String): Int {
+        return if (textures_loaded[filePath] == null) {
+            val textureId = TextureHelper.loadTextureFromFile(context, filePath)
+            textures_loaded[filePath] = textureId
+            textureId
+        } else textures_loaded[filePath]!!
     }
 
 
@@ -109,7 +118,7 @@ class Model(val context: Context) {
             mesh.updateShaderUniforms(
                 mesh.mModelMatrix, viewMatrix, projectionMatrix,
                 Camera.Position,
-                mMaterials[mesh.materialKey]!!.TextureDiffuse.id
+                mMaterials[mesh.materialKey]!!.TextureDiffuse
             )
             mesh.draw()
         }

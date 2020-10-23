@@ -19,6 +19,7 @@ import com.focus617.myopengldemo.objects.geometry.d3.cube.Cube
 import com.focus617.myopengldemo.utils.Vector
 import com.focus617.myopengldemo.utils.helper.MatrixHelper
 import com.focus617.myopengldemo.utils.clamp
+import com.focus617.myopengldemo.utils.helper.TextureHelper
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -71,11 +72,11 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
         mSun = Sun(context, 1.0f)
 
 //        mEarth = Earth(context, 1.0f)
-//        earthDayTexture =TextureHelper.loadTexture(context, R.drawable.earth)
-//        earthNightTexture =TextureHelper.loadTexture(context, R.drawable.earthn)
-
+//        earthDayTexture = TextureHelper.loadTextureFromFile(context, "Earth/earth.png")
+//        earthNightTexture =TextureHelper.loadTextureFromFile(context, "Earth/earthn.png")
+//
 //        mMoon = Moon(context, 0.5f)
-//        moonTexture =TextureHelper.loadTexture(context, R.drawable.moon)
+//        moonTexture =TextureHelper.loadTextureFromFile(context, "Earth/moon.png")
 
 //        mCube = Cube(context)
 //        boxTexture = TextureHelper.loadTexture(context, R.drawable.box)
@@ -89,8 +90,8 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 
 //        // build model
         mModel = Model(context)
-//        mModel.load(context, "3dModel/statueOfPharaoh/sculpt.obj")
-        mModel.loadFromObj("3dModel/teapot/teapot_t.obj")
+        mModel.loadFromObj("3dModel/Aya/091_W_Aya_10K.obj")
+//        mModel.loadFromObj("3dModel/teapot/teapot_t.obj")
 
     }
 
@@ -111,7 +112,7 @@ open class XGLRenderer(open val context: Context) : GLSurfaceView.Renderer {
 //            -aspect, aspect, -1f, 1f,
 //            2f, 50f
 //        )
-        MatrixHelper.perspectiveM(mProjectionMatrix, yFovInDegrees, aspect, 0.1f, 500f)
+        MatrixHelper.perspectiveM(mProjectionMatrix, yFovInDegrees, aspect, 1f, 10000f)
 
 
         //启动一个线程定时旋转地球、月球

@@ -31,7 +31,7 @@ object MtlLoader {
         try {
             val scanner = Scanner(context.assets.open(mtlFileName))
             while (scanner.hasNextLine()) {
-                val line = scanner.nextLine()
+                val line = scanner.nextLine().trim()
 
                 when {
                     line.isEmpty() -> continue

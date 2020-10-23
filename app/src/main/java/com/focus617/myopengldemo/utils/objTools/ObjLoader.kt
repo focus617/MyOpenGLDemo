@@ -321,6 +321,8 @@ object ObjLoader {
                     currentVertexList!!.add(0f)
                 }
                 else {
+                    mObjInfo.hasNormalInFace = true
+
                     currentVertexList!!.add(mObjInfo.mNormals[normalIndex].x)
                     currentVertexList!!.add(mObjInfo.mNormals[normalIndex].y)
                     currentVertexList!!.add(mObjInfo.mNormals[normalIndex].z)
@@ -332,6 +334,8 @@ object ObjLoader {
                     currentVertexList!!.add(0f)
                 }
                 else {
+                    mObjInfo.hasTextureInFace = true
+
                     currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].s)
                     currentVertexList!!.add(mObjInfo.mTextureCoords[textureIndex].t)
                     if (mObjInfo.textureDimension == 3) {
