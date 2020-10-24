@@ -1,4 +1,4 @@
-package com.focus617.myopengldemo.base
+package com.focus617.myopengldemo.base.basic
 
 import android.content.Context
 import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
@@ -12,7 +12,7 @@ import com.focus617.myopengldemo.utils.Vector
  */
 class Mesh(
     context: Context,
-    val materialKey: String,
+    val materialName: String,
     val data: ObjectBuilder2.Companion.GeneratedData
 ): IndexMeshObject(context) {
 
@@ -42,7 +42,9 @@ class Mesh(
         viewMatrix: FloatArray,
         projectionMatrix: FloatArray,
         viewPosition: Vector,
-        textureId: Int
+        specular: FloatArray,
+        shininess: Float,
+        textureDiffuseId: Int
     ) {
         mProgram.use()
         (mProgram as MeshShaderProgram).setUniforms(
@@ -50,7 +52,9 @@ class Mesh(
             viewMatrix,
             projectionMatrix,
             viewPosition,
-            textureId
+            specular,
+            shininess,
+            textureDiffuseId
         )
     }
 
@@ -105,7 +109,7 @@ class Mesh(
             (VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE) * Float.SIZE_BYTES
 
         private const val VERTEX_ATTRIBUTE_SIZE =
-            VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE + (VERTEX_TEXCOORDO_SIZE+1)
+            VERTEX_POS_SIZE + VERTEX_NORMAL_SIZE + (VERTEX_TEXCOORDO_SIZE +1)
 
         // 连续的顶点属性组之间的间隔
         private const val VERTEX_STRIDE = VERTEX_ATTRIBUTE_SIZE * Float.SIZE_BYTES

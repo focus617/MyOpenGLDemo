@@ -28,7 +28,7 @@ object ShaderConstants {
     const val U_POINT_LIGHT_LINEAR = "light.linear"
     const val U_POINT_LIGHT_QUADRATIC = "light.quadratic"
 
-    const val U_MATERIAL_DIFFUSE = "material.diffuse"
+    const val U_MATERIAL_TEXTURE_DIFFUSE = "material.textureDiffuse"
     const val U_MATERIAL_SPECULAR = "material.specular"
     const val U_MATERIAL_SHININESS = "material.shininess"
 

@@ -57,7 +57,7 @@ class ObjInfo {
     var mMtlFileName: String? = null
 
     // 存放解析出来的材质库
-    var mMaterials = HashMap<String, Material>()
+    var mMaterialInfos = HashMap<String, MaterialInfo>()
 
     // 存放解析出来的顶点的坐标
     val mVertices = ArrayList<ObjVertex>()
@@ -81,7 +81,7 @@ class ObjInfo {
     fun clear() {
         name = "def"
         mMtlFileName = null
-        mMaterials.clear()
+        mMaterialInfos.clear()
         mVertices.clear()
         mNormals.clear()
         mTextureCoords.clear()
@@ -100,14 +100,8 @@ class ObjInfo {
             Timber.d("parse(): parsing key: $key")
             val vertices = mFinalVertices[key] ?: continue
 
-            var vertexSize = 3 + 3 + 3
-//            if (hasNormalInFace) vertexSize += 3
-//            if (hasTextureInFace) {
-//                when (textureDimension) {
-//                    2 -> vertexSize += 2
-//                    3 -> vertexSize += 3
-//                }
-//            }
+            var vertexSize = 9
+
             val numVertices = vertices.size / vertexSize
             Timber.d("parse():vertexSize=$vertexSize, numVertices=$numVertices")
 
@@ -234,12 +228,12 @@ class ObjInfo {
         }
     }
 
-    fun dumpMaterials() {
-        Timber.d("dumpMaterials()")
-        Timber.d("Size of Materials: ${mMaterials.size}")
-        mMaterials.forEach { (key, material) ->
-            Timber.d("\nMaterial[$key]:")
-            material.dump()
+    fun dumpMaterialInfos() {
+        Timber.d("dumpMaterialInfos()")
+        Timber.d("Size of MaterialInfos: ${mMaterialInfos.size}")
+        mMaterialInfos.forEach { (key, materialInfo) ->
+            Timber.d("\nMaterialInfo[$key]:")
+            materialInfo.dump()
         }
     }
 

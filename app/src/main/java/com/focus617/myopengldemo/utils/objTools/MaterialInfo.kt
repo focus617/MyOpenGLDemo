@@ -41,7 +41,7 @@ import timber.log.Timber
  * mtl文件信息类
  * 对应于Assimp的 Material类
  */
-class Material {
+class MaterialInfo {
     // 材质对象名称
     var name: String? = null
 
@@ -89,8 +89,8 @@ class Material {
     }
 
     companion object{
-        fun getDefault(kdTexture: String): Material{
-            val material = Material()
+        fun getDefault(kdTexture: String): MaterialInfo{
+            val material = MaterialInfo()
             material.name = "Default"
             material.Kd_Texture = kdTexture
 

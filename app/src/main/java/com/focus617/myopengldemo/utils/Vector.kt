@@ -10,6 +10,7 @@ class Vector(var x: Float, var y: Float, var z: Float) {
 
 
     override fun toString(): String = "($x, $y, $z)"
+    fun toFloatArray() = floatArrayOf(x,y,z)
 
     //求向量的模的方法
     fun module(): Float = kotlin.math.sqrt(x * x + y * y + z * z)

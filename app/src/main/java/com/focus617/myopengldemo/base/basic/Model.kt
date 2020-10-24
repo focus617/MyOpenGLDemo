@@ -1,21 +1,10 @@
-package com.focus617.myopengldemo.base
+package com.focus617.myopengldemo.base.basic
 
 import android.content.Context
-import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.utils.helper.TextureHelper
 import com.focus617.myopengldemo.utils.objTools.*
 import timber.log.Timber
 
-
-//data class Texture(
-//    var id: Int,
-//    var fileName: String  // 我们储存纹理的路径用于与其它纹理进行比较
-//)
-
-data class TextureGroup(
-    var TextureDiffuse: Int,
-    var TextureSpecular: Int
-)
 
 class Model(val context: Context) {
 
@@ -24,7 +13,7 @@ class Model(val context: Context) {
     private val mMeshes = HashMap<String, Mesh>()
 
     //模型所包含的Material集合
-    private val mMaterials = HashMap<String, TextureGroup>()
+    private val mMaterials = HashMap<String, Material>()
 
     // 对所有加载过的纹理全局储存，防止重复加载
     private val textures_loaded = HashMap<String, Int>()
@@ -46,7 +35,7 @@ class Model(val context: Context) {
 
         val objInfo = ObjLoader.load(context, pathName)
 
-        loadMaterialTextures(objInfo.mMaterials)
+        loadMaterialTextures(objInfo.mMaterialInfos)
         processMesh(objInfo)
     }
 
@@ -62,51 +51,52 @@ class Model(val context: Context) {
     }
 
     //创建纹理并加载图像数据
-    private fun loadMaterialTextures(mMaterialMap: HashMap<String, Material>) {
+    private fun loadMaterialTextures(mMaterialMap: HashMap<String, MaterialInfo>) {
         if (mMaterialMap.size == 0) {
             val defaultPath = "$directory/$defaultTextureFile"
             val defaultTextureId =
                 TextureHelper.loadTextureFromFile(context, defaultPath)
 
+            //将构建的textureId存进已构建纹理库
             textures_loaded[defaultPath] = defaultTextureId
-            mMaterials[DEFAULT_GROUP_NAME] = TextureGroup(defaultTextureId,0)
+            // 构建缺省材料
+            val defaultMaterial = Material(DEFAULT_GROUP_NAME)
+            defaultMaterial.textureDiffuse = defaultTextureId
+            mMaterials[DEFAULT_GROUP_NAME] = defaultMaterial
 
         } else {
-            for ((key, material) in mMaterialMap) {
+            for ((materialName, materialInfo) in mMaterialMap) {
 
                 val textureDiffuse =
-                    if (material.Kd_Texture != null) getTexture("$directory/${material.Kd_Texture}")
+                    if (materialInfo.Kd_Texture != null) getTexture("$directory/${materialInfo.Kd_Texture}")
                     else 0
 
                 val textureSpecular =
-                    if (material.Ks_ColorTexture != null)
-                        getTexture("$directory/${material.Ks_ColorTexture}")
+                    if (materialInfo.Ks_ColorTexture != null)
+                        getTexture("$directory/${materialInfo.Ks_ColorTexture}")
                     else 0
 
-                mMaterials[key] = TextureGroup(textureDiffuse, textureSpecular)
+                // 构建材料
+                val material = Material(materialName)
+                material.textureDiffuse = textureDiffuse
+                material.textureSpecular = textureSpecular
+                mMaterials[materialName] = material
             }
         }
 
     }
 
     private fun getTexture(filePath: String): Int {
+        //如果纹理库中还没有需要构建的纹理，创建新的纹理
         return if (textures_loaded[filePath] == null) {
             val textureId = TextureHelper.loadTextureFromFile(context, filePath)
+            //将构建的textureId存进已构建纹理库
             textures_loaded[filePath] = textureId
             textureId
-        } else textures_loaded[filePath]!!
+        }
+        //如果纹理库中已有构建好的纹理，直接使用
+        else textures_loaded[filePath]!!
     }
-
-
-    fun initScene() {
-//        val scene = XuScene(context)
-
-        // process ASSIMP's root node recursively
-//        processNode(scene.mRootNode, scene)
-//        if(scene.mMesh != null)
-//            processMesh(scene.mMesh!!)
-    }
-
 
     //渲染模型，即依次渲染各个网格
     fun draw(
@@ -118,13 +108,25 @@ class Model(val context: Context) {
             mesh.updateShaderUniforms(
                 mesh.mModelMatrix, viewMatrix, projectionMatrix,
                 Camera.Position,
-                mMaterials[mesh.materialKey]!!.TextureDiffuse
+                mMaterials[mesh.materialName]!!.specular.toFloatArray(),
+                mMaterials[mesh.materialName]!!.shininess,
+                mMaterials[mesh.materialName]!!.textureDiffuse
             )
             mesh.draw()
         }
     }
+
+
 }
 
+//fun initScene() {
+//        val scene = XuScene(context)
+//
+//        //process ASSIMP's root node recursively
+//        processNode(scene.mRootNode, scene)
+//        if(scene.mMesh != null)
+//            processMesh(scene.mMesh!!)
+//}
 /**
  * 处理 Scene 对象包含的节点和子节点
  *
@@ -135,4 +137,42 @@ class Model(val context: Context) {
  * 轮胎网格）都会随着一起位移。这样的系统能够用父子关系很容易地创建出来。
  */
 //    fun processNode(node: Node, scene: XuScene){}
+
+//    private fun setTextures(shaderProgram: ShaderProgram) {
+//
+//        val PreFix = "material."
+//
+//        var diffuseNr = 1
+//        var specularNr = 1
+//
+//        for ((index, texture) in textures.withIndex()) {
+//            // 在绑定之前激活相应的纹理单元
+//            glActiveTexture(GL_TEXTURE0 + index);
+//
+//            // 获取纹理序号（diffuse_textureN 中的 N）
+//            var name: String
+//            var number: String
+//
+//            when (textures[index].type) {
+//                TextureType.TextureDiffuse -> {
+//                    name = "texture_diffuse"
+//                    number = (diffuseNr++).toString()
+//                }
+//                TextureType.TextureSpecular -> {
+//                    name = "texture_specular"
+//                    number = (specularNr++).toString()
+//                }
+//            }
+//
+//            /* 纹理命名标准：
+//             * 每个漫反射纹理被命名为texture_diffuseN，
+//             * 每个镜面光纹理应该被命名为texture_specularN，
+//             * 其中N的范围是1到纹理采样器最大允许的数字。
+//             */
+//            shaderProgram.setInt((PreFix + name + number), index);
+//
+//            glBindTexture(GL_TEXTURE_2D, textures[index].id);
+//        }
+//        glActiveTexture(GL_TEXTURE0);
+//    }
 

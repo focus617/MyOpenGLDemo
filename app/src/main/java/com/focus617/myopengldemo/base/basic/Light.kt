@@ -4,7 +4,7 @@ import com.focus617.myopengldemo.utils.Vector
 
 // 点光源
 object PointLight {
-    var position: Vector = Vector(80.0f, 80.0f, -100.0f)
+    var position: Vector = Vector(30.0f, 50.0f, -50.0f)
 
     var ambient: Vector = Vector(0.2f, 0.2f, 0.2f)
     var diffuse: Vector = Vector(1.0f, 1.0f, 1.0f)

@@ -30,7 +30,7 @@ object ObjLoader {
         mObjInfo.dumpNormals()
         mObjInfo.dumpTextureCoords()
         mObjInfo.dumpFaces()
-        mObjInfo.dumpMaterials()
+        mObjInfo.dumpMaterialInfos()
     }
 
     /**
@@ -77,7 +77,7 @@ object ObjLoader {
                     line.startsWith(MTLLIB) -> {
                         fillMtlLib(line)
                         if (mObjInfo.mMtlFileName != null) {
-                            MtlLoader.load(context, mObjInfo.mMtlFileName!!, mObjInfo.mMaterials)
+                            MtlLoader.parse(context, mObjInfo.mMtlFileName!!, mObjInfo.mMaterialInfos)
                         }
                     }
                     line.startsWith(O) -> {

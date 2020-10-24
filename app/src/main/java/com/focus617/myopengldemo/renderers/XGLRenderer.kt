@@ -4,7 +4,7 @@ import android.content.Context
 import android.opengl.GLES31.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
-import com.focus617.myopengldemo.base.Model
+import com.focus617.myopengldemo.base.basic.Model
 import com.focus617.myopengldemo.base.basic.Camera
 import com.focus617.myopengldemo.base.basic.PointLight
 import com.focus617.myopengldemo.base.objectbuilder.IndexMeshObject
@@ -19,7 +19,6 @@ import com.focus617.myopengldemo.objects.geometry.d3.cube.Cube
 import com.focus617.myopengldemo.utils.Vector
 import com.focus617.myopengldemo.utils.helper.MatrixHelper
 import com.focus617.myopengldemo.utils.clamp
-import com.focus617.myopengldemo.utils.helper.TextureHelper
 import timber.log.Timber
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10

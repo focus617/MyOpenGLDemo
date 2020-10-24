@@ -3,7 +3,7 @@ package com.focus617.myopengldemo.objects.geometry.d3.cube
 import android.content.Context
 import android.opengl.GLES31
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_IT_MV_MATRIX
-import com.focus617.myopengldemo.base.program.ShaderConstants.U_MATERIAL_DIFFUSE
+import com.focus617.myopengldemo.base.program.ShaderConstants.U_MATERIAL_TEXTURE_DIFFUSE
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_MATERIAL_SHININESS
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_MATERIAL_SPECULAR
 import com.focus617.myopengldemo.base.program.ShaderConstants.U_MODEL_MATRIX
@@ -20,7 +20,7 @@ import com.focus617.myopengldemo.base.program.ShaderConstants.U_VIEW_MATRIX
 import com.focus617.myopengldemo.base.program.ShaderProgram
 import com.focus617.myopengldemo.utils.Vector
 import com.focus617.myopengldemo.base.basic.PointLight
-import com.focus617.myopengldemo.base.basic.Material
+import com.focus617.myopengldemo.base.basic.ObjectMaterial
 
 const val PATH = "Cube"
 const val VERTEX_FILE = "cube_vertex_shader.glsl"
@@ -48,9 +48,6 @@ class CubeShaderProgram(context: Context) : ShaderProgram(
 
         setVector3fv(U_POINT_VIEW_POSITION, viewPosition, 1)
 
-        setVector3fv(U_MATERIAL_SPECULAR, Material.specular,1)
-        setFloat(U_MATERIAL_SHININESS, Material.shininess)
-
         setVector3fv(U_POINT_LIGHT_POSITION, PointLight.position, 1)
         setVector3fv(U_POINT_LIGHT_AMBIENT, PointLight.ambient, 1)
         setVector3fv(U_POINT_LIGHT_DIFFUSE,  PointLight.diffuse, 1)
@@ -59,9 +56,13 @@ class CubeShaderProgram(context: Context) : ShaderProgram(
         setFloat(U_POINT_LIGHT_LINEAR, PointLight.Linear)
         setFloat(U_POINT_LIGHT_QUADRATIC, PointLight.Quadratic)
 
+
+        setVector3fv(U_MATERIAL_SPECULAR, ObjectMaterial.specular,1)
+        setFloat(U_MATERIAL_SHININESS, ObjectMaterial.shininess)
+
         GLES31.glActiveTexture(GLES31.GL_TEXTURE0)
         GLES31.glBindTexture(GLES31.GL_TEXTURE_2D, boxTextureId)
-        setTexture(U_MATERIAL_DIFFUSE,0)
+        setTexture(U_MATERIAL_TEXTURE_DIFFUSE,0)
     }
 }
 

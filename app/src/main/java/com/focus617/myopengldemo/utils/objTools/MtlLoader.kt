@@ -12,7 +12,7 @@ import java.util.*
  */
 object MtlLoader {
 
-    private var currentMaterial: Material? = null
+    private var currentMaterialInfo: MaterialInfo? = null
 
     /**
      * 加载并分析 mtl文件，并将结果存入 XuScene的材质列表 [XuScene.mMaterials]
@@ -20,7 +20,7 @@ object MtlLoader {
      * @param mtlFileName assets的 mtl文件路径
      * @return
      */
-    fun load(context: Context, mtlFileName: String, mMtlMap: HashMap<String, Material>) {
+    fun parse(context: Context, mtlFileName: String, mMtlMap: HashMap<String, MaterialInfo>) {
 
         Timber.d("load from Mtl File: $mtlFileName")
         if (mtlFileName.isEmpty() or TextUtils.isEmpty(mtlFileName)) {
@@ -42,40 +42,40 @@ object MtlLoader {
                         fillNewMTL(line, mMtlMap)
                     }
                     line.startsWith(KA) -> {                // 环境光
-                        currentMaterial!!.Ka_Color = getColorFromLine(line)
+                        currentMaterialInfo!!.Ka_Color = getColorFromLine(line)
                     }
                     line.startsWith(KD) -> {                // 散射光
-                        currentMaterial!!.Kd_Color = getColorFromLine(line)
+                        currentMaterialInfo!!.Kd_Color = getColorFromLine(line)
                     }
                     line.startsWith(KS) -> {                // 镜面光
-                        currentMaterial!!.Ks_Color = getColorFromLine(line)
+                        currentMaterialInfo!!.Ks_Color = getColorFromLine(line)
                     }
                     line.startsWith(NS) -> {                // 高光调整参数
-                        currentMaterial!!.ns = getFloatFromLine(line)
+                        currentMaterialInfo!!.ns = getFloatFromLine(line)
                     }
                     line.startsWith(D) -> {                // 高光调整参数
-                        currentMaterial!!.alpha = getFloatFromLine(line)
+                        currentMaterialInfo!!.alpha = getFloatFromLine(line)
                     }
                     line.startsWith(ILLUM) -> {                // 高光调整参数
-                        currentMaterial!!.illum = getIntFromLine(line)
+                        currentMaterialInfo!!.illum = getIntFromLine(line)
                     }
                     line.startsWith(MAP_KA) -> {            //材质的环境贴图
-                        currentMaterial!!.Ka_Texture = getStringFromLine(line)
+                        currentMaterialInfo!!.Ka_Texture = getStringFromLine(line)
                     }
                     line.startsWith(MAP_KD) -> {            //材质的散射贴图
-                        currentMaterial!!.Kd_Texture = getStringFromLine(line)
+                        currentMaterialInfo!!.Kd_Texture = getStringFromLine(line)
                     }
                     line.startsWith(MAP_KS) -> {            //材质的镜面贴图
-                        currentMaterial!!.Ks_ColorTexture = getStringFromLine(line)
+                        currentMaterialInfo!!.Ks_ColorTexture = getStringFromLine(line)
                     }
                     line.startsWith(MAP_NS) -> {
-                        currentMaterial!!.Ns_Texture = getStringFromLine(line)
+                        currentMaterialInfo!!.Ns_Texture = getStringFromLine(line)
                     }
                     line.startsWith(MAP_D) || line.startsWith(MAP_TR) -> {
-                        currentMaterial!!.alphaTexture = getStringFromLine(line)
+                        currentMaterialInfo!!.alphaTexture = getStringFromLine(line)
                     }
                     line.startsWith(MAP_BUMP) -> {
-                        currentMaterial!!.bumpTexture = getStringFromLine(line)
+                        currentMaterialInfo!!.bumpTexture = getStringFromLine(line)
                     }
 
                     else -> {
@@ -89,29 +89,29 @@ object MtlLoader {
             Timber.e(ex.message.toString())
         }
         // 将最后一个材质保存
-        mMtlMap[currentMaterial!!.name!!] = currentMaterial!!
-        Timber.d("MTL: ${currentMaterial!!.name!!} finished")
+        mMtlMap[currentMaterialInfo!!.name!!] = currentMaterialInfo!!
+        Timber.d("MTL: ${currentMaterialInfo!!.name!!} finished")
     }
 
-    private fun fillNewMTL(line: String, mMtlMap: HashMap<String, Material>) {
+    private fun fillNewMTL(line: String, mMtlMap: HashMap<String, MaterialInfo>) {
         val items = line.split(DELIMITER).toTypedArray()
         if (items.size != 2) return
 
-        if (currentMaterial != null) {
+        if (currentMaterialInfo != null) {
             // 开始定义一个新的材质，因此要将上一个材质存入 mMtlMap
-            mMtlMap[currentMaterial!!.name!!] = currentMaterial!!
-            Timber.d("MTL: ${currentMaterial!!.name!!} closed")
+            mMtlMap[currentMaterialInfo!!.name!!] = currentMaterialInfo!!
+            Timber.d("MTL: ${currentMaterialInfo!!.name!!} closed")
         }
-        currentMaterial = Material()
-        currentMaterial!!.name = items[1]
-        Timber.d("Create new mtl: ${currentMaterial!!.name!!} ")
+        currentMaterialInfo = MaterialInfo()
+        currentMaterialInfo!!.name = items[1]
+        Timber.d("Create new mtl: ${currentMaterialInfo!!.name!!} ")
     }
 
     private fun fillNs(line: String) {
         val items = line.split(DELIMITER).toTypedArray()
         if (items.size != 2) return
 
-        currentMaterial!!.ns = items[1].toFloat()
+        currentMaterialInfo!!.ns = items[1].toFloat()
     }
 
 

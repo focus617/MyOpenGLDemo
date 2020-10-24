@@ -4,11 +4,11 @@ import com.focus617.myopengldemo.base.objectbuilder.AttributeProperty
 import com.focus617.myopengldemo.base.objectbuilder.VertexBuffer
 import com.focus617.myopengldemo.programs.particles.SkyboxShaderProgram
 
-class Skybox {
+class SkyBox {
 
     private val vertexBuffer = VertexBuffer.build(vertices, VERTEX_COUNT, indices)
 
-    fun bindDataES3(skyboxProgram: SkyboxShaderProgram) {
+    fun bindData(skyboxProgram: SkyboxShaderProgram) {
         val attribPropertyList: List<AttributeProperty> = arrayListOf(
             // 链接顶点属性，告诉OpenGL该如何解析顶点数据
             AttributeProperty(
@@ -21,7 +21,7 @@ class Skybox {
         vertexBuffer.bindData(attribPropertyList)
     }
 
-    fun drawES3() {
+    fun draw() {
         vertexBuffer.draw()
     }
     

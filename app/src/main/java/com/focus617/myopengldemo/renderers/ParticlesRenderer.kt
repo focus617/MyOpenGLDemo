@@ -67,7 +67,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
     private lateinit var cube: LightCube
 
     private lateinit var skyBoxProgram: SkyboxShaderProgram
-    private lateinit var skyBox: Skybox
+    private lateinit var skyBox: SkyBox
 
     private lateinit var heightmapProgram: HeightmapShaderProgram
     private lateinit var heightmap: Heightmap
@@ -121,7 +121,7 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
         )
 
         skyBoxProgram = SkyboxShaderProgram(context)
-        skyBox = Skybox()
+        skyBox = SkyBox()
 
 //        cubeProgram = SkeyCubeShaderProgram(context)
         cube = LightCube(context)
@@ -281,8 +281,8 @@ class ParticlesRenderer(val context: Context) : GLSurfaceView.Renderer {
 
         skyBoxProgram.use()
         skyBoxProgram.setUniforms(mMVPMatrix, skyboxTexture)
-        skyBox.bindDataES3(skyBoxProgram)
-        skyBox.drawES3()
+        skyBox.bindData(skyBoxProgram)
+        skyBox.draw()
 
         glDepthFunc(GL_LESS)
     }

@@ -57,15 +57,6 @@ class Heightmap(bitmap: Bitmap) {
                 // assume the heightmap is grayscale, and use the value of the
                 // red color to determine the height.
 
-//                val xPosition = (col.toFloat() / (width - 1).toFloat()) - 0.5f
-//                val yPosition =
-//                    Color.red(pixels[row * height + col]).toFloat() / 255.toFloat()
-//                val zPosition = (row.toFloat() / (height - 1).toFloat()) - 0.5f
-//
-//                heightmapVertices[offset++] = xPosition
-//                heightmapVertices[offset++] = yPosition
-//                heightmapVertices[offset++] = zPosition
-
                 val point = getPoint(pixels, row, col)
 
                 heightmapVertices[offset++] = point.x

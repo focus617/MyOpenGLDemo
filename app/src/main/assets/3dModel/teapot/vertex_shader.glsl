@@ -14,7 +14,6 @@ out vec3 v_worldSpacePos;
 out vec3 v_worldSpaceViewPos;
 out vec3 v_Normal;
 out vec2 v_TexCoords;
-out vec3 v_Position;
 
 void main()
 {
@@ -30,6 +29,4 @@ void main()
 
    //将顶点的纹理坐标传给片元着色器
    v_TexCoords = a_TextureCoordinates;
-
-   v_Position = a_Position;
 }

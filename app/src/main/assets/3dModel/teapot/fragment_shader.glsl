@@ -11,9 +11,19 @@ in vec3 v_worldSpacePos;
 in vec3 v_worldSpaceViewPos;
 in vec3 v_Normal;
 in vec2 v_TexCoords;
-in vec3 v_Position;
 
 out vec4 gl_FragColor;//输出到的片元颜色
+
+struct Material {
+// 漫反射贴图
+    sampler2D textureDiffuse;
+// 镜面强度(Specular Intensity)
+    vec3 specular;
+// 高光的反光度
+    float shininess;
+};
+
+uniform Material material;
 
 struct Light {
     vec3 position;
@@ -39,7 +49,6 @@ vec3 reflectDir;
 vec3 getAmbientLighting();
 vec3 getDiffuseLighting();
 vec3 getSpecularLighting();
-vec3 getMaterialColor();
 
 void main()
 {
@@ -55,14 +64,9 @@ void main()
     viewDir = normalize(v_worldSpaceViewPos - v_worldSpacePos);
     reflectDir = reflect(-lightDir, norm);
 
-    vec3 ambient = getAmbientLighting();
-    vec3 diffuse = getDiffuseLighting();
-    vec3 specular = getSpecularLighting();
-
-    //纹理采样颜色值
-    vec3 materialColor = vec3(texture(u_TextureUnit, v_TexCoords));
-
-    vec3 result = ambient*materialColor + diffuse*materialColor + specular*materialColor;
+    vec3 result = getAmbientLighting();
+    result += getDiffuseLighting();
+    result += getSpecularLighting();
 
     //将计算出的颜色传递给管线
     gl_FragColor = vec4(result, 1.0);
@@ -71,7 +75,7 @@ void main()
 // 环境光
 vec3 getAmbientLighting()
 {
-    vec3 ambient = light.ambient;
+    vec3 ambient = light.ambient * vec3(texture(material.textureDiffuse, v_TexCoords));
 
     return ambient;
 }
@@ -85,7 +89,7 @@ vec3 getDiffuseLighting()
     light.quadratic * (pow(lightDistance, 2.0)));
     float diff = cosine * adjustParam * attenuation;
 
-    vec3 diffuse = light.diffuse * diff;
+    vec3 diffuse = light.diffuse * diff * vec3(texture(material.textureDiffuse, v_TexCoords));
 
     return diffuse;
 }
@@ -93,29 +97,8 @@ vec3 getDiffuseLighting()
 // 镜面光
 vec3 getSpecularLighting()
 {
-    float  shininess = 100.0;// 高光的反光度
-
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-    vec3 specular = light.specular * spec;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    vec3 specular = light.specular * (spec * material.specular);
 
     return specular;
-}
-
-vec3 getMaterialColor()
-{
-//    vec3 bColor=vec3(0.678, 0.231, 0.129);//条纹的颜色(深红色)
-    vec3 mColor=vec3(0.763, 0.657, 0.614);//间隔区域的颜色(淡红色)
-
-    return mColor;//设置片元颜色为间隔区域的颜色
-
-//    float y=v_Position.y;//提取顶点的y坐标值
-//
-//    y=mod((y+100.0)*4.0, 4.0);//折算出区间值
-//
-//    if (y>1.8) { //当区间值大于指定值时
-//        return bColor;//设置片元颜色为条纹的颜色
-//
-//    } else { //当区间值不大于指定值时
-//        return mColor;//设置片元颜色为间隔区域的颜色
-//    }
 }
